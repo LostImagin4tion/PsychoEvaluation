@@ -16,13 +16,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "PsychoEvaluation"
 
-include(":app")
 
 include(":multiplatform:core")
 include(":multiplatform:common")
 include(":multiplatform:feature")
 
+include(":android:entry:app")
+
 include(":android:core")
 include(":android:common")
-include(":android:feature")
- 
+
+include(":android:feature:navigation:impl")
