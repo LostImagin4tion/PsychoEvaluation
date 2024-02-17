@@ -153,10 +153,12 @@ object Dependencies {
 
     object UI {
         private const val MATERIAL_VERSION = "1.9.0"
+        private const val SPLASH_SCREEN_VERSION = "1.0.0"
 
         private const val MATERIAL = "com.google.android.material:material:$MATERIAL_VERSION"
+        private const val SPLASH_SCREEN = "androidx.core:core-splashscreen:$SPLASH_SCREEN_VERSION"
 
-        val allDeps = listOf(MATERIAL)
+        val allDeps = listOf(MATERIAL, SPLASH_SCREEN)
     }
 
     object Plugins {

@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.navigation.impl.theme
+package ru.miem.psychoEvaluation.designSystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
