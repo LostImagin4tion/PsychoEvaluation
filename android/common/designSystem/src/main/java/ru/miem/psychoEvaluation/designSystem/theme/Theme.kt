@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.navigation.impl.theme
+package ru.miem.psychoEvaluation.designSystem.theme
 
 import android.app.Activity
 import android.os.Build

@@ -11,6 +11,11 @@ android {
 }
 
 dependencies {
+
+    // ==== Common layer ====
+
+    implementation(project(":android:common:designSystem"))
+
     // ==== Feature layer ====
 
     // Navigation

@@ -8,6 +8,4 @@ android {
 
 dependencies {
     implementation(project(":android:common:designSystem"))
-
-    implementation(project(":android:feature:navigation:api"))
 }

@@ -16,14 +16,28 @@ dependencyResolutionManagement {
 
 rootProject.name = "PsychoEvaluation"
 
+// ==== MULTIPLATFORM ====
 
+// Core
 include(":multiplatform:core")
+
+// Common
 include(":multiplatform:common")
+
+// Feature
 include(":multiplatform:feature")
 
+// ==== ANDROID ====
+
+// Entries
 include(":android:entry:app")
 
+// Core
 include(":android:core")
-include(":android:common")
 
+// Common
+include(":android:common:designSystem")
+
+// Features
+include(":android:feature:navigation:api")
 include(":android:feature:navigation:impl")
