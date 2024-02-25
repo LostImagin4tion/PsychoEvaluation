@@ -1,3 +1,5 @@
+package ru.miem.psychoEvaluation.feature.navigation.impl.ui
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,12 +12,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
+import ru.miem.psychoEvaluation.core.di.impl.api
+import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
+import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationApi
 import ru.miem.psychoEvaluation.feature.navigation.impl.data.Routes
+import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
+import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
 
 @Composable
 fun Navigation(
@@ -32,10 +37,15 @@ fun Navigation(
         }
     }
 
+    val authorizationScreen by api(AuthorizationApi::authorizationScreen)
+    val registrationScreen by api(RegistrationApi::registrationScreen)
+
     NavigationContent(
         paddingValues = paddingValues,
         navController = navController,
         showMessage = showMessage,
+        authorizationScreen = authorizationScreen,
+        registrationScreen = registrationScreen
     )
 }
 
@@ -44,6 +54,8 @@ fun NavigationContent(
     paddingValues: PaddingValues,
     navController: NavHostController,
     showMessage: (Int) -> Unit,
+    authorizationScreen: AuthorizationScreen,
+    registrationScreen: RegistrationScreen
 ) {
     Surface(
         modifier = Modifier
@@ -51,5 +63,25 @@ fun NavigationContent(
             .padding(paddingValues),
         color = MaterialTheme.colorScheme.background
     ) {
+        NavHost(
+            navController = navController,
+            startDestination = remember {
+                Routes.authorization
+            }
+        ) {
+            composable(Routes.authorization) {
+                authorizationScreen.AuthorizationScreen(
+                    navController = navController,
+                    showMessage = showMessage
+                )
+            }
+
+            composable(Routes.registration) {
+                registrationScreen.RegistrationScreen(
+                    navController = navController,
+                    showMessage = showMessage
+                )
+            }
+        }
     }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="registration_welcome_text">Registration</string>
+    <string name="registration_email_field" translatable="false">Email</string>
+    <string name="registration_password_field">Password</string>
+
+    <string name="registration_continue_button">Continue</string>
+    <string name="registration_create_account_button">Log in existing account</string>
+
+    <string name="registration_invalid_data_alert">Please, enter valid email and password</string>
+</resources>
