@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="authorization_welcome_text">Authorization</string>
+    <string name="authorization_email_field" translatable="false">Email</string>
+    <string name="authorization_password_field">Password</string>
+
+    <string name="authorization_continue_button">Continue</string>
+    <string name="authorization_create_account_button">Create account</string>
+
+    <string name="authorization_invalid_data_alert">Please, enter valid email and password</string>
+</resources>

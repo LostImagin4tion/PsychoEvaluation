@@ -2,10 +2,25 @@ package ru.miem.psychoEvaluation.designSystem.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+/**
+ * Main Colors
+ */
+val psychoPrimary = Color(0xFF4285F4)
+val psychoPrimaryGray = Color(0xFF8F8F8F)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+/**
+ * Action/Button Colors
+ */
+val psychoPrimaryLight = Color(0xFF00A09D)
+val psychoPrimaryDark = Color(0xFF017E84)
+
+val psychoGray = Color(0xFF8F8F8F)
+val psychoOnGray = Color(0xFF6B6D70)
+
+val psychoErrorPrimaryDark = Color(0xFF840101)
+
+/**
+ * Background Colors
+ */
+val psychoLightGrayBackground = Color(0xFFE2E7EE)
+val psychoDarkBackground = Color(0xFF1B1F1D)

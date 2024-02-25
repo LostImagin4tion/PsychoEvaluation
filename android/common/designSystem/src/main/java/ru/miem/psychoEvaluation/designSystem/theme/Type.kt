@@ -2,33 +2,103 @@ package ru.miem.psychoEvaluation.designSystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import ru.miem.psychoEvaluation.common.designSystem.R
 
-// Set of Material typography styles to start with
+private val fonts = FontFamily(
+    Font(R.font.inter_regular),
+    Font(R.font.inter_bold, weight = FontWeight.Bold),
+    Font(R.font.inter_light, weight = FontWeight.Light),
+    Font(R.font.inter_thin, weight = FontWeight.Thin),
+    Font(R.font.inter_medium, weight = FontWeight.Medium),
+)
+
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
+    // ==== SMALL SECTION ====
+    labelSmall = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        lineHeight = 14.sp,
+        letterSpacing = 0.3.sp
+    ),
+    bodySmall = TextStyle(
+        fontFamily = fonts,
+        fontSize = 6.sp,
+        fontWeight = FontWeight.Medium,
         letterSpacing = 0.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+    titleSmall = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        letterSpacing = 0.3.sp,
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        letterSpacing = 0.3.sp
+    ),
+
+    // ==== MEDIUM SECTION ====
+    labelMedium = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 14.sp,
+        letterSpacing = 0.3.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = fonts,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
+        fontSize = 14.sp,
+        letterSpacing = 0.25.sp
+    ),
+    titleMedium = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        letterSpacing = 0.5.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        letterSpacing = 0.5.sp
+    ),
+
+    // ==== LARGE SECTION ====
+    labelLarge = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        letterSpacing = 0.3.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp,
+        letterSpacing = 0.25.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.Medium,
+        fontSize = 32.sp,
+        letterSpacing = 0.15.sp,
+    ),
+    displayLarge = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 80.sp,
+        letterSpacing = 0.sp
+    ),
+    headlineLarge = TextStyle(
+        fontFamily = fonts,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 28.sp,
         letterSpacing = 0.5.sp
     )
-    */
 )

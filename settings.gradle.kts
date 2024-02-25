@@ -33,7 +33,8 @@ include(":multiplatform:feature")
 include(":android:entry:app")
 
 // Core
-include(":android:core")
+include(":android:core:di:api")
+include(":android:core:di:impl")
 
 // Common
 include(":android:common:designSystem")
@@ -41,3 +42,9 @@ include(":android:common:designSystem")
 // Features
 include(":android:feature:navigation:api")
 include(":android:feature:navigation:impl")
+
+include(":android:feature:authorization:api")
+include(":android:feature:authorization:impl")
+
+include(":android:feature:registration:api")
+include(":android:feature:registration:impl")
