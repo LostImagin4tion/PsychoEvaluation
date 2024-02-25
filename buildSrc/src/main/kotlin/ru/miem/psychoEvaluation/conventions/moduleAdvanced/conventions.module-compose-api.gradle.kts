@@ -26,4 +26,8 @@ dependencies {
     implementation(platform(Dependencies.Compose.COMPOSE_BOM))
     implementation(Dependencies.Compose.Core.UI)
     Dependencies.Compose.Navigation.allNavigationDeps.forEach { implementation(it) }
+
+    // Core
+    // DI
+    api(project(":android:core:di:api"))
 }

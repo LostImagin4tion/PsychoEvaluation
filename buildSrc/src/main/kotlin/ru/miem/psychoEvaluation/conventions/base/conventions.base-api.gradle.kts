@@ -9,7 +9,19 @@ import ru.miem.psychoEvaluation.consts.CompileVersions
  * @since 17.02.2024
  */
 plugins {
-    id("org.jetbrains.kotlin.android")
+    id("com.android.library")
+    kotlin("android")
+}
+
+android {
+    compileSdk = CompileVersions.CURRENT_COMPILE_VERSION
+
+    defaultConfig {
+        minSdk = CompileVersions.MINIMUM_COMPILE_VERSION
+    }
+    kotlinOptions {
+        jvmTarget = CompileVersions.JVM_TARGET
+    }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
