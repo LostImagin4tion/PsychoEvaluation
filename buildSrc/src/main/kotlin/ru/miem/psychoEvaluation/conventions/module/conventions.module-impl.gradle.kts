@@ -22,6 +22,9 @@ dependencies {
 
     // Logger
     Dependencies.Logger.allDeps.forEach { implementation(it) }
+
+    // DI
+    implementation(project(":android:core:di:impl"))
 }
 
 fun DependencyHandler.allTestImplementation(deps: Any) {

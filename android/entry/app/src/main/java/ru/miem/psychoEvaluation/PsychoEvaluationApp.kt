@@ -2,6 +2,8 @@ package ru.miem.psychoEvaluation
 
 import android.app.Application
 import android.os.StrictMode
+import ru.miem.psychoEvaluation.di.PsychoEvaluationAppComponent
+import ru.miem.psychoEvaluation.di.initApis
 import timber.log.Timber
 
 class PsychoEvaluationApp : Application() {
@@ -11,6 +13,7 @@ class PsychoEvaluationApp : Application() {
         super.onCreate()
 
         initTimber()
+        psychoEvaluationAppComponent = initApis()
     }
 
     private fun initTimber() {
@@ -40,5 +43,9 @@ class PsychoEvaluationApp : Application() {
                     .build()
             )
         }
+    }
+
+    companion object {
+        lateinit var psychoEvaluationAppComponent: PsychoEvaluationAppComponent
     }
 }
