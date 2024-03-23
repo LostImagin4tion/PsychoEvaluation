@@ -51,3 +51,6 @@ include(":android:feature:registration:impl")
 
 include(":android:feature:userProfile:api")
 include(":android:feature:userProfile:impl")
+
+include(":android:feature:trainings:api")
+include(":android:feature:trainings:impl")

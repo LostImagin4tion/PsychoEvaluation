@@ -34,4 +34,7 @@ dependencies {
 
     implementation(project(":android:feature:userProfile:api"))
     implementation(project(":android:feature:userProfile:impl"))
+
+    implementation(project(":android:feature:trainings:api"))
+    implementation(project(":android:feature:trainings:impl"))
 }

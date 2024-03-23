@@ -49,6 +49,7 @@ fun NeuronsTextBlock(
             BodyText(
                 isLarge = false,
                 textRes = R.string.red_neuron_text,
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .background(
@@ -70,6 +71,7 @@ fun NeuronsTextBlock(
             BodyText(
                 isLarge = false,
                 textRes = R.string.blue_neuron_text,
+                color = Color.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .background(
