@@ -12,7 +12,7 @@ import ru.miem.psychoEvaluation.common.designSystem.R
 fun SimpleAppLogo(
     modifier: Modifier = Modifier
 ) = Image(
-    painter = painterResource(id = R.drawable.app_logo),
+    painter = painterResource(id = R.drawable.ic_app_logo),
     contentDescription = null,
     modifier = modifier.size(120.dp)
 )

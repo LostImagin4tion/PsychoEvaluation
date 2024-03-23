@@ -13,4 +13,5 @@ dependencies {
 
     implementation(project(":android:feature:authorization:api"))
     implementation(project(":android:feature:registration:api"))
+    implementation(project(":android:feature:userProfile:api"))
 }

@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 private val DarkColorPalette = darkColorScheme(
     primary = psychoPrimary,
     onPrimary = Color.White,
-    secondary = psychoDarkBackground,
+    secondary = psychoPrimaryDark,
     primaryContainer = psychoPrimaryDark,
     onPrimaryContainer = Color.White,
     onSecondaryContainer = Color.White,

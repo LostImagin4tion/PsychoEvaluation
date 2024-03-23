@@ -27,6 +27,7 @@ import ru.miem.psychoEvaluation.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.designSystem.logo.SimpleAppLogo
 import ru.miem.psychoEvaluation.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.designSystem.textfields.LoginTextField
+import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.designSystem.theme.psychoGray
 import ru.miem.psychoEvaluation.designSystem.theme.psychoOnGray
 
@@ -65,13 +66,13 @@ fun WelcomeScreen(
                 .align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(R.drawable.back_icon),
+                painter = painterResource(R.drawable.ic_back),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         }
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
     } else {
         Spacer(modifier = Modifier.height(96.dp))
     }

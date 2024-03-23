@@ -1,11 +1,7 @@
 plugins {
-    conventions.`module-compose-impl`
+    conventions.`module-compose-api`
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.feature.navigation.impl"
-}
-
-dependencies {
-    implementation(project(":android:common:designSystem"))
+    namespace = "ru.miem.psychoEvaluation.feature.navigation.api"
 }

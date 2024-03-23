@@ -18,9 +18,11 @@ import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.core.di.impl.api
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationApi
-import ru.miem.psychoEvaluation.feature.navigation.impl.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
+import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
+import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileApi
 
 @Composable
 fun Navigation(
@@ -39,13 +41,15 @@ fun Navigation(
 
     val authorizationScreen by api(AuthorizationApi::authorizationScreen)
     val registrationScreen by api(RegistrationApi::registrationScreen)
+    val userProfileScreen by api(UserProfileApi::userProfileScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
         navController = navController,
         showMessage = showMessage,
         authorizationScreen = authorizationScreen,
-        registrationScreen = registrationScreen
+        registrationScreen = registrationScreen,
+        userProfileScreen = userProfileScreen
     )
 }
 
@@ -55,7 +59,8 @@ fun NavigationContent(
     navController: NavHostController,
     showMessage: (Int) -> Unit,
     authorizationScreen: AuthorizationScreen,
-    registrationScreen: RegistrationScreen
+    registrationScreen: RegistrationScreen,
+    userProfileScreen: UserProfileScreen
 ) {
     Surface(
         modifier = Modifier
@@ -66,7 +71,7 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.authorization
+                Routes.userProfile
             }
         ) {
             composable(Routes.authorization) {
@@ -78,6 +83,13 @@ fun NavigationContent(
 
             composable(Routes.registration) {
                 registrationScreen.RegistrationScreen(
+                    navController = navController,
+                    showMessage = showMessage
+                )
+            }
+
+            composable(Routes.userProfile) {
+                userProfileScreen.UserProfileScreen(
                     navController = navController,
                     showMessage = showMessage
                 )

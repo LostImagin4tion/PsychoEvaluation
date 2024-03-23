@@ -31,4 +31,7 @@ dependencies {
 
     implementation(project(":android:feature:registration:api"))
     implementation(project(":android:feature:registration:impl"))
+
+    implementation(project(":android:feature:userProfile:api"))
+    implementation(project(":android:feature:userProfile:impl"))
 }

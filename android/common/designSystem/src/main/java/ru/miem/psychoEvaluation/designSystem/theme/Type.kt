@@ -20,27 +20,27 @@ val Typography = Typography(
     // ==== SMALL SECTION ====
     labelSmall = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
-        lineHeight = 14.sp,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 12.sp,
         letterSpacing = 0.3.sp
     ),
     bodySmall = TextStyle(
         fontFamily = fonts,
-        fontSize = 6.sp,
+        fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
-        letterSpacing = 0.sp
+        letterSpacing = 0.3.sp
     ),
     titleSmall = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
         letterSpacing = 0.3.sp,
     ),
     headlineSmall = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
+        fontSize = 20.sp,
         letterSpacing = 0.3.sp
     ),
 
@@ -48,13 +48,13 @@ val Typography = Typography(
     labelMedium = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         letterSpacing = 0.3.sp
     ),
     bodyMedium = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         letterSpacing = 0.25.sp
     ),
     titleMedium = TextStyle(
@@ -73,13 +73,13 @@ val Typography = Typography(
     // ==== LARGE SECTION ====
     labelLarge = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.Medium,
-        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
         letterSpacing = 0.3.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = fonts,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         letterSpacing = 0.25.sp
     ),

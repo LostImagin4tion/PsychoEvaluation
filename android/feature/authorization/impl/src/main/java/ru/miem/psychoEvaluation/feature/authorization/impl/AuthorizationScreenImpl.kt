@@ -13,12 +13,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.designSystem.screenTemplates.WelcomeScreen
+import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.designSystem.utils.isValidEmail
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
-import ru.miem.psychoEvaluation.feature.navigation.impl.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import javax.inject.Inject
 
 class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
@@ -29,10 +29,12 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         showMessage: (Int) -> Unit
     ) {
         val navigateToRegistration = { navController.navigate(Routes.registration) }
+        val navigateToUserProfile = { navController.navigate(Routes.userProfile) }
 
         AuthorizationScreenContent(
             showMessage = showMessage,
-            navigateToRegistration = navigateToRegistration
+            navigateToRegistration = navigateToRegistration,
+            navigateToUserProfile = navigateToUserProfile
         )
     }
 
@@ -40,11 +42,12 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
     private fun AuthorizationScreenContent(
         showMessage: (Int) -> Unit,
         navigateToRegistration: () -> Unit = {},
+        navigateToUserProfile: () -> Unit = {},
     ) = Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = Dimensions.mainHorizontalPadding)
             .imePadding()
     ) {
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -65,10 +68,12 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
             if (isEmailInputError || isPasswordInputError) {
                 showMessage(R.string.authorization_invalid_data_alert)
+            } else {
+                navigateToUserProfile()
             }
         }
 
-        // ===== UI SECTION ====
+        // ===== UI SECTION =====
 
         WelcomeScreen(
             emailInput = emailInput,
