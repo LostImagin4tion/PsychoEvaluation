@@ -48,3 +48,6 @@ include(":android:feature:authorization:impl")
 
 include(":android:feature:registration:api")
 include(":android:feature:registration:impl")
+
+include(":android:feature:userProfile:api")
+include(":android:feature:userProfile:impl")

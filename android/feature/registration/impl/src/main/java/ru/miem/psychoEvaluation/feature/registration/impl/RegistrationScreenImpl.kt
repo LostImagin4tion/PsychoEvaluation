@@ -13,11 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.designSystem.screenTemplates.WelcomeScreen
+import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.designSystem.utils.isValidEmail
-import ru.miem.psychoEvaluation.feature.navigation.impl.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import javax.inject.Inject
 
@@ -44,7 +44,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = Dimensions.mainHorizontalPadding)
             .imePadding()
     ) {
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -68,7 +68,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
             }
         }
 
-        // ===== UI SECTION ====
+        // ===== UI SECTION =====
 
         WelcomeScreen(
             isRegistration = true,
