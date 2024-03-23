@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                         if (currentRoute !in routes) return@Scaffold
 
                         NavigationBar(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
                             modifier = Modifier.height(70.dp)
                         ) {
                             items.forEach { screen ->
@@ -131,10 +132,12 @@ class MainActivity : AppCompatActivity() {
                 ?: error("Not in an activity - unable to get Window reference")
 
             val color = MaterialTheme.colorScheme.background.toArgb()
+            val bottomBarColor = MaterialTheme.colorScheme.primaryContainer.toArgb()
             val isLightStatusBar = !isSystemInDarkTheme()
 
             SideEffect {
                 currentWindow.statusBarColor = color
+                currentWindow.navigationBarColor = bottomBarColor
 
                 WindowCompat.getInsetsController(currentWindow, view)
                     .isAppearanceLightStatusBars = isLightStatusBar

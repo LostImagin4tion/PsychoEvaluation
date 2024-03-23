@@ -2,7 +2,6 @@ package ru.miem.psychoEvaluation.feature.userProfile.impl
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,9 +51,12 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-        TitleText(textRes = R.string.profile_header, isLarge = false)
+        TitleText(
+            textRes = R.string.profile_header,
+            isLarge = false,
+        )
 
-        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding * 2))
 
         NeuronsTextBlock()
 
