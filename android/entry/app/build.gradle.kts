@@ -14,15 +14,16 @@ dependencies {
 
     // ==== Core layer ====
 
-    // DI
     implementation(project(":android:core:di:impl"))
 
-    // USB Device Api
     implementation(project(":android:core:usbDeviceApi:impl"))
 
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))
+
+    implementation(project(":android:common:dataAnalysis:airplaneGame:api"))
+    implementation(project(":android:common:dataAnalysis:airplaneGame:impl"))
 
     // ==== Feature layer ====
 

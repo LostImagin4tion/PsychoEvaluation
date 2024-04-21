@@ -8,17 +8,17 @@ android {
 
 dependencies {
 
-    // Core
+    // ==== Core layer ====
+
     implementation(project(":android:core:usbDeviceApi:api"))
 
-    // Common
-    // Design system
+    // ==== Common layer ====
+
     implementation(project(":android:common:designSystem"))
 
-    // Feature
-    // Authorization API
-    implementation(project(":android:feature:trainings:debugTraining:api"))
+    // ==== Feature layer ====
 
-    // Navigation API
+    api(project(":android:feature:trainings:debugTraining:api"))
+
     implementation(project(":android:feature:navigation:api"))
 }
