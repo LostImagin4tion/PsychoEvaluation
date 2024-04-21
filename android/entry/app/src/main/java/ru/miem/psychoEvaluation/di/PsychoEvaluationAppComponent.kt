@@ -3,11 +3,13 @@ package ru.miem.psychoEvaluation.di
 import dagger.Component
 import ru.miem.psychoEvaluation.core.di.impl.ApiRegistry
 import ru.miem.psychoEvaluation.core.di.impl.ApiResolver
+import ru.miem.psychoEvaluation.di.modules.CoreAggregationModule
 import ru.miem.psychoEvaluation.di.modules.FeatureAggregationModule
 
 @Component(
     modules = [
         FeatureAggregationModule::class,
+        CoreAggregationModule::class,
     ]
 )
 interface PsychoEvaluationAppComponent {

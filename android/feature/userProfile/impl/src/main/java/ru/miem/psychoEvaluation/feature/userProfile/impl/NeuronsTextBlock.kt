@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ru.miem.psychoEvaluation.designSystem.text.BodyText
-import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
+import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 
 @Composable
 fun NeuronsTextBlock(

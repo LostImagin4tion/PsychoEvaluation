@@ -21,8 +21,10 @@ import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
-import ru.miem.psychoEvaluation.feature.trainings.api.TrainingsScreen
-import ru.miem.psychoEvaluation.feature.trainings.api.di.TrainingsScreenApi
+import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
+import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenApi
+import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
+import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenApi
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
 import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileApi
 
@@ -30,7 +32,8 @@ import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileApi
 fun Navigation(
     snackbarHostState: SnackbarHostState,
     paddingValues: PaddingValues,
-    navController: NavHostController
+    navController: NavHostController,
+    setupSystemBarColors: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -44,16 +47,19 @@ fun Navigation(
     val authorizationScreen by api(AuthorizationApi::authorizationScreen)
     val registrationScreen by api(RegistrationApi::registrationScreen)
     val userProfileScreen by api(UserProfileApi::userProfileScreen)
-    val trainingsScreen by api(TrainingsScreenApi::trainingsScreen)
+    val trainingsScreen by api(TrainingsScreenApi::trainingsListScreen)
+    val debugTrainingScreen by api(DebugTrainingScreenApi::debugTrainingScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
         navController = navController,
         showMessage = showMessage,
+        setupSystemBarColors = setupSystemBarColors,
         authorizationScreen = authorizationScreen,
         registrationScreen = registrationScreen,
         userProfileScreen = userProfileScreen,
-        trainingsScreen = trainingsScreen,
+        trainingsListScreen = trainingsScreen,
+        debugTrainingScreen = debugTrainingScreen,
     )
 }
 
@@ -62,10 +68,12 @@ fun NavigationContent(
     paddingValues: PaddingValues,
     navController: NavHostController,
     showMessage: (Int) -> Unit,
+    setupSystemBarColors: @Composable () -> Unit,
     authorizationScreen: AuthorizationScreen,
     registrationScreen: RegistrationScreen,
     userProfileScreen: UserProfileScreen,
-    trainingsScreen: TrainingsScreen,
+    trainingsListScreen: TrainingsListScreen,
+    debugTrainingScreen: DebugTrainingScreen,
 ) {
     Surface(
         modifier = Modifier
@@ -76,10 +84,11 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.authorization
+                Routes.userProfile
             }
         ) {
             composable(Routes.authorization) {
+                setupSystemBarColors()
                 authorizationScreen.AuthorizationScreen(
                     navController = navController,
                     showMessage = showMessage
@@ -87,6 +96,7 @@ fun NavigationContent(
             }
 
             composable(Routes.registration) {
+                setupSystemBarColors()
                 registrationScreen.RegistrationScreen(
                     navController = navController,
                     showMessage = showMessage
@@ -94,14 +104,24 @@ fun NavigationContent(
             }
 
             composable(Routes.userProfile) {
+                setupSystemBarColors()
                 userProfileScreen.UserProfileScreen(
                     navController = navController,
                     showMessage = showMessage
                 )
             }
 
-            composable(Routes.trainings) {
-                trainingsScreen.TrainingsScreen(
+            composable(Routes.trainingsList) {
+                setupSystemBarColors()
+                trainingsListScreen.TrainingsScreen(
+                    navController = navController,
+                    showMessage = showMessage
+                )
+            }
+
+            composable(Routes.debugTraining) {
+                setupSystemBarColors()
+                debugTrainingScreen.DebugTrainingScreen(
                     navController = navController,
                     showMessage = showMessage
                 )

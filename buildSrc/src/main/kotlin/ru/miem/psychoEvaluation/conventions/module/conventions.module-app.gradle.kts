@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.dependencies
 import ru.miem.psychoEvaluation.consts.Dependencies
 
 /**

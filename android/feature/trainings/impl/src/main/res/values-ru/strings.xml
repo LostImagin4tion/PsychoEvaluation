@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="trainings_header">Тренировки</string>
-
-    <string name="concentration_training_title">Концентрация</string>
-    <string name="concentration_training_description">Контролируй свое эмоциональное состояние, чтобы предотвратить крушение самолета</string>
-</resources>

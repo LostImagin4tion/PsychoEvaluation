@@ -15,14 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import ru.miem.psychoEvaluation.designSystem.buttons.FilledTextButton
-import ru.miem.psychoEvaluation.designSystem.text.BodyText
-import ru.miem.psychoEvaluation.designSystem.text.LabelText
-import ru.miem.psychoEvaluation.designSystem.text.SubtitleText
-import ru.miem.psychoEvaluation.designSystem.text.TitleText
-import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.designSystem.theme.psychoGray
-import ru.miem.psychoEvaluation.designSystem.theme.psychoOnGray
+import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
+import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
+import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
+import ru.miem.psychoEvaluation.common.designSystem.text.SubtitleText
+import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
+import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoGray
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
 import javax.inject.Inject
 
@@ -46,7 +46,6 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
             .padding(horizontal = 24.dp)
             .imePadding()
     ) {
-
         // ===== UI SECTION =====
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
@@ -67,7 +66,6 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
         Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding))
 
         Column(modifier = Modifier.padding(start = Dimensions.mainHorizontalPadding)) {
-
             LabelText(
                 textRes = R.string.title_login,
                 isLarge = true

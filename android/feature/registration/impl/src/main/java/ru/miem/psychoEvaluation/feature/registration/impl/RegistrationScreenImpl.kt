@@ -14,9 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
-import ru.miem.psychoEvaluation.designSystem.screenTemplates.WelcomeScreen
-import ru.miem.psychoEvaluation.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.designSystem.utils.isValidEmail
+import ru.miem.psychoEvaluation.common.designSystem.screenTemplates.WelcomeScreen
+import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.isValidEmail
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import javax.inject.Inject
@@ -60,7 +60,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         val isContinueButtonEnabled = emailInput.text.isNotBlank() && passwordInput.text.isNotBlank()
 
         val onContinueButtonClick = {
-            isEmailInputError = emailInput.text.isBlank() || !isValidEmail(emailInput.text)
+            isEmailInputError = emailInput.text.isBlank() || !emailInput.text.isValidEmail()
             isPasswordInputError = passwordInput.text.isBlank()
 
             if (isEmailInputError || isPasswordInputError) {
