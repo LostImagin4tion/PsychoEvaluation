@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trainings_header">Trainings</string>
+
+    <!--  Debug Training  -->
+    <string name="debug_training_title">Debug Training</string>
+    <string name="debug_training_description">This training is used for debugging connection with sensor and retrieving data from it</string>
+
+    <!--  Concentration Training  -->
+    <string name="concentration_training_title">Concentration</string>
+    <string name="concentration_training_description">Control your emotional state to prevent a plane crash</string>
+</resources>

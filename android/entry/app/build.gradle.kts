@@ -17,13 +17,15 @@ dependencies {
     // DI
     implementation(project(":android:core:di:impl"))
 
+    // USB Device Api
+    implementation(project(":android:core:usbDeviceApi:impl"))
+
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))
 
     // ==== Feature layer ====
 
-    // Navigation
     implementation(project(":android:feature:navigation:impl"))
 
     implementation(project(":android:feature:authorization:api"))
@@ -35,6 +37,9 @@ dependencies {
     implementation(project(":android:feature:userProfile:api"))
     implementation(project(":android:feature:userProfile:impl"))
 
-    implementation(project(":android:feature:trainings:api"))
-    implementation(project(":android:feature:trainings:impl"))
+    implementation(project(":android:feature:trainingsList:api"))
+    implementation(project(":android:feature:trainingsList:impl"))
+
+    implementation(project(":android:feature:trainings:debugTraining:api"))
+    implementation(project(":android:feature:trainings:debugTraining:impl"))
 }

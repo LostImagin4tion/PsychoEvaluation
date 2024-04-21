@@ -1,10 +1,13 @@
 package ru.miem.psychoEvaluation.feature.navigation.impl
 
 import android.app.Activity
+import android.content.Intent
+import android.hardware.usb.UsbManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -31,21 +34,26 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import ru.miem.psychoEvaluation.designSystem.text.LabelText
-import ru.miem.psychoEvaluation.designSystem.theme.PsychoEvaluationTheme
+import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
+import ru.miem.psychoEvaluation.common.designSystem.theme.PsychoEvaluationTheme
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Screens
 import ru.miem.psychoEvaluation.feature.navigation.impl.ui.Navigation
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
-            val navController = rememberNavController()
+            navController = rememberNavController()
             val snackbarHostState = remember { SnackbarHostState() }
 
             PsychoEvaluationTheme {
@@ -65,63 +73,26 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     },
-                    bottomBar = {
-                        val items = Screens.entries
-                        val routes = items.map { it.route }
-
-                        val navBackStackEntry by navController.currentBackStackEntryAsState()
-                        val currentRoute =
-                            navBackStackEntry?.destination?.hierarchy?.first()?.route
-
-                        // hide bottom bar for other screens
-                        if (currentRoute !in routes) return@Scaffold
-
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.height(70.dp)
-                        ) {
-                            items.forEach { screen ->
-                                NavigationBarItem(
-                                    selected = currentRoute == screen.route,
-                                    label = {
-                                        LabelText(
-                                            textRes = screen.nameRes,
-                                            isMedium = false
-                                        )
-                                    },
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(screen.iconRes),
-                                            contentDescription = null,
-                                            modifier = Modifier
-                                                .size(22.dp)
-                                                .padding(vertical = 1.dp)
-                                        )
-                                    },
-                                    onClick = {
-                                        if (screen.route != currentRoute) {
-                                            navController.navigate(screen.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) { }
-                                            }
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .navigationBarsPadding()
-                                        .clip(CircleShape),
-                                )
-                            }
-                        }
-                    },
+                    bottomBar = { NavigationBar() },
                     content = {
                         Navigation(
                             snackbarHostState = snackbarHostState,
                             paddingValues = it,
-                            navController = navController
+                            navController = navController,
+                            setupSystemBarColors = { SetupSystemBarsColors() }
                         )
                     }
                 )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        Timber.tag("HELLO").e("HELLO ON NEW INTENT")
+        if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
+            navController.navigate(Routes.debugTraining)
+        }
+        super.onNewIntent(intent)
     }
 
     @Composable
@@ -132,7 +103,12 @@ class MainActivity : AppCompatActivity() {
                 ?: error("Not in an activity - unable to get Window reference")
 
             val color = MaterialTheme.colorScheme.background.toArgb()
-            val bottomBarColor = MaterialTheme.colorScheme.primaryContainer.toArgb()
+
+            val bottomBarColor = when (navController.currentDestination?.route) {
+                in Routes.navigationBarDestinations -> MaterialTheme.colorScheme.primaryContainer.toArgb()
+                else -> MaterialTheme.colorScheme.background.toArgb()
+            }
+
             val isLightStatusBar = !isSystemInDarkTheme()
 
             SideEffect {
@@ -143,5 +119,63 @@ class MainActivity : AppCompatActivity() {
                     .isAppearanceLightStatusBars = isLightStatusBar
             }
         }
+    }
+
+    @Composable
+    private fun NavigationBar() {
+        val items = Screens.entries
+        val routes = items.map { it.route }
+
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute =
+            navBackStackEntry?.destination?.hierarchy?.first()?.route
+
+        // hide bottom bar for other screens
+        if (currentRoute !in routes) return
+
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            modifier = Modifier.height(70.dp),
+        ) {
+            items.forEach {
+                createNavigationBarItem(screen = it, currentRoute = currentRoute)
+            }
+        }
+    }
+
+    @Composable
+    fun RowScope.createNavigationBarItem(screen: Screens, currentRoute: String?) {
+        NavigationBarItem(
+            selected = currentRoute == screen.route,
+            label = {
+                LabelText(
+                    textRes = screen.nameRes,
+                    isMedium = false
+                )
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(screen.iconRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(22.dp)
+                        .padding(vertical = 1.dp)
+                )
+            },
+            onClick = {
+                if (screen.route != currentRoute) {
+                    navController.navigate(screen.route) {
+                        popUpTo(navController.graph.findStartDestination().id) { }
+                    }
+                }
+            },
+            modifier = Modifier
+                .navigationBarsPadding()
+                .clip(CircleShape),
+        )
+    }
+
+    private companion object {
+        val TAG: String = MainActivity::class.java.simpleName
     }
 }

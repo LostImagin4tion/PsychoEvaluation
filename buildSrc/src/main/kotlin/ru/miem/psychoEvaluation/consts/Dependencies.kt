@@ -11,11 +11,14 @@ object Dependencies {
     object AndroidCore {
         private const val APPCOMPAT_VERSION = "1.6.1"
         private const val CORE_VERSION = "1.12.0"
+        private const val ANNOTATIONS_VERSION = "1.7.1"
 
         private const val APPCOMPAT = "androidx.appcompat:appcompat:$APPCOMPAT_VERSION"
         private const val CORE = "androidx.core:core-ktx:$CORE_VERSION"
 
-        val allDeps = listOf(APPCOMPAT, CORE)
+        private const val ANNOTATIONS = "androidx.annotation:annotation:$ANNOTATIONS_VERSION"
+
+        val allDeps = listOf(APPCOMPAT, CORE, ANNOTATIONS)
     }
 
     object Coroutines {
@@ -159,6 +162,23 @@ object Dependencies {
         private const val SPLASH_SCREEN = "androidx.core:core-splashscreen:$SPLASH_SCREEN_VERSION"
 
         val allDeps = listOf(MATERIAL, SPLASH_SCREEN)
+    }
+
+    object UsbDrivers {
+        private const val VERSION = "3.7.0"
+
+        private const val USB_DRIVERS = "com.github.mik3y:usb-serial-for-android:$VERSION"
+
+        val allDeps = listOf(USB_DRIVERS)
+    }
+
+    object Charts {
+        private const val VICO_VERSION = "2.0.0-alpha.14"
+
+        private const val VICO_COMPOSE = "com.patrykandpatrick.vico:compose:$VICO_VERSION"
+        private const val VICO_MATERIAL = "com.patrykandpatrick.vico:compose-m3:$VICO_VERSION"
+
+        val allDeps = listOf(VICO_COMPOSE, VICO_MATERIAL)
     }
 
     object Plugins {

@@ -36,4 +36,5 @@ dependencies {
 
     // UI
     Dependencies.UI.allDeps.forEach { implementation(it) }
+    Dependencies.Charts.allDeps.forEach { implementation(it) }
 }

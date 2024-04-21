@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trainings_header">Тренировки</string>
+
+    <!--  Debug Training  -->
+    <string name="debug_training_title">Дебаг тренировка</string>
+    <string name="debug_training_description">Эта тренировка нужна для того, чтобы дебажить соединение с датчиком и получение данных от него</string>
+
+    <!--  Concentration Training  -->
+    <string name="concentration_training_title">Концентрация</string>
+    <string name="concentration_training_description">Контролируй свое эмоциональное состояние, чтобы предотвратить крушение самолета</string>
+</resources>

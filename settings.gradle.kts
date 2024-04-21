@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 dependencyResolutionManagement {
@@ -11,6 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
@@ -36,6 +38,9 @@ include(":android:entry:app")
 include(":android:core:di:api")
 include(":android:core:di:impl")
 
+include(":android:core:usbDeviceApi:api")
+include(":android:core:usbDeviceApi:impl")
+
 // Common
 include(":android:common:designSystem")
 
@@ -52,5 +57,9 @@ include(":android:feature:registration:impl")
 include(":android:feature:userProfile:api")
 include(":android:feature:userProfile:impl")
 
-include(":android:feature:trainings:api")
-include(":android:feature:trainings:impl")
+include(":android:feature:trainingsList:api")
+include(":android:feature:trainingsList:impl")
+
+include(":android:feature:trainings:debugTraining:api")
+include(":android:feature:trainings:debugTraining:impl")
+include(":android:core:utils")

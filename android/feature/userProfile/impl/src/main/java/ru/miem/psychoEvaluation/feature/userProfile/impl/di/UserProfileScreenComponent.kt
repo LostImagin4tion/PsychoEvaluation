@@ -8,7 +8,7 @@ import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileApi
         UserProfileScreenModule::class,
     ],
 )
-interface UserProfileScreenComponent: UserProfileApi {
+interface UserProfileScreenComponent : UserProfileApi {
     companion object {
         fun create(): UserProfileApi = DaggerUserProfileScreenComponent.builder().build()
     }

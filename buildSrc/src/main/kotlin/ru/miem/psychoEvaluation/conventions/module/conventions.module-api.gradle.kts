@@ -1,5 +1,4 @@
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.project
+import ru.miem.psychoEvaluation.consts.Dependencies
 
 /**
  * Convention for api modules, which contains [conventions.base-api] and
@@ -13,4 +12,10 @@ plugins {
 }
 
 dependencies {
+
+    Dependencies.Coroutines.allDeps.forEach { implementation(it) }
+
+    // Core
+    // DI
+    api(project(":android:core:di:api"))
 }
