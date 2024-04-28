@@ -13,12 +13,11 @@ dependencies {
     // Coroutines
     Dependencies.Coroutines.allDeps.forEach { implementation(it) }
 
-    // Common libs
     // Dagger 2
     Dependencies.Dagger.implDeps.forEach { implementation(it) }
     Dependencies.Dagger.kaptDeps.forEach { kapt(it) }
 
-    // Core layer
-    // DI API
+    // ==== Core layer ====
+
     api(project(":android:core:di:api"))
 }

@@ -41,6 +41,11 @@ include(":android:core:di:impl")
 include(":android:core:usbDeviceApi:api")
 include(":android:core:usbDeviceApi:impl")
 
+include(":android:core:dataAnalysis:airplaneGame:api")
+include(":android:core:dataAnalysis:airplaneGame:impl")
+
+include(":android:core:utils")
+
 // Common
 include(":android:common:designSystem")
 
@@ -62,4 +67,3 @@ include(":android:feature:trainingsList:impl")
 
 include(":android:feature:trainings:debugTraining:api")
 include(":android:feature:trainings:debugTraining:impl")
-include(":android:core:utils")

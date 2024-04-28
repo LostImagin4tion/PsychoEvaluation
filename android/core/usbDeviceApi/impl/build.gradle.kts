@@ -9,18 +9,10 @@ android {
 }
 
 dependencies {
-
-    // Coroutines
-    Dependencies.Coroutines.allDeps.forEach { implementation(it) }
-
+    // Usb Drivers
     Dependencies.UsbDrivers.allDeps.forEach { implementation(it) }
 
-    // Common libs
-    // Dagger 2
-    Dependencies.Dagger.implDeps.forEach { implementation(it) }
-    Dependencies.Dagger.kaptDeps.forEach { kapt(it) }
+    // ==== Core layer ====
 
-    // Core layer
-    // DI API
     api(project(":android:core:usbDeviceApi:api"))
 }

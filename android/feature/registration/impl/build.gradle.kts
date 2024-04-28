@@ -8,14 +8,13 @@ android {
 
 dependencies {
 
-    // Common
-    // Design system
+    // ==== Common layer ====
+
     implementation(project(":android:common:designSystem"))
 
-    // Feature
-    // Authorization API
-    implementation(project(":android:feature:registration:api"))
+    // ==== Feature layer ====
 
-    // Navigation API
+    api(project(":android:feature:registration:api"))
+
     implementation(project(":android:feature:navigation:api"))
 }
