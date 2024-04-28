@@ -18,29 +18,23 @@ dependencies {
 
     implementation(project(":android:core:usbDeviceApi:impl"))
 
+    implementation(project(":android:core:dataAnalysis:airplaneGame:impl"))
+
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))
-
-    implementation(project(":android:common:dataAnalysis:airplaneGame:api"))
-    implementation(project(":android:common:dataAnalysis:airplaneGame:impl"))
 
     // ==== Feature layer ====
 
     implementation(project(":android:feature:navigation:impl"))
 
-    implementation(project(":android:feature:authorization:api"))
     implementation(project(":android:feature:authorization:impl"))
 
-    implementation(project(":android:feature:registration:api"))
     implementation(project(":android:feature:registration:impl"))
 
-    implementation(project(":android:feature:userProfile:api"))
     implementation(project(":android:feature:userProfile:impl"))
 
-    implementation(project(":android:feature:trainingsList:api"))
     implementation(project(":android:feature:trainingsList:impl"))
 
-    implementation(project(":android:feature:trainings:debugTraining:api"))
     implementation(project(":android:feature:trainings:debugTraining:impl"))
 }
