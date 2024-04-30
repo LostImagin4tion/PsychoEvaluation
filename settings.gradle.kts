@@ -2,10 +2,12 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
         gradlePluginPortal()
         maven { url = uri("https://jitpack.io") }
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -67,3 +69,6 @@ include(":android:feature:trainingsList:impl")
 
 include(":android:feature:trainings:debugTraining:api")
 include(":android:feature:trainings:debugTraining:impl")
+
+include(":android:feature:trainings:airplaneGame:api")
+include(":android:feature:trainings:airplaneGame:impl")

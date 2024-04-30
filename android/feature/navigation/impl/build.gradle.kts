@@ -1,3 +1,5 @@
+import ru.miem.psychoEvaluation.consts.Dependencies
+
 plugins {
     conventions.`module-compose-impl`
 }
@@ -22,4 +24,5 @@ dependencies {
     implementation(project(":android:feature:userProfile:api"))
     implementation(project(":android:feature:trainingsList:api"))
     implementation(project(":android:feature:trainings:debugTraining:api"))
+    implementation(project(":android:feature:trainings:airplaneGame:api"))
 }

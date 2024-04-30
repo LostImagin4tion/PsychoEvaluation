@@ -2,9 +2,10 @@
 plugins {
     id("com.android.application") apply false
     id("com.android.library") apply false
-    id("org.jetbrains.kotlin.jvm")apply false
+    id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.android") apply false
     id("org.jetbrains.kotlin.multiplatform") apply false
+//    id("com.soywiz.korge") version "5.4.0" apply false
     id("io.gitlab.arturbosch.detekt") version ru.miem.psychoEvaluation.consts.Dependencies.Plugins.DETEKT_VERSION
 }
 

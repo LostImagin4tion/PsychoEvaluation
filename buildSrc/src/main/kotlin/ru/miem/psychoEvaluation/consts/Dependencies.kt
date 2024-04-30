@@ -150,8 +150,8 @@ object Dependencies {
 
         private const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:$MOSHI_KOTLIN_VERSION"
 
-        val allDeps = listOf(MOSHI_KOTLIN, OKHTTP, LOGGING_INTERCEPTOR)
-        val allKaptDeps = listOf(MOSHI_CODEGEN)
+        val implDeps = listOf(MOSHI_KOTLIN, OKHTTP, LOGGING_INTERCEPTOR)
+        val kaptKaptDeps = listOf(MOSHI_CODEGEN)
     }
 
     object UI {
@@ -179,6 +179,54 @@ object Dependencies {
         private const val VICO_MATERIAL = "com.patrykandpatrick.vico:compose-m3:$VICO_VERSION"
 
         val allDeps = listOf(VICO_COMPOSE, VICO_MATERIAL)
+    }
+
+    object GameEngine {
+//        private const val KORGE_VERSION = "5.2.0"
+//        private const val KORVI_VERSION = "3.4.0"
+//        private const val DATA_STRUCTURES_VERSION = "5.3.1"
+//        private const val LOGGER_VERSION = "5.3.1"
+//
+//        private const val KORGE_ENGINE = "com.soywiz.korlibs.korge2:korge-android:$KORGE_VERSION"
+//        private const val KORGE_GRAPHICS = "com.soywiz.korlibs.korgw:korgw-android:$KORGE_VERSION"
+//        private const val KORGE_VIDEO = "com.soywiz.korlibs.korvi:korvi-android:$KORVI_VERSION"
+//        private const val KORGE_IMAGES = "com.soywiz.korlibs.korim:korim-android:$KORGE_VERSION"
+//        private const val KORGE_AUDIO = "com.soywiz.korlibs.korau:korau-android:$KORGE_VERSION"
+//        private const val KORGE_DATA_STRUCTURES = "com.soywiz.korge:korlibs-datastructure-android:$DATA_STRUCTURES_VERSION"
+//        private const val KORGE_MATH = "com.soywiz.korlibs.korma:korma-android:$KORGE_VERSION"
+//        private const val KORGE_TIME = "com.soywiz.korlibs.klock:klock-android:$KORGE_VERSION"
+//        private const val KORGE_IO = "com.soywiz.korlibs.korio:korio-android:$KORGE_VERSION"
+//        private const val KORGE_INJECT = "com.soywiz.korlibs.korinject:korinject-android:$KORGE_VERSION"
+//        private const val KORGE_LOGGER = "com.soywiz.korge:korlibs-logger-android:$LOGGER_VERSION"
+//
+//        val allDeps = listOf(
+//            KORGE_ENGINE, KORGE_GRAPHICS, KORGE_VIDEO, KORGE_IMAGES, KORGE_AUDIO,
+//            KORGE_DATA_STRUCTURES, KORGE_MATH, KORGE_TIME, KORGE_IO, KORGE_INJECT
+//        )
+
+//        private const val KORGE_VERSION = "5.4.0"
+//
+//        private const val KORGE_CORE = "com.soywiz.korge:korge-core-android:$KORGE_VERSION"
+//        private const val KORGE_FOUNDATION = "com.soywiz.korge:korge-foundation-android:$KORGE_VERSION"
+//        private const val KORGE_PLATFORM = "com.soywiz.korge:korlibs-platform-android:$KORGE_VERSION"
+//
+//        val allDeps = listOf(
+//            KORGE_CORE, KORGE_FOUNDATION, KORGE_PLATFORM
+//        )
+        private const val KORGE_VERSION = "3.4.0"
+
+        private const val KORGE_ANDROID = "com.soywiz.korlibs.korge2:korge-android:$KORGE_VERSION"
+        private const val KORGE_GRAPHICS = "com.soywiz.korlibs.korgw:korgw-android:$KORGE_VERSION"
+        private const val KORGE_VIDEO = "com.soywiz.korlibs.korvi:korvi-android:$KORGE_VERSION"
+        private const val KORGE_IMAGES = "com.soywiz.korlibs.korim:korim-android:$KORGE_VERSION"
+        private const val KORGE_AUDIO = "com.soywiz.korlibs.korau:korau-android:$KORGE_VERSION"
+        private const val KORGE_DATA_STRUCTURES = "com.soywiz.korlibs.kds:kds-android:$KORGE_VERSION"
+        private const val KORGE_MATH = "com.soywiz.korlibs.korma:korma-android:$KORGE_VERSION"
+
+        val allDeps = listOf(
+            KORGE_ANDROID, KORGE_GRAPHICS, KORGE_VIDEO, KORGE_IMAGES, KORGE_AUDIO,
+            KORGE_DATA_STRUCTURES, KORGE_MATH,
+        )
     }
 
     object Plugins {
