@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.utils
 
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container

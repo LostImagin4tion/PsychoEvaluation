@@ -6,14 +6,15 @@ import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.Borders
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.DataAnalysis
 import javax.inject.Inject
 
-class DataAnalysisImpl @Inject constructor(): DataAnalysis {
+@Suppress("MagicNumber")
+class DataAnalysisImpl @Inject constructor() : DataAnalysis {
 
     override fun findPreparationData(dataFlow: Flow<Int>): Flow<Int> {
         return dataFlow.take(PREPARATION_DATA_COUNT)
     }
 
     override fun getNormalizedValue(value: Double, borders: Borders): Double {
-        return (value - borders.upperLimit)/(borders.upperLimit - borders.lowerLimit) * 100
+        return (value - borders.upperLimit) / (borders.upperLimit - borders.lowerLimit) * 100
     }
 
     override fun findDataBorders(y: List<Int>): Borders {
@@ -32,7 +33,7 @@ class DataAnalysisImpl @Inject constructor(): DataAnalysis {
         val sumXSquared = indices.sumOf { it * it }
 
         return (indices.size * sumXY - sumX * sumY).toDouble() /
-                (indices.size * sumXSquared - sumX * sumX).toDouble()
+            (indices.size * sumXSquared - sumX * sumX).toDouble()
     }
 
     private fun findBorders(slope: Double, meanValue: Double): Borders {

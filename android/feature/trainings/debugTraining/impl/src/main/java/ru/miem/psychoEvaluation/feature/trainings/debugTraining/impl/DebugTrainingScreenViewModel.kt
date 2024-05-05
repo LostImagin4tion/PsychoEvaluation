@@ -1,7 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.debugTraining.impl
 
 import android.hardware.usb.UsbManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer

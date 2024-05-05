@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game
 
 import com.soywiz.korge.scene.Module
 import com.soywiz.korge.scene.Scene

@@ -8,5 +8,4 @@ import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.di.DataAnalysisAp
         DataAnalysisApiProvider::class,
     ]
 )
-interface CommonAggregationModule {
-}
+interface CommonAggregationModule
