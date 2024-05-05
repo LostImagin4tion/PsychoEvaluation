@@ -24,7 +24,7 @@ class DebugTrainingScreenViewModel : ViewModel() {
         usbManager: UsbManager,
     ): Boolean {
         val device = usbManager.deviceList.values.lastOrNull()
-        return usbManager.hasPermission(device)
+        return device != null && usbManager.hasPermission(device)
     }
 
     fun connectToUsbDevice(usbManager: UsbManager) {

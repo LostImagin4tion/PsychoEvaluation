@@ -8,7 +8,7 @@ interface TrainingsListScreen {
 
     @Composable
     @SuppressLint("NotConstructor")
-    fun TrainingsScreen(
+    fun TrainingsListScreen(
         navController: NavHostController,
         showMessage: (Int) -> Unit
     )

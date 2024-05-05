@@ -150,8 +150,8 @@ object Dependencies {
 
         private const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:$MOSHI_KOTLIN_VERSION"
 
-        val allDeps = listOf(MOSHI_KOTLIN, OKHTTP, LOGGING_INTERCEPTOR)
-        val allKaptDeps = listOf(MOSHI_CODEGEN)
+        val implDeps = listOf(MOSHI_KOTLIN, OKHTTP, LOGGING_INTERCEPTOR)
+        val kaptKaptDeps = listOf(MOSHI_CODEGEN)
     }
 
     object UI {
@@ -179,6 +179,23 @@ object Dependencies {
         private const val VICO_MATERIAL = "com.patrykandpatrick.vico:compose-m3:$VICO_VERSION"
 
         val allDeps = listOf(VICO_COMPOSE, VICO_MATERIAL)
+    }
+
+    object GameEngine {
+        private const val KORGE_VERSION = "3.4.0"
+
+        private const val KORGE_ANDROID = "com.soywiz.korlibs.korge2:korge-android:$KORGE_VERSION"
+        private const val KORGE_GRAPHICS = "com.soywiz.korlibs.korgw:korgw-android:$KORGE_VERSION"
+        private const val KORGE_VIDEO = "com.soywiz.korlibs.korvi:korvi-android:$KORGE_VERSION"
+        private const val KORGE_IMAGES = "com.soywiz.korlibs.korim:korim-android:$KORGE_VERSION"
+        private const val KORGE_AUDIO = "com.soywiz.korlibs.korau:korau-android:$KORGE_VERSION"
+        private const val KORGE_DATA_STRUCTURES = "com.soywiz.korlibs.kds:kds-android:$KORGE_VERSION"
+        private const val KORGE_MATH = "com.soywiz.korlibs.korma:korma-android:$KORGE_VERSION"
+
+        val allDeps = listOf(
+            KORGE_ANDROID, KORGE_GRAPHICS, KORGE_VIDEO, KORGE_IMAGES, KORGE_AUDIO,
+            KORGE_DATA_STRUCTURES, KORGE_MATH,
+        )
     }
 
     object Plugins {

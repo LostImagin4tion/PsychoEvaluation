@@ -13,6 +13,7 @@ object Routes {
 
     // === Trainings ===
     const val debugTraining = "debugTraining"
+    const val airplaneGame = "airplaneGame"
 
-    val trainingsDestinations = listOf(debugTraining)
+    val trainingsDestinations = listOf(debugTraining, airplaneGame)
 }

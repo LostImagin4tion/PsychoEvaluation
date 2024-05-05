@@ -21,6 +21,8 @@ import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenApi
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
@@ -49,6 +51,7 @@ fun Navigation(
     val userProfileScreen by api(UserProfileApi::userProfileScreen)
     val trainingsScreen by api(TrainingsScreenApi::trainingsListScreen)
     val debugTrainingScreen by api(DebugTrainingScreenApi::debugTrainingScreen)
+    val airplaneGameScreen by api(AirplaneGameScreenApi::airplaneGameScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
@@ -60,6 +63,7 @@ fun Navigation(
         userProfileScreen = userProfileScreen,
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
+        airplaneGameScreen = airplaneGameScreen,
     )
 }
 
@@ -74,6 +78,7 @@ fun NavigationContent(
     userProfileScreen: UserProfileScreen,
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
+    airplaneGameScreen: AirplaneGameScreen,
 ) {
     Surface(
         modifier = Modifier
@@ -113,7 +118,7 @@ fun NavigationContent(
 
             composable(Routes.trainingsList) {
                 setupSystemBarColors()
-                trainingsListScreen.TrainingsScreen(
+                trainingsListScreen.TrainingsListScreen(
                     navController = navController,
                     showMessage = showMessage
                 )
@@ -124,6 +129,14 @@ fun NavigationContent(
                 debugTrainingScreen.DebugTrainingScreen(
                     navController = navController,
                     showMessage = showMessage
+                )
+            }
+
+            composable(Routes.airplaneGame) {
+                setupSystemBarColors()
+                airplaneGameScreen.AirplaneGameScreen(
+                    navController = navController,
+                    showMessage = showMessage,
                 )
             }
         }

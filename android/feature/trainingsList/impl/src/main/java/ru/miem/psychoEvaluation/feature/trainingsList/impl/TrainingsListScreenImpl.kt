@@ -21,18 +21,20 @@ import javax.inject.Inject
 class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
 
     @Composable
-    override fun TrainingsScreen(
+    override fun TrainingsListScreen(
         navController: NavHostController,
         showMessage: (Int) -> Unit
     ) {
         TrainingsScreenContent(
-            navigateToDebugTraining = { navController.navigate(Routes.debugTraining) }
+            navigateToDebugTraining = { navController.navigate(Routes.debugTraining) },
+            navigateToAirplaneGame = { navController.navigate(Routes.airplaneGame) },
         )
     }
 
     @Composable
     private fun TrainingsScreenContent(
         navigateToDebugTraining: () -> Unit,
+        navigateToAirplaneGame: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
@@ -65,7 +67,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 TrainingCard(
                     titleRes = R.string.concentration_training_title,
                     descriptionRes = R.string.concentration_training_description,
-                    imageRes = R.drawable.concentration_training_icon
+                    imageRes = R.drawable.concentration_training_icon,
+                    onClick = navigateToAirplaneGame
                 )
             }
         }
