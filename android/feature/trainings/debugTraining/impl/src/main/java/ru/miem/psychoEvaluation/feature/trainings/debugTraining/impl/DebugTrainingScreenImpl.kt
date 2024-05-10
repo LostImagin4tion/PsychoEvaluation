@@ -1,8 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.debugTraining.impl
 
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
 import androidx.compose.foundation.layout.Column
@@ -25,6 +23,8 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
+import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
+import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import javax.inject.Inject
@@ -37,7 +37,6 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         showMessage: (Int) -> Unit
     ) {
         val context = LocalContext.current
-        val requestPermissionIntentAction = "${context.packageName}.USB_PERMISSION"
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
         val viewModel: DebugTrainingScreenViewModel = viewModel()
@@ -50,7 +49,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
 
         SystemBroadcastReceiver(
             isExported = true,
-            systemAction = requestPermissionIntentAction,
+            systemAction = context.requestPermissionIntentAction,
             onSystemEvent = { _ ->
                 if (viewModel.isUsbDeviceAccessGranted(usbManager)) {
                     isDeviceAccessGranted = true
@@ -59,14 +58,12 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         )
 
         LaunchedEffect(isDeviceAccessGranted) {
-            if (!isDeviceAccessGranted) {
-                val usbPermissionIntent = createUsbDevicePermissionIntent(context, requestPermissionIntentAction)
-                usbManager.requestPermission(
-                    usbManager.deviceList.values.last(),
-                    usbPermissionIntent
-                )
-            } else {
-                viewModel.connectToUsbDevice(usbManager)
+            if (viewModel.hasConnectedDevices(usbManager)) {
+                if (!isDeviceAccessGranted) {
+                    usbManager.requestUsbDeviceAccess(context)
+                } else {
+                    viewModel.connectToUsbDevice(usbManager)
+                }
             }
         }
 
@@ -96,16 +93,6 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
             modifier = Modifier.fillMaxSize()
         )
     }
-
-    private fun createUsbDevicePermissionIntent(
-        context: Context,
-        intentAction: String
-    ) = PendingIntent.getBroadcast(
-        context,
-        0,
-        Intent(intentAction),
-        PendingIntent.FLAG_IMMUTABLE
-    )
 
     private companion object {
         val TAG: String = DebugTrainingScreenImpl::class.java.simpleName

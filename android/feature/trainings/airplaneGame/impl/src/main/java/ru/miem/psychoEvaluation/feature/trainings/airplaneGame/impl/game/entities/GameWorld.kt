@@ -34,6 +34,7 @@ class GameWorld(
     private var score = 0
 
     val isReady get() = currentState == GameState.READY
+    val isRunning get() = currentState == GameState.RUNNING
     val isGameOver get() = currentState == GameState.GAME_OVER
     val isHighScore get() = currentState == GameState.HIGH_SCORE
 
@@ -110,9 +111,7 @@ class GameWorld(
         }
     }
 
-    fun onClick() {
-        airplane.onClick()
-    }
+    fun onNewData(speed: Double) = airplane.onNewData(speed)
 
     private fun updateScoreViews() {
         scoreText.updateScoreView(score = score, x = midPointX, y = 128.0)

@@ -1,15 +1,15 @@
 package ru.miem.psychoEvaluation.feature.trainingsList.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenApi
+import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenDiApi
 
 @Component(
     modules = [
         TrainingsListScreenModule::class,
     ]
 )
-interface TrainingsListScreenComponent : TrainingsScreenApi {
+interface TrainingsListScreenComponent : TrainingsScreenDiApi {
     companion object {
-        fun create(): TrainingsScreenApi = DaggerTrainingsListScreenComponent.builder().build()
+        fun create(): TrainingsScreenDiApi = DaggerTrainingsListScreenComponent.builder().build()
     }
 }

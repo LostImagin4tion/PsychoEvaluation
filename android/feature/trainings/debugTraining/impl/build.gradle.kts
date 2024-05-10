@@ -16,6 +16,8 @@ dependencies {
 
     implementation(project(":android:common:designSystem"))
 
+    implementation(project(":android:common:interactors:usbDeviceInteractor:api"))
+
     // ==== Feature layer ====
 
     api(project(":android:feature:trainings:debugTraining:api"))

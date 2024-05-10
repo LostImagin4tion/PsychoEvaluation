@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import ru.miem.psychoEvaluation.core.usbDevice.api.UsbDeviceRepository
-import ru.miem.psychoEvaluation.core.usbDevice.api.models.UsbDeviceData
 import timber.log.Timber
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
@@ -22,7 +21,6 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
 
     private var usbIOManager: SerialInputOutputManager? = null
     private var usbSerialPort: UsbSerialPort? = null
-    private var connected = false
 
     private val _usbDeviceDataFlow = createCallbackFlow()
 
@@ -34,7 +32,10 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
         override fun onRunError(e: Exception?) = onRunErrorCallback(e)
     }
 
-    override val usbDeviceDataFlow: Flow<UsbDeviceData> = _usbDeviceDataFlow
+    override val usbDeviceDataFlow: Flow<Int> = _usbDeviceDataFlow
+
+    override var isConnected: Boolean = false
+        private set
 
     override fun connectToUsbDevice(
         usbManager: UsbManager,
@@ -89,12 +90,12 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
             }
 
             Timber.tag(TAG).i("Connected successfully")
-            connected = true
-        } ?: Timber.tag(TAG).i("Connection failed somehow")
+            isConnected = true
+        } ?: Timber.tag(TAG).e("Connection failed somehow")
     }
 
     override fun disconnect() {
-        connected = false
+        isConnected = false
 
         usbIOManager?.apply {
             listener = null
@@ -108,10 +109,10 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
         usbSerialPort = null
     }
 
-    private fun createCallbackFlow(): Flow<UsbDeviceData> = callbackFlow {
+    private fun createCallbackFlow(): Flow<Int> = callbackFlow {
         usbDeviceListener.apply {
             onNewDataCallback = { data ->
-                data.toUsbDeviceData()?.let {
+                data.toUsbDeviceInt()?.let {
                     trySendBlocking(it).onFailure { throwable ->
                         Timber.tag(TAG).d("Failed to send new stress data $throwable ${throwable?.message}")
                     }
@@ -130,7 +131,7 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
         }
         .flowOn(Dispatchers.IO)
 
-    private fun ByteArray?.toUsbDeviceData(): UsbDeviceData? {
+    private fun ByteArray?.toUsbDeviceInt(): Int? {
         return this
             .takeIf { it?.isNotEmpty() == true }
             ?.let { data ->
@@ -138,9 +139,6 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
                 string.substring(2, string.lastIndex).toInt(INT_RADIX)
             }
             ?.takeIf { it != 0 }
-            ?.let { sensorData ->
-                UsbDeviceData(sensorData)
-            }
     }
 
     private companion object {

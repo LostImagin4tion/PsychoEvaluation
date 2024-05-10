@@ -1,7 +1,7 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api
 
-import ru.miem.psychoEvaluation.core.di.api.Api
+import ru.miem.psychoEvaluation.core.di.api.DiApi
 
-interface AirplaneGameScreenApi : Api {
+interface AirplaneGameScreenDiApi : DiApi {
     val airplaneGameScreen: AirplaneGameScreen
 }

@@ -4,11 +4,14 @@ import com.soywiz.korge.scene.Module
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korma.geom.SizeInt
+import kotlinx.coroutines.flow.StateFlow
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
 import kotlin.reflect.KClass
 
 class CustomModule(
     private val width: Int = DEFAULT_WIDTH,
     private val height: Int = DEFAULT_HEIGHT,
+    private val dataFlow: StateFlow<UsbDeviceData>
 ) : Module() {
 
     companion object {
@@ -25,6 +28,12 @@ class CustomModule(
     override val mainScene: KClass<out Scene> = CustomScene::class
 
     override suspend fun AsyncInjector.configure() {
-        mapPrototype { CustomScene(width.toDouble(), height.toDouble()) }
+        mapPrototype {
+            CustomScene(
+                widthParam = width.toDouble(),
+                heightParam = height.toDouble(),
+                dataFlow = dataFlow,
+            )
+        }
     }
 }

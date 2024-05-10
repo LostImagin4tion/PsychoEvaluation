@@ -51,6 +51,8 @@ include(":android:core:utils")
 // Common
 include(":android:common:designSystem")
 
+include(":android:common:interactors:usbDeviceInteractor")
+
 // Features
 include(":android:feature:navigation:api")
 include(":android:feature:navigation:impl")
@@ -72,3 +74,5 @@ include(":android:feature:trainings:debugTraining:impl")
 
 include(":android:feature:trainings:airplaneGame:api")
 include(":android:feature:trainings:airplaneGame:impl")
+include(":android:common:interactors:usbDeviceInteractor:api")
+include(":android:common:interactors:usbDeviceInteractor:impl")

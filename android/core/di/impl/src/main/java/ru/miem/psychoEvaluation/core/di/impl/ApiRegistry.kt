@@ -1,6 +1,6 @@
 package ru.miem.psychoEvaluation.core.di.impl
 
-import ru.miem.psychoEvaluation.core.di.api.Api
+import ru.miem.psychoEvaluation.core.di.api.DiApi
 import ru.miem.psychoEvaluation.core.di.impl.exception.ResolverNotInstalledException
 
 /**
@@ -18,12 +18,12 @@ object ApiRegistry {
     private var apiResolver: ApiResolver? = null
 
     /**
-     * Method for providing [Api] from **DI Map** to [ApiResolver].
+     * Method for providing [DiApi] from **DI Map** to [ApiResolver].
      *
      * @throws ResolverNotInstalledException in case it is not possible to find the required **Api** by key
      * @return реализация **Api**
      */
-    fun <T : Api> getApi(cls: Class<T>): T {
+    fun <T : DiApi> getApi(cls: Class<T>): T {
         return apiResolver?.getApi(cls)
             ?: throw ResolverNotInstalledException("Resolver is not installed")
     }
