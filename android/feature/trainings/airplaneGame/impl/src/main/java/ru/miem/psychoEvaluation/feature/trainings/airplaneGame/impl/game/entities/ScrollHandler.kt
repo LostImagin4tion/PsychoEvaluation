@@ -31,12 +31,14 @@ class ScrollHandler : Container() {
     }
 
     fun onRestart() {
-        clouds1.onRestart(210.0, SCROLL_SPEED)
+        clouds1.onRestart(CLOUD_DEFAULT_X, SCROLL_SPEED)
         clouds2.onRestart(clouds1.rightmostX + CLOUDS_GAP, SCROLL_SPEED)
         clouds3.onRestart(clouds2.rightmostX + CLOUDS_GAP, SCROLL_SPEED)
     }
 
     private companion object {
+        const val CLOUD_DEFAULT_X = 210.0
+
         const val SCROLL_SPEED = -100.0
         const val CLOUDS_GAP = 300
     }

@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 
+@Suppress("MagicNumber")
 @Composable
 fun NeuronsTextBlock(
     modifier: Modifier = Modifier

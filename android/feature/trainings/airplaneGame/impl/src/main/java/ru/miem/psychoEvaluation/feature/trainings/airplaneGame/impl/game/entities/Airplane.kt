@@ -52,7 +52,7 @@ class Airplane(
 
     fun update(delta: TimeSpan) {
         velocity += acceleration * delta.seconds
-        velocity.y = minOf(200.0, velocity.y)
+        velocity.y = minOf(MIN_VELOCITY, velocity.y)
 
         if (position.y < 0) {
             position.y = 0.0
@@ -62,13 +62,13 @@ class Airplane(
         position += velocity * delta.seconds
 
         if (velocity.y < 0) {
-            airplaneRotationDegrees -= 600 * delta.seconds
-            airplaneRotationDegrees = maxOf(-20.0, airplaneRotationDegrees)
+            airplaneRotationDegrees -= FALLING_AIRPLANE_DEGREES * delta.seconds
+            airplaneRotationDegrees = maxOf(MAX_FALLING_AIRPLANE_DEGREES, airplaneRotationDegrees)
         }
 
         if (isFalling || !isAlive) {
-            airplaneRotationDegrees += 480 * delta.seconds
-            airplaneRotationDegrees = minOf(50.0, airplaneRotationDegrees)
+            airplaneRotationDegrees += LIVE_AIRPLANE_DEGREES * delta.seconds
+            airplaneRotationDegrees = minOf(MIN_LIVE_AIRPLANE_DEGREES, airplaneRotationDegrees)
         }
 
         updateView()
@@ -81,7 +81,7 @@ class Airplane(
 
     fun onClick() {
         if (isAlive) {
-            velocity.y = -140.0
+            velocity.y = VELOCITY_MODIFIER
         }
     }
 
@@ -98,7 +98,7 @@ class Airplane(
         airplaneRotationDegrees = 0.0
         position.y = y
         velocity.setTo(0.0, 0.0)
-        acceleration.setTo(0.0, 460.0)
+        acceleration.setTo(0.0, DEFAULT_ACCELERATION)
         isAlive = true
     }
 
@@ -109,5 +109,12 @@ class Airplane(
 
     private companion object {
         const val BOUNDING_RADIUS = 16.0
+        const val MIN_VELOCITY = 200.0
+        const val DEFAULT_ACCELERATION = 460.0
+        const val FALLING_AIRPLANE_DEGREES = 600.0
+        const val LIVE_AIRPLANE_DEGREES = 480.0
+        const val MAX_FALLING_AIRPLANE_DEGREES = -20.0
+        const val MIN_LIVE_AIRPLANE_DEGREES = 50.0
+        const val VELOCITY_MODIFIER = -140.0
     }
 }
