@@ -23,7 +23,7 @@ class BackgroundView(
         solidRect(
             width = width,
             height = height,
-            color = RGBA(55, 80, 100, 255)
+            color = RGBA(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA)
         ).xy(0, 0) // background
 
         image(AssetLoader.background) {
@@ -31,5 +31,12 @@ class BackgroundView(
             scale(width / this.width, height / this.height)
 //            scaleWhileMaintainingAspect(ScalingOption.ByWidthAndHeight(width, height))
         }.xy(0.0, 0.0) // todo: make bg move but slower than foreground
+    }
+
+    private companion object {
+        const val BACKGROUND_RED = 55
+        const val BACKGROUND_GREEN = 80
+        const val BACKGROUND_BLUE = 100
+        const val BACKGROUND_ALPHA = 255
     }
 }

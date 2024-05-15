@@ -60,7 +60,7 @@ class GameWorld(
         currentState = GameState.READY
         score = 0
         scroller.onRestart()
-        airplane.onRestart(midPointY - 5 + 12 / 2)
+        airplane.onRestart(midPointY)
         updateScoreViews()
     }
 

@@ -29,9 +29,13 @@ class ScoreText(
 
     fun updateScoreView(score: Int, x: Double, y: Double) {
         val scoreString = score.toString()
-        val shadowX = x - 3 * scoreString.length
+        val shadowX = x - SHADOW_MODIFIER * scoreString.length
 
         scoreShadow.apply { text = scoreString }.xy(shadowX, y)
         scoreText.apply { text = scoreString }.xy(shadowX + 1, y - 1)
+    }
+
+    private companion object {
+        const val SHADOW_MODIFIER = 3
     }
 }
