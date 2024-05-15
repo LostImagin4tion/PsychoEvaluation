@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
         mavenCentral()
@@ -23,7 +23,7 @@ rootProject.name = "PsychoEvaluation"
 // ==== MULTIPLATFORM ====
 
 // Core
-include(":multiplatform:core")
+include(":multiplatform:core:httpClient")
 
 // Common
 include(":multiplatform:common")
@@ -51,7 +51,8 @@ include(":android:core:utils")
 // Common
 include(":android:common:designSystem")
 
-include(":android:common:interactors:usbDeviceInteractor")
+include(":android:common:interactors:usbDeviceInteractor:api")
+include(":android:common:interactors:usbDeviceInteractor:impl")
 
 // Features
 include(":android:feature:navigation:api")
@@ -74,5 +75,3 @@ include(":android:feature:trainings:debugTraining:impl")
 
 include(":android:feature:trainings:airplaneGame:api")
 include(":android:feature:trainings:airplaneGame:impl")
-include(":android:common:interactors:usbDeviceInteractor:api")
-include(":android:common:interactors:usbDeviceInteractor:impl")

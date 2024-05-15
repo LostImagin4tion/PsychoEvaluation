@@ -2,9 +2,10 @@
 plugins {
     id("com.android.application") apply false
     id("com.android.library") apply false
-    id("org.jetbrains.kotlin.jvm") apply false
-    id("org.jetbrains.kotlin.android") apply false
-    id("org.jetbrains.kotlin.multiplatform") apply false
+    kotlin("jvm") apply false
+    kotlin("android") apply false
+    kotlin("multiplatform") apply false
+    kotlin("plugin.serialization") version ru.miem.psychoEvaluation.consts.CompileVersions.KOTLIN_VERSION apply false
     id("io.gitlab.arturbosch.detekt") version ru.miem.psychoEvaluation.consts.Dependencies.Plugins.DETEKT_VERSION
 }
 

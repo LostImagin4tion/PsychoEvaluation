@@ -143,18 +143,21 @@ object Dependencies {
     }
 
     object Network {
-        private const val MOSHI_KOTLIN_VERSION = "1.15.0"
-        private const val OKHTTP_VERSION = "4.12.0"
+        private const val KTOR_VERSION = "2.3.11"
 
-        private const val MOSHI_KOTLIN = "com.squareup.moshi:moshi-kotlin:$MOSHI_KOTLIN_VERSION"
+        private const val KTOR_CORE = "io.ktor:ktor-client-core:$KTOR_VERSION"
+        private const val KTOR_OKHTTP = "io.ktor:ktor-client-okhttp:$KTOR_VERSION"
+        private const val KTOR_DARWIN = "io.ktor:ktor-client-darwin:$KTOR_VERSION"
+        private const val KTOR_SERIALIZATION = "io.ktor:ktor-serialization-kotlinx-json:$KTOR_VERSION"
+        private const val KTOR_CONTENT_NEGOTIATION = "io.ktor:ktor-client-content-negotiation:$KTOR_VERSION"
+        private const val KTOR_LOGGING = "io.ktor:ktor-client-logging:$KTOR_VERSION"
 
-        private const val OKHTTP = "com.squareup.okhttp3:okhttp:$OKHTTP_VERSION"
-        private const val LOGGING_INTERCEPTOR = "com.squareup.okhttp3:logging-interceptor:$OKHTTP_VERSION"
-
-        private const val MOSHI_CODEGEN = "com.squareup.moshi:moshi-kotlin-codegen:$MOSHI_KOTLIN_VERSION"
-
-        val implDeps = listOf(MOSHI_KOTLIN, OKHTTP, LOGGING_INTERCEPTOR)
-        val kaptKaptDeps = listOf(MOSHI_CODEGEN)
+        val androidDeps = listOf(KTOR_OKHTTP)
+        val iosDeps = listOf(KTOR_DARWIN)
+        val multiplatformDeps = listOf(
+            KTOR_CORE, KTOR_SERIALIZATION, KTOR_CONTENT_NEGOTIATION,
+            KTOR_LOGGING
+        )
     }
 
     object UI {
