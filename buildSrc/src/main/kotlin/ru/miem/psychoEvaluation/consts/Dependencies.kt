@@ -182,6 +182,13 @@ object Dependencies {
     }
 
     object GameEngine {
+        // ================================================
+        // BE VERY CAREFUL WHEN UPDATING KORGE VERSION!!!
+        // ================================================
+        //
+        // After version 3.4.0 authors changed KorGE a lot
+        // If you update version, the project will most likely break
+        // So be ready to fix it :)
         private const val KORGE_VERSION = "3.4.0"
 
         private const val KORGE_ANDROID = "com.soywiz.korlibs.korge2:korge-android:$KORGE_VERSION"
