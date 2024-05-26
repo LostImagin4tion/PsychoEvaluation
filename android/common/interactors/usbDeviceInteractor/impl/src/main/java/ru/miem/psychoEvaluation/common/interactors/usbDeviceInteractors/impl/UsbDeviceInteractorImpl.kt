@@ -65,6 +65,5 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
         }
     }
 
-
     override fun disconnect() = usbDeviceRepository.disconnect()
 }

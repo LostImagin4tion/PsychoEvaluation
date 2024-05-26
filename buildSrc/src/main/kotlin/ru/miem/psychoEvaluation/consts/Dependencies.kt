@@ -84,7 +84,8 @@ object Dependencies {
             private const val VIEW_MODEL_SAVED_STATE =
                 "androidx.lifecycle:lifecycle-viewmodel-savedstate:$LIFECYCLE_VERSION"
 
-            val allLifecycleDeps = listOf(ACTIVITY_COMPOSE, RUNTIME, VIEW_MODEL, RUNTIME_COMPOSE,
+            val allLifecycleDeps = listOf(
+                ACTIVITY_COMPOSE, RUNTIME, VIEW_MODEL, RUNTIME_COMPOSE,
                 VIEW_MODEL_SAVED_STATE
             )
         }

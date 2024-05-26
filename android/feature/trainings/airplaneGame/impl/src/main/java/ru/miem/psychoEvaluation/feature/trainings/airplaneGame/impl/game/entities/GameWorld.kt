@@ -4,9 +4,7 @@ import android.content.Context
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
-import com.soywiz.korio.async.ObservableProperty
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameOverText
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.scoreText
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.welcomeText
 
 fun Container.gameWorld(
@@ -91,7 +89,6 @@ class GameWorld(
         ) {
             scroller.stop()
             airplane.die()
-            airplane.decelerate()
 
             currentState = GameState.GAME_OVER
         }

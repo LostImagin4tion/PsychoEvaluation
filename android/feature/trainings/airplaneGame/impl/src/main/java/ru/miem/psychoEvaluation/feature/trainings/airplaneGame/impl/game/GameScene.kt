@@ -4,7 +4,6 @@ import android.content.Context
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.SContainer
 import com.soywiz.korge.view.addUpdater
-import com.soywiz.korio.async.ObservableProperty
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.GameWorld
@@ -41,8 +40,7 @@ class GameScene(
                     previousData = null
                     gameWorld?.restart()
                 }
-            }
-            else if (gameWorld?.isRunning == true) {
+            } else if (gameWorld?.isRunning == true) {
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
                 if (previousData == null) {

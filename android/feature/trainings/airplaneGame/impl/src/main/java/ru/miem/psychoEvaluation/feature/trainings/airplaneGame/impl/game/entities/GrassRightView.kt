@@ -16,7 +16,7 @@ class GrassRightView(
     x: Double,
     screenHeight: Double,
     scrollSpeed: Double
-): LeftScrollable(
+) : LeftScrollable(
     x,
     screenHeight - AssetLoader.grassRight.height,
     AssetLoader.grassRight.width,

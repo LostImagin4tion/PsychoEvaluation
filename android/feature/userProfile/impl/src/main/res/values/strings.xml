@@ -9,5 +9,6 @@
     <string name="title_login">Login</string>
     <string name="title_password">Password</string>
 
+    <string name="share_button_text">Share stress data</string>
     <string name="logout_button_text">Log out from account</string>
 </resources>

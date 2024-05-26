@@ -16,7 +16,7 @@ class RockRightView(
     x: Double,
     screenHeight: Double,
     scrollSpeed: Double,
-): LeftScrollable(
+) : LeftScrollable(
     x,
     screenHeight - AssetLoader.rockRight.height,
     AssetLoader.rockRight.width,

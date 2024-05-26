@@ -18,6 +18,7 @@ fun UsbManager.requestUsbDeviceAccess(context: Context) {
     )
 }
 
+@Suppress("MagicNumber")
 private fun Context.createUsbDevicePermissionIntent(intentAction: String): PendingIntent = PendingIntent
     .getBroadcast(
         this,

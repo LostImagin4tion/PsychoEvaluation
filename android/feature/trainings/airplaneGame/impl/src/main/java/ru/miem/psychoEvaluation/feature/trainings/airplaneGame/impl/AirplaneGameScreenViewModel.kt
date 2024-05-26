@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.di.impl.diApi
-import timber.log.Timber
 
 class AirplaneGameScreenViewModel : ViewModel() {
 

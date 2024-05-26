@@ -16,7 +16,7 @@ class GrassMiddleView(
     x: Double,
     screenHeight: Double,
     scrollSpeed: Double
-): LeftScrollable(
+) : LeftScrollable(
     x,
     screenHeight - AssetLoader.grassMiddle.height,
     AssetLoader.grassMiddle.width,

@@ -2,7 +2,6 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entiti
 
 import android.content.Context
 import android.os.Environment
-import android.widget.Toast
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
@@ -36,10 +35,11 @@ class AirplaneView(
     private var isAlive = true
     private var airplaneRotationDegrees = 0.0
 
-    private val position = Point(x, y) // todo: is there a vector2d class just to name it more suitable?
+    // todo: is there a vector2d class just to name it more suitable?
+    private val position = Point(x, y)
+
     private val velocity = Point()
     private val acceleration = Point()
-    private val gravityAcceleration = Point(0.0, 1.0) // todo: how to make it immutable? (don't need it here but for the future)
 
     private val image = image(AssetLoader.airplane, 0.5, 0.5) {
         smoothing = false
@@ -72,12 +72,11 @@ class AirplaneView(
         position += velocity * delta.seconds
 
         if (acceleration.y > 0) {
-            airplaneRotationDegrees -= 0.5
-            airplaneRotationDegrees = maxOf(-15.0, airplaneRotationDegrees)
-        }
-        else if (acceleration.y < 0) {
-            airplaneRotationDegrees += 0.5
-            airplaneRotationDegrees = minOf(15.0, airplaneRotationDegrees)
+            airplaneRotationDegrees -= AIRPLANE_ROTATION_DEGREES_DELTA
+            airplaneRotationDegrees = maxOf(-AIRPLANE_MAXIMUM_ROTATION, airplaneRotationDegrees)
+        } else if (acceleration.y < 0) {
+            airplaneRotationDegrees += AIRPLANE_ROTATION_DEGREES_DELTA
+            airplaneRotationDegrees = minOf(AIRPLANE_MAXIMUM_ROTATION, airplaneRotationDegrees)
         } else {
             airplaneRotationDegrees = 0.0
         }
@@ -93,7 +92,7 @@ class AirplaneView(
     fun onNewData(rawData: Int, speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
-            velocity.y = speed * -5.0
+            velocity.y = speed * AIRPLANE_VELOCITY_MULTIPLIER
             Timber.tag("HELLO").i("velocity ${velocity.y} acceleration ${acceleration.y}")
             fileOutputWriter?.write("$rawData\n")
         }
@@ -103,10 +102,6 @@ class AirplaneView(
         isAlive = false
         velocity.y = 0.0
         closeStream()
-    }
-
-    fun decelerate() {
-        gravityAcceleration.y = 0.0
     }
 
     fun onStart(context: Context) {
@@ -123,7 +118,6 @@ class AirplaneView(
         position.y = y
         velocity.setTo(0.0, 0.0)
         acceleration.setTo(0.0, 0.0)
-        gravityAcceleration.setTo(0.0, 460.0)
         isAlive = true
     }
 
@@ -132,20 +126,14 @@ class AirplaneView(
             closeStream()
 
             val datetime = calendar.time.toString("yyyy-MM-dd_HH:mm:ss")
-            val filename = "$datetime+psycho.txt"
-
-            Timber.tag(TAG).i("HELLO external files ${context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}")
+            val filename = "$datetime-psycho.txt"
 
             val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
             fileOutputWriter = file.bufferedWriter()
 
-//            fileOutputWriter = context
-//                .openFileOutput(filename, Context.MODE_PRIVATE)
-//                .bufferedWriter()
-
             Timber.tag(TAG).i(
                 "Created new file ${file.absolutePath}, " +
-                        "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
+                    "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
             )
         } catch (e: IOException) {
             Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
@@ -172,5 +160,10 @@ class AirplaneView(
 
         private const val AIRPLANE_WIDTH_PX = 637.5
         private const val AIRPLANE_HEIGHT_PX = 207.0
+
+        private const val AIRPLANE_VELOCITY_MULTIPLIER = -10.0
+
+        private const val AIRPLANE_ROTATION_DEGREES_DELTA = 0.5
+        private const val AIRPLANE_MAXIMUM_ROTATION = 15.0
     }
 }
