@@ -1,10 +1,14 @@
 package ru.miem.psychoEvaluation.common.designSystem.charts
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -33,7 +37,7 @@ fun SingleLineChart(
         rememberLineSpec(
             shader = DynamicShaders.color(Color(lineColorInt)),
             point = ShapeComponent(shape = Shapes.pillShape, color = lineColorInt),
-            pointSize = 12.dp
+            pointSize = 8.dp
         ),
     )
 
@@ -46,8 +50,29 @@ fun SingleLineChart(
     CartesianChartHost(
         chart = rememberCartesianChart(
             *chartLayers,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis()
+            startAxis = rememberStartAxis(
+                label = rememberAxisLabelComponent(
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                axis = rememberAxisLineComponent(
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                tick = rememberAxisTickComponent(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    brush = null
+                ),
+            ),
+            bottomAxis = rememberBottomAxis(
+                label = rememberAxisLabelComponent(
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                axis = rememberAxisLineComponent(
+                    color = MaterialTheme.colorScheme.onPrimary
+                ),
+                tick = rememberAxisTickComponent(
+                    color = MaterialTheme.colorScheme.onPrimary, brush = null
+                ),
+            )
         ),
         scrollState = rememberVicoScrollState(
             autoScroll = Scroll.Absolute.End,

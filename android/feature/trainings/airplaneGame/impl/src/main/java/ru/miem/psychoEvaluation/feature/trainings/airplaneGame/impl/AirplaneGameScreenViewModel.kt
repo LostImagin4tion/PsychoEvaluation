@@ -3,12 +3,15 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 import android.hardware.usb.UsbManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.lineSeries
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.di.impl.diApi
+import timber.log.Timber
 
 class AirplaneGameScreenViewModel : ViewModel() {
 
@@ -17,6 +20,8 @@ class AirplaneGameScreenViewModel : ViewModel() {
     private val _stressData = MutableStateFlow(UsbDeviceData(0, 0.0))
 
     val stressData: StateFlow<UsbDeviceData> = _stressData
+    val allStress = mutableListOf<Int>()
+    val chartModelProducer = CartesianChartModelProducer.build()
 
     fun isUsbDeviceAccessGranted(
         usbManager: UsbManager,
@@ -31,6 +36,10 @@ class AirplaneGameScreenViewModel : ViewModel() {
         viewModelScope.launch {
             usbDeviceInteractor.getNormalizedDeviceData(usbManager, screenHeight) {
                 _stressData.emit(it)
+                allStress.add(it.rawData)
+                chartModelProducer.runTransaction {
+                    lineSeries { series(allStress) }
+                }
             }
         }
     }

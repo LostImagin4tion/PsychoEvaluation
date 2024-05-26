@@ -6,22 +6,23 @@ import com.soywiz.korge.view.image
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.utils.LeftScrollable
 
-fun Container.clouds(
+fun Container.rockLeftView(
     x: Double,
-    y: Double,
-    scrollSpeed: Double,
-) = Clouds(
-    x = x,
-    y = y,
-    scrollSpeed = scrollSpeed,
-).addTo(this)
+    screenHeight: Double,
+    scrollSpeed: Double
+) = RockLeftView(x, screenHeight, scrollSpeed).addTo(this)
 
-class Clouds(
+class RockLeftView(
     x: Double,
-    y: Double,
+    screenHeight: Double,
     scrollSpeed: Double,
-) :
-    LeftScrollable(x, y, AssetLoader.clouds.width, scrollSpeed) {
-
-    private val cloudsImage = scrollingContainer.image(AssetLoader.clouds) { smoothing = false }
+) : LeftScrollable(
+    x,
+    screenHeight - AssetLoader.rockLeft.height,
+    AssetLoader.rockLeft.width,
+    scrollSpeed
+) {
+    private val rockImage = scrollingContainer.image(AssetLoader.rockLeft) {
+        smoothing = false
+    }
 }

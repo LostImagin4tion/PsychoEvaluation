@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text
 
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo

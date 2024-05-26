@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities
 
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
@@ -20,17 +20,21 @@ class BackgroundView(
 ) : Container() {
 
     init {
+        // solid color for background
         solidRect(
             width = width,
             height = height,
             color = RGBA(BACKGROUND_RED, BACKGROUND_GREEN, BACKGROUND_BLUE, BACKGROUND_ALPHA)
-        ).xy(0, 0) // background
+        ) {
+            xy(0, 0)
+        }
 
         image(AssetLoader.background) {
             smoothing = false
             scale(width / this.width, height / this.height)
+            xy(0.0, 0.0)
 //            scaleWhileMaintainingAspect(ScalingOption.ByWidthAndHeight(width, height))
-        }.xy(0.0, 0.0) // todo: make bg move but slower than foreground
+        }
     }
 
     private companion object {

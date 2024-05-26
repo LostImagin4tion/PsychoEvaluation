@@ -1,3 +1,4 @@
+import gradle.kotlin.dsl.accessors._baee36425e0baa694975157087c92977.debugImplementation
 import ru.miem.psychoEvaluation.consts.CompileVersions
 import ru.miem.psychoEvaluation.consts.Dependencies
 
@@ -33,6 +34,7 @@ dependencies {
     // Compose
     implementation(platform(Dependencies.Compose.COMPOSE_BOM))
     Dependencies.Compose.allDeps.forEach { implementation(it) }
+    Dependencies.Compose.allDebugDeps.forEach { debugImplementation(it) }
 
     // UI
     Dependencies.UI.allDeps.forEach { implementation(it) }

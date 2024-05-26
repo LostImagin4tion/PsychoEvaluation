@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text
 
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
@@ -7,41 +7,41 @@ import com.soywiz.korge.view.xy
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.Typography
 
-fun Container.gameOverText(
+fun Container.welcomeText(
     x: Double,
     y: Double,
-    textSize: Double = Typography.bodyTextTextSize
-) = GameOverText(x, y, textSize).addTo(this)
+    textSize: Double = Typography.headlineTextSize,
+) = WelcomeText(x, y, textSize).addTo(this)
 
-class GameOverText(
+class WelcomeText(
     x: Double,
     y: Double,
-    textSize: Double
+    textSize: Double,
 ) : Container() {
 
     init {
         text(
-            text = "Game Over",
+            text = "Touch me",
             textSize = textSize,
-            font = AssetLoader.shadow
+            font = AssetLoader.shadow,
         ) { xy(x - this.width / 2, y - textSize / 2) }
 
         text(
-            text = "Game Over",
+            text = "Touch me",
             textSize = textSize,
-            font = AssetLoader.text
+            font = AssetLoader.text,
         ) { xy(x - this.width / 2, y - textSize / 2) }
 
         text(
-            text = "Try again?",
+            text = "if you are ready to start",
             textSize = textSize,
-            font = AssetLoader.shadow
+            font = AssetLoader.shadow,
         ) { xy(x - this.width / 2, y + textSize / 2) }
 
         text(
-            text = "Try again?",
+            text = "if you are ready to start",
             textSize = textSize,
-            font = AssetLoader.text
+            font = AssetLoader.text,
         ) { xy(x - this.width / 2, y + textSize / 2) }
     }
 }

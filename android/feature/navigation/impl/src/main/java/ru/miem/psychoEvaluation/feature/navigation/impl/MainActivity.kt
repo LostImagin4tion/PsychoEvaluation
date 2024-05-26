@@ -123,8 +123,8 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     private fun NavigationBar() {
-        val items = Screens.entries
-        val routes = items.map { it.route }
+        val screens = Screens.entries.toList()
+        val routes = screens.map { it.route }
 
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute =
@@ -137,42 +137,42 @@ class MainActivity : AppCompatActivity() {
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier.height(70.dp),
         ) {
-            items.forEach {
-                createNavigationBarItem(screen = it, currentRoute = currentRoute)
-            }
+            NavigationBarItems(screens = screens, currentRoute = currentRoute)
         }
     }
 
     @Composable
-    fun RowScope.createNavigationBarItem(screen: Screens, currentRoute: String?) {
-        NavigationBarItem(
-            selected = currentRoute == screen.route,
-            label = {
-                LabelText(
-                    textRes = screen.nameRes,
-                    isMedium = false
-                )
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(screen.iconRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .padding(vertical = 1.dp)
-                )
-            },
-            onClick = {
-                if (screen.route != currentRoute) {
-                    navController.navigate(screen.route) {
-                        popUpTo(navController.graph.findStartDestination().id) { }
+    fun RowScope.NavigationBarItems(screens: List<Screens>, currentRoute: String?) {
+        screens.forEach {
+            NavigationBarItem(
+                selected = currentRoute == it.route,
+                label = {
+                    LabelText(
+                        textRes = it.nameRes,
+                        isMedium = false
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(it.iconRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .padding(vertical = 1.dp)
+                    )
+                },
+                onClick = {
+                    if (it.route != currentRoute) {
+                        navController.navigate(it.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { }
+                        }
                     }
-                }
-            },
-            modifier = Modifier
-                .navigationBarsPadding()
-                .clip(CircleShape),
-        )
+                },
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .clip(CircleShape),
+            )
+        }
     }
 
     private companion object {
