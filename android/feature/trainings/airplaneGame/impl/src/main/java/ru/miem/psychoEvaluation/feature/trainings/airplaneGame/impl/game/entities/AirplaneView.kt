@@ -92,7 +92,7 @@ class AirplaneView(
     fun onNewData(rawData: Int, speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
-            velocity.y = speed * AIRPLANE_VELOCITY_MULTIPLIER
+            velocity.y += speed * AIRPLANE_VELOCITY_MULTIPLIER
             Timber.tag("HELLO").i("velocity ${velocity.y} acceleration ${acceleration.y}")
             fileOutputWriter?.write("$rawData\n")
         }
@@ -156,14 +156,14 @@ class AirplaneView(
     companion object {
         private val TAG = AirplaneView::class.java.simpleName
 
-        private const val BOUNDING_RADIUS = 150.0
+        private const val BOUNDING_RADIUS = 110.0
 
         private const val AIRPLANE_WIDTH_PX = 637.5
         private const val AIRPLANE_HEIGHT_PX = 207.0
 
-        private const val AIRPLANE_VELOCITY_MULTIPLIER = -10.0
+        private const val AIRPLANE_VELOCITY_MULTIPLIER = -15.0
 
-        private const val AIRPLANE_ROTATION_DEGREES_DELTA = 0.5
+        private const val AIRPLANE_ROTATION_DEGREES_DELTA = 0.25
         private const val AIRPLANE_MAXIMUM_ROTATION = 15.0
     }
 }
