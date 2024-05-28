@@ -15,20 +15,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.core.di.impl.api
+import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
-import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationApi
+import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
-import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
+import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
-import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenApi
+import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
-import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenApi
+import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
-import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileApi
+import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileDiApi
 
 @Composable
 fun Navigation(
@@ -46,12 +46,12 @@ fun Navigation(
         }
     }
 
-    val authorizationScreen by api(AuthorizationApi::authorizationScreen)
-    val registrationScreen by api(RegistrationApi::registrationScreen)
-    val userProfileScreen by api(UserProfileApi::userProfileScreen)
-    val trainingsScreen by api(TrainingsScreenApi::trainingsListScreen)
-    val debugTrainingScreen by api(DebugTrainingScreenApi::debugTrainingScreen)
-    val airplaneGameScreen by api(AirplaneGameScreenApi::airplaneGameScreen)
+    val authorizationScreen by diApi(AuthorizationDiApi::authorizationScreen)
+    val registrationScreen by diApi(RegistrationDiApi::registrationScreen)
+    val userProfileScreen by diApi(UserProfileDiApi::userProfileScreen)
+    val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
+    val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
+    val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
 
     NavigationContent(
         paddingValues = paddingValues,

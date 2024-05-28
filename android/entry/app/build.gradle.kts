@@ -22,6 +22,8 @@ dependencies {
 
     implementation(project(":android:common:designSystem"))
 
+    implementation(project(":android:common:interactors:usbDeviceInteractor:impl"))
+
     // ==== Feature layer ====
 
     implementation(project(":android:feature:navigation:impl"))

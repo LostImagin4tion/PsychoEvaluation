@@ -5,18 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.lineSeries
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import ru.miem.psychoEvaluation.core.di.impl.api
-import ru.miem.psychoEvaluation.core.usbDevice.api.di.UsbDeviceRepositoryApi
-import ru.miem.psychoEvaluation.core.usbDevice.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.core.di.impl.diApi
 
 class DebugTrainingScreenViewModel : ViewModel() {
 
-    private val usbDeviceRepository by api(UsbDeviceRepositoryApi::usbDeviceRepository)
-
-    private val stressData = mutableListOf<UsbDeviceData>()
+    private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
 
     val chartModelProducer = CartesianChartModelProducer.build()
 
@@ -27,26 +22,19 @@ class DebugTrainingScreenViewModel : ViewModel() {
         return device != null && usbManager.hasPermission(device)
     }
 
-    fun connectToUsbDevice(usbManager: UsbManager) {
-        usbDeviceRepository.connectToUsbDevice(usbManager = usbManager)
+    fun hasConnectedDevices(usbManager: UsbManager) = usbManager.deviceList.isNotEmpty()
 
+    fun connectToUsbDevice(usbManager: UsbManager) {
         viewModelScope.launch {
-            usbDeviceRepository.usbDeviceDataFlow.collect { usbDeviceData ->
-                withContext(Dispatchers.Default) {
-                    stressData.add(usbDeviceData)
-                    chartModelProducer.runTransaction {
-                        lineSeries {
-                            series(stressData.map { it.data })
-                        }
-                    }
+            usbDeviceInteractor.getAllRawDeviceData(usbManager) {
+                chartModelProducer.runTransaction {
+                    lineSeries { series((it)) }
                 }
             }
         }
     }
 
-    fun disconnect() {
-        usbDeviceRepository.disconnect()
-    }
+    fun disconnect() = usbDeviceInteractor.disconnect()
 
     private companion object {
         val TAG: String = DebugTrainingScreenViewModel::class.java.simpleName

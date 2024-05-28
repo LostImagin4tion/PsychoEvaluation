@@ -24,7 +24,7 @@ android {
 dependencies {
 
     implementation(platform(Dependencies.Compose.COMPOSE_BOM))
-    implementation(Dependencies.Compose.Core.UI)
+    Dependencies.Compose.Core.allCoreDeps.forEach { implementation(it) }
     Dependencies.Compose.Navigation.allNavigationDeps.forEach { implementation(it) }
 
     // Core

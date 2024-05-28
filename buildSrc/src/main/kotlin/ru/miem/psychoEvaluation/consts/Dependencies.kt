@@ -37,33 +37,22 @@ object Dependencies {
         // BE VERY CAREFUL WHEN UPDATING COMPOSE DEPENDENCIES, BECAUSE THEY CAN USE DIFFERENT VERSION!
         // ===========================================================================================
 
-        const val COMPOSE_BOM = "androidx.compose:compose-bom:2024.02.00"
+        const val COMPOSE_BOM = "androidx.compose:compose-bom:2024.02.02"
 
         object Core {
-            private const val ACTIVITY_COMPOSE_VERSION = "1.8.2"
-
-            private const val ACTIVITY_COMPOSE =
-                "androidx.activity:activity-compose:$ACTIVITY_COMPOSE_VERSION"
-
-            const val UI = "androidx.compose.ui:ui"
+            private const val UI = "androidx.compose.ui:ui"
             private const val UI_UTILS = "androidx.compose.ui:ui-util"
 
+            val allCoreDeps = listOf(UI, UI_UTILS)
+        }
+
+        object Tooling {
             private const val UI_TOOLING = "androidx.compose.ui:ui-tooling" // debugImplementation
             private const val UI_TOOLING_DATA = "androidx.compose.ui:ui-tooling-data"
             private const val UI_TOOLING_PREVIEW = "androidx.compose.ui:ui-tooling-preview"
 
-            val allCoreDeps = listOf(
-                ACTIVITY_COMPOSE, UI, UI_UTILS, UI_TOOLING, UI_TOOLING_DATA,
-                UI_TOOLING_PREVIEW
-            )
-        }
-
-        object Navigation {
-            private const val VERSION = "2.7.7"
-
-            private const val NAVIGATION_COMPOSE = "androidx.navigation:navigation-compose:$VERSION"
-
-            val allNavigationDeps = listOf(NAVIGATION_COMPOSE)
+            val allToolingDeps = listOf(UI_TOOLING_DATA, UI_TOOLING_PREVIEW)
+            val allToolingDebugDeps = listOf(UI_TOOLING)
         }
 
         object Foundation {
@@ -82,6 +71,10 @@ object Dependencies {
 
         object Lifecycle {
             private const val LIFECYCLE_VERSION = "2.7.0"
+            private const val ACTIVITY_COMPOSE_VERSION = "1.8.2"
+
+            private const val ACTIVITY_COMPOSE =
+                "androidx.activity:activity-compose:$ACTIVITY_COMPOSE_VERSION"
 
             private const val RUNTIME = "androidx.lifecycle:lifecycle-runtime-ktx:$LIFECYCLE_VERSION"
             private const val RUNTIME_COMPOSE =
@@ -92,9 +85,17 @@ object Dependencies {
                 "androidx.lifecycle:lifecycle-viewmodel-savedstate:$LIFECYCLE_VERSION"
 
             val allLifecycleDeps = listOf(
-                RUNTIME, VIEW_MODEL, RUNTIME_COMPOSE,
+                ACTIVITY_COMPOSE, RUNTIME, VIEW_MODEL, RUNTIME_COMPOSE,
                 VIEW_MODEL_SAVED_STATE
             )
+        }
+
+        object Navigation {
+            private const val VERSION = "2.7.7"
+
+            private const val NAVIGATION_COMPOSE = "androidx.navigation:navigation-compose:$VERSION"
+
+            val allNavigationDeps = listOf(NAVIGATION_COMPOSE)
         }
 
         object Coil {
@@ -105,9 +106,11 @@ object Dependencies {
             val allCoilDeps = listOf(COIL_COMPOSE)
         }
 
-        val allDeps = Core.allCoreDeps + Navigation.allNavigationDeps +
+        val allDeps = Core.allCoreDeps + Tooling.allToolingDeps + Navigation.allNavigationDeps +
             Foundation.allFoundationDeps + Material.allMaterialDeps +
             Lifecycle.allLifecycleDeps + Coil.allCoilDeps
+
+        val allDebugDeps = Tooling.allToolingDebugDeps
     }
 
     object Redux {

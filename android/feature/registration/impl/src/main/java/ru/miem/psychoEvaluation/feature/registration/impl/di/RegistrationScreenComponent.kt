@@ -1,15 +1,15 @@
 package ru.miem.psychoEvaluation.feature.registration.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
+import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 
 @Component(
     modules = [
         RegistrationScreenModule::class
     ],
 )
-interface RegistrationScreenComponent : RegistrationApi {
+interface RegistrationScreenComponent : RegistrationDiApi {
     companion object {
-        fun create(): RegistrationApi = DaggerRegistrationScreenComponent.builder().build()
+        fun create(): RegistrationDiApi = DaggerRegistrationScreenComponent.builder().build()
     }
 }

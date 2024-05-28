@@ -10,6 +10,7 @@ enum class Screens(
     @DrawableRes val iconRes: Int
 ) {
     Trainings(Routes.trainingsList, R.string.bottom_bar_trainings_button, R.drawable.ic_training),
-    Statistics(Routes.statistics, R.string.bottom_bar_statistics_button, R.drawable.ic_statistics),
+
+//    Statistics(Routes.statistics, R.string.bottom_bar_statistics_button, R.drawable.ic_statistics),
     Profile(Routes.userProfile, R.string.bottom_bar_profile_button, R.drawable.ic_profile),
 }

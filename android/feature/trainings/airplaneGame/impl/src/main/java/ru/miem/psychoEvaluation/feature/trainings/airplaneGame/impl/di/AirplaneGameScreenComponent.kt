@@ -1,15 +1,15 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
 
 @Component(
     modules = [
         AirplaneGameScreenModule::class,
     ]
 )
-interface AirplaneGameScreenComponent : AirplaneGameScreenApi {
+interface AirplaneGameScreenComponent : AirplaneGameScreenDiApi {
     companion object {
-        fun create(): AirplaneGameScreenApi = DaggerAirplaneGameScreenComponent.builder().build()
+        fun create(): AirplaneGameScreenDiApi = DaggerAirplaneGameScreenComponent.builder().build()
     }
 }

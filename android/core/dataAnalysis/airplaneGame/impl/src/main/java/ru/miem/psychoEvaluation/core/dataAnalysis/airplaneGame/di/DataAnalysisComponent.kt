@@ -1,15 +1,15 @@
 package ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisApi
+import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisDiApi
 
 @Component(
     modules = [
         DataAnalysisModule::class,
     ]
 )
-interface DataAnalysisComponent : DataAnalysisApi {
+interface DataAnalysisComponent : DataAnalysisDiApi {
     companion object {
-        fun create(): DataAnalysisApi = DaggerDataAnalysisComponent.builder().build()
+        fun create(): DataAnalysisDiApi = DaggerDataAnalysisComponent.builder().build()
     }
 }

@@ -1,5 +1,8 @@
 package ru.miem.psychoEvaluation.feature.userProfile.impl
 
+import android.content.Context
+import android.content.Intent
+import android.os.Environment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
@@ -24,6 +29,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoGray
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
+import timber.log.Timber
 import javax.inject.Inject
 
 class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
@@ -46,6 +52,8 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
             .padding(horizontal = 24.dp)
             .imePadding()
     ) {
+        val context = LocalContext.current
+
         // ===== UI SECTION =====
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
@@ -90,6 +98,24 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
         Spacer(modifier = Modifier.weight(1f))
 
         FilledTextButton(
+            textRes = R.string.share_button_text,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White,
+                disabledContainerColor = psychoGray,
+                disabledContentColor = psychoOnGray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.mainHorizontalPadding),
+            onClick = {
+                createShareDataChooser(context)
+            }
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+
+        FilledTextButton(
             textRes = R.string.logout_button_text,
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primary,
@@ -104,5 +130,34 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
         )
 
         Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding))
+    }
+
+    private fun createShareDataChooser(context: Context) {
+        context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            ?.let { docs ->
+                val shareIntent = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                    type = "text/plain"
+                    flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                    val fileUris = docs.listFiles()
+                        ?.map {
+                            FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.fileProvider",
+                                it,
+                            )
+                        }
+                        ?.let { ArrayList(it) }
+
+                    Timber.tag(TAG).i("Detected file URIs for sharing: $fileUris")
+
+                    putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileUris)
+                }
+                context.startActivity(Intent.createChooser(shareIntent, "Share stress data"))
+            }
+    }
+
+    private companion object {
+        val TAG: String = UserProfileScreenImpl::class.java.simpleName
     }
 }

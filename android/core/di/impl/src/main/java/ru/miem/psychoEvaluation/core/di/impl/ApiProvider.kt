@@ -1,9 +1,9 @@
 package ru.miem.psychoEvaluation.core.di.impl
 
-import ru.miem.psychoEvaluation.core.di.api.Api
+import ru.miem.psychoEvaluation.core.di.api.DiApi
 
 /**
- * [ApiProvider] - SAM interface for wrapping implementation of [Api] and subsequent addition
+ * [ApiProvider] - SAM interface for wrapping implementation of [DiApi] and subsequent addition
  * to general **DI Map** of [ApiResolver]
  *
  * Use like this:
@@ -15,5 +15,5 @@ import ru.miem.psychoEvaluation.core.di.api.Api
  * @author Egor Danilov
  */
 fun interface ApiProvider {
-    fun get(): Api
+    fun get(): DiApi
 }

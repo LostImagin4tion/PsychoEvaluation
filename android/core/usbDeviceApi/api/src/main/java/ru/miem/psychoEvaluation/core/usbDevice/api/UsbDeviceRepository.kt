@@ -2,10 +2,12 @@ package ru.miem.psychoEvaluation.core.usbDevice.api
 
 import android.hardware.usb.UsbManager
 import kotlinx.coroutines.flow.Flow
-import ru.miem.psychoEvaluation.core.usbDevice.api.models.UsbDeviceData
 
 interface UsbDeviceRepository {
-    val usbDeviceDataFlow: Flow<UsbDeviceData>
+    val usbDeviceDataFlow: Flow<Int>
+    val isConnected: Boolean
+    val isNotConnected: Boolean
+        get() = !isConnected
 
     fun connectToUsbDevice(
         usbManager: UsbManager,

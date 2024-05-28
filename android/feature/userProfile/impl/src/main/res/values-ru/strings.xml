@@ -9,5 +9,6 @@
     <string name="title_login">Логин</string>
     <string name="title_password">Пароль</string>
 
+    <string name="share_button_text">Пошарить данные</string>
     <string name="logout_button_text">Выйти из аккаунта</string>
 </resources>

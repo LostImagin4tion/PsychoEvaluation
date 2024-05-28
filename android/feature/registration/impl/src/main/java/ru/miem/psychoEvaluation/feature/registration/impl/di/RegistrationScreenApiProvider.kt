@@ -5,13 +5,13 @@ import dagger.Provides
 import dagger.multibindings.IntoMap
 import ru.miem.psychoEvaluation.core.di.impl.ApiKey
 import ru.miem.psychoEvaluation.core.di.impl.ApiProvider
-import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationApi
+import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 
 @Module
 class RegistrationScreenApiProvider {
 
     @Provides
     @IntoMap
-    @ApiKey(RegistrationApi::class)
+    @ApiKey(RegistrationDiApi::class)
     fun providesRegistrationScreenApiProvider() = ApiProvider(RegistrationScreenComponent::create)
 }

@@ -29,6 +29,7 @@ dependencies {
     // Compose
     implementation(platform(Dependencies.Compose.COMPOSE_BOM))
     Dependencies.Compose.allDeps.forEach { implementation(it) }
+    Dependencies.Compose.allDebugDeps.forEach { debugImplementation(it) }
 
     // UI
     Dependencies.UI.allDeps.forEach { implementation(it) }

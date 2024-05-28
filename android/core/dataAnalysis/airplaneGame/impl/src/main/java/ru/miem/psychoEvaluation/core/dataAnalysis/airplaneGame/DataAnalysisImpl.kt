@@ -14,7 +14,7 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
     }
 
     override fun getNormalizedValue(value: Double, borders: Borders): Double {
-        return (value - borders.upperLimit) / (borders.upperLimit - borders.lowerLimit) * 100
+        return (value - borders.lowerLimit) / (borders.upperLimit - borders.lowerLimit) * 100
     }
 
     override fun findDataBorders(y: List<Int>): Borders {
