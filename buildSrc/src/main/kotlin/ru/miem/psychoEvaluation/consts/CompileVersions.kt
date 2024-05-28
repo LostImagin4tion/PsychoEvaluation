@@ -10,6 +10,7 @@ import org.gradle.api.JavaVersion
  */
 object CompileVersions {
 
+    const val KOTLIN_VERSION = "1.9.22"
     const val COMPOSE_COMPILE_VERSION = "1.5.9"
 
     val JAVA_COMPILE_VERSION = JavaVersion.VERSION_1_8
