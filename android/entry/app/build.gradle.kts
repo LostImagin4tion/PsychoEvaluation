@@ -16,6 +16,7 @@ dependencies {
 
     implementation(project(":android:core:di:impl"))
     implementation(project(":android:core:deviceApi:usbDeviceApi:impl"))
+    implementation(project(":android:core:deviceApi:bleDeviceApi:impl"))
     implementation(project(":android:core:dataAnalysis:airplaneGame:impl"))
 
     // ==== Common layer ====

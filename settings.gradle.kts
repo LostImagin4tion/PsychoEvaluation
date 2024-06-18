@@ -43,6 +43,8 @@ include(":android:core:di:impl")
 include(":android:core:deviceApi:api")
 include(":android:core:deviceApi:usbDeviceApi:api")
 include(":android:core:deviceApi:usbDeviceApi:impl")
+include(":android:core:deviceApi:bleDeviceApi:api")
+include(":android:core:deviceApi:bleDeviceApi:impl")
 
 include(":android:core:dataAnalysis:airplaneGame:api")
 include(":android:core:dataAnalysis:airplaneGame:impl")
