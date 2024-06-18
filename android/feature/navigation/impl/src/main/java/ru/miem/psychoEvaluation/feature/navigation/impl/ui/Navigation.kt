@@ -88,7 +88,7 @@ fun NavigationContent(
     ) {
         NavHost(
             navController = navController,
-            startDestination = remember { Routes.authorization }
+            startDestination = remember { Routes.userProfile }
         ) {
             composable(Routes.authorization) {
                 setupSystemBarColors()

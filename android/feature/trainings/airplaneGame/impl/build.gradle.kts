@@ -14,7 +14,7 @@ dependencies {
 
     // ==== Core layer ====
 
-    implementation(project(":android:core:usbDeviceApi:api"))
+    implementation(project(":android:core:deviceApi:api"))
 
     // ==== Common layer ====
 

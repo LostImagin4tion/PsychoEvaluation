@@ -5,7 +5,7 @@ import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.UsbD
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
-import ru.miem.psychoEvaluation.core.usbDevice.api.di.UsbDeviceRepositoryDiApi
+import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepositoryDiApi
 import ru.miem.psychoEvaluation.core.utils.coroutines.withIO
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
         val usbDeviceRawData = mutableListOf<Int>()
 
         withIO {
-            usbDeviceRepository.usbDeviceDataFlow.collect { sensorData ->
+            usbDeviceRepository.deviceDataFlow.collect { sensorData ->
                 usbDeviceRawData.add(sensorData)
                 onNewValueEmitted(usbDeviceRawData)
             }
@@ -40,7 +40,7 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
         }
 
         withIO {
-            usbDeviceRepository.usbDeviceDataFlow.collect(onNewValueEmitted)
+            usbDeviceRepository.deviceDataFlow.collect(onNewValueEmitted)
         }
     }
 
@@ -54,7 +54,7 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
         }
 
         withIO {
-            usbDeviceRepository.usbDeviceDataFlow.collect { rawData ->
+            usbDeviceRepository.deviceDataFlow.collect { rawData ->
                 onNewValueEmitted(
                     UsbDeviceData(
                         rawData,

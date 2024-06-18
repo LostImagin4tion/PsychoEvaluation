@@ -1,7 +1,7 @@
 package ru.miem.psychoEvaluation.di.modules
 
 import dagger.Module
-import ru.miem.psychoEvaluation.core.usbDevice.impl.di.UsbDeviceRepositoryApiProvider
+import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.impl.di.UsbDeviceRepositoryApiProvider
 
 @Module(
     includes = [
