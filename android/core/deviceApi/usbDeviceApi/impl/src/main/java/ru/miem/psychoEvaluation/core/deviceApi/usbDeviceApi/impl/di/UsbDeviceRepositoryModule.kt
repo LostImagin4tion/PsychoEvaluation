@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.impl.UsbDeviceReposi
 interface UsbDeviceRepositoryModule {
 
     @Binds
-    fun provideUsbDeviceRepository(impl: UsbDeviceRepositoryImpl): UsbDeviceRepository
+    fun bindUsbDeviceRepository(impl: UsbDeviceRepositoryImpl): UsbDeviceRepository
 }

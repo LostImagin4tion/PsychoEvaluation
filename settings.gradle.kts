@@ -40,6 +40,9 @@ include(":android:entry:app")
 include(":android:core:di:api")
 include(":android:core:di:impl")
 
+include(":android:core:dataStorage:api")
+include(":android:core:dataStorage:impl")
+
 include(":android:core:deviceApi:api")
 include(":android:core:deviceApi:usbDeviceApi:api")
 include(":android:core:deviceApi:usbDeviceApi:impl")

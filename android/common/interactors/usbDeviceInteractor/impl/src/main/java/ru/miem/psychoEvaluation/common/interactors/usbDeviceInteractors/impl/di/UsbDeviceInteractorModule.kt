@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.impl.Usb
 interface UsbDeviceInteractorModule {
 
     @Binds
-    fun provideUsbDeviceInteractor(impl: UsbDeviceInteractorImpl): UsbDeviceInteractor
+    fun bindUsbDeviceInteractor(impl: UsbDeviceInteractorImpl): UsbDeviceInteractor
 }

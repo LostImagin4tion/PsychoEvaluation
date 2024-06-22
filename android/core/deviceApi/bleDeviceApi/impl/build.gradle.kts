@@ -1,5 +1,3 @@
-import ru.miem.psychoEvaluation.consts.Dependencies
-
 plugins {
     conventions.`module-impl`
 }

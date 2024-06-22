@@ -170,6 +170,14 @@ object Dependencies {
         val allDeps = listOf(MATERIAL, SPLASH_SCREEN)
     }
 
+    object DataStore {
+        private const val VERSION = "1.1.1"
+
+        private const val DATA_STORE = "androidx.datastore:datastore-preferences:$VERSION"
+
+        val allDeps = listOf(DATA_STORE)
+    }
+
     object UsbDrivers {
         private const val VERSION = "3.7.0"
 

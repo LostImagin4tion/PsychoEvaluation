@@ -1,3 +1,5 @@
+import ru.miem.psychoEvaluation.consts.Dependencies
+
 plugins {
     conventions.`module-compose-app`
 }
@@ -12,9 +14,12 @@ android {
 
 dependencies {
 
+    Dependencies.DataStore.allDeps.forEach { implementation(it) }
+
     // ==== Core layer ====
 
     implementation(project(":android:core:di:impl"))
+    implementation(project(":android:core:dataStorage:impl"))
     implementation(project(":android:core:deviceApi:usbDeviceApi:impl"))
     implementation(project(":android:core:deviceApi:bleDeviceApi:impl"))
     implementation(project(":android:core:dataAnalysis:airplaneGame:impl"))

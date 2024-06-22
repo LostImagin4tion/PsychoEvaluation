@@ -13,5 +13,5 @@ class UsbDeviceRepositoryApiProvider {
     @Provides
     @IntoMap
     @ApiKey(UsbDeviceRepositoryDiApi::class)
-    fun provideUsbDeviceRepositoryApiProvider() = ApiProvider(UsbDeviceRepositoryComponent.Companion::create)
+    fun provideUsbDeviceRepositoryApiProvider() = ApiProvider(UsbDeviceRepositoryComponent::create)
 }

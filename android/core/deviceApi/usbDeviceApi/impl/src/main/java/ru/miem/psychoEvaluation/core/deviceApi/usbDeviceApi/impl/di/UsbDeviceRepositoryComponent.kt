@@ -8,8 +8,7 @@ import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepo
         UsbDeviceRepositoryModule::class
     ]
 )
-interface UsbDeviceRepositoryComponent :
-    UsbDeviceRepositoryDiApi {
+interface UsbDeviceRepositoryComponent : UsbDeviceRepositoryDiApi {
 
     companion object {
         fun create(): UsbDeviceRepositoryDiApi = DaggerUsbDeviceRepositoryComponent.builder().build()

@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.trainings.debugTraining.impl.DebugTraini
 interface DebugTrainingScreenModule {
 
     @Binds
-    fun provideDebugTrainingScreen(impl: DebugTrainingScreenImpl): DebugTrainingScreen
+    fun bindDebugTrainingScreen(impl: DebugTrainingScreenImpl): DebugTrainingScreen
 }

@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.userProfile.impl.UserProfileScreenImpl
 interface UserProfileScreenModule {
 
     @Binds
-    fun provideUserProfileScreen(impl: UserProfileScreenImpl): UserProfileScreen
+    fun bindUserProfileScreen(impl: UserProfileScreenImpl): UserProfileScreen
 }

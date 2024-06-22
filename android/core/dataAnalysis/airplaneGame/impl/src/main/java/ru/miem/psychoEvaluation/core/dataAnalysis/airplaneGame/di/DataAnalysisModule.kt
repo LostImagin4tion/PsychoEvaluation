@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.DataAnalysis
 interface DataAnalysisModule {
 
     @Binds
-    fun provideDataAnalysis(impl: DataAnalysisImpl): DataAnalysis
+    fun bindDataAnalysis(impl: DataAnalysisImpl): DataAnalysis
 }

@@ -1,10 +1,16 @@
 package ru.miem.psychoEvaluation
 
 import android.app.Application
+import android.content.Context
 import android.os.StrictMode
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import ru.miem.psychoEvaluation.di.PsychoEvaluationAppComponent
 import ru.miem.psychoEvaluation.di.initApis
 import timber.log.Timber
+
+internal val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences_data_store")
 
 class PsychoEvaluationApp : Application() {
 
@@ -13,7 +19,7 @@ class PsychoEvaluationApp : Application() {
         super.onCreate()
 
         initTimber()
-        psychoEvaluationAppComponent = initApis()
+        psychoEvaluationAppComponent = initApis(this)
     }
 
     private fun initTimber() {
