@@ -1,8 +1,15 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.bluetooth.BluetoothManager
+import android.companion.AssociationInfo
+import android.companion.AssociationRequest
+import android.companion.BluetoothLeDeviceFilter
+import android.companion.CompanionDeviceManager
 import android.content.Context
+import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,7 +35,9 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.soywiz.korge.android.KorgeAndroidView
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
+import ru.miem.psychoEvaluation.common.designSystem.system.EnableBluetoothIfNeeded
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
+import ru.miem.psychoEvaluation.common.designSystem.system.RequestBluetoothPermissionsIfNeeded
 import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
 import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
@@ -36,6 +45,7 @@ import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.mode
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import timber.log.Timber
+import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
@@ -47,14 +57,30 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+        val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+            .adapter
 
         val viewModel: AirplaneGameScreenViewModel = viewModel()
 
         var isDeviceAccessGranted by remember {
             mutableStateOf(viewModel.isUsbDeviceAccessGranted(usbManager))
         }
+        var isBluetoothAccessGranted by remember {
+            mutableStateOf(false)
+        }
 
         ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+
+        RequestBluetoothPermissionsIfNeeded { permissionsGranted ->
+            isBluetoothAccessGranted = permissionsGranted
+        }
+
+        if (isBluetoothAccessGranted) {
+            EnableBluetoothIfNeeded(bluetoothAdapter)
+        }
+
+        // TODO listen for bluetooth state via broadcast receiver
+        //  https://developer.android.com/develop/connectivity/bluetooth/setup#kotlin
 
         SystemBroadcastReceiver(
             isExported = true,

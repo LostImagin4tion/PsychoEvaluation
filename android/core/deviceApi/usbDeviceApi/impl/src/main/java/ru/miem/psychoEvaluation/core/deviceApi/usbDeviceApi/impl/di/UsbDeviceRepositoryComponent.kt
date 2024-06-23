@@ -5,7 +5,7 @@ import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepo
 
 @Component(
     modules = [
-        UsbDeviceRepositoryModule::class
+        UsbDeviceRepositoryModule::class,
     ]
 )
 interface UsbDeviceRepositoryComponent : UsbDeviceRepositoryDiApi {

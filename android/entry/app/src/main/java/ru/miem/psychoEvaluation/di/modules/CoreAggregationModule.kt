@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import ru.miem.psychoEvaluation.core.dataStorage.api.DataStoreProvider
 import ru.miem.psychoEvaluation.core.dataStorage.impl.di.DataStorageApiProvider
+import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.di.BluetoothDeviceRepositoryApiProvider
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.impl.di.UsbDeviceRepositoryApiProvider
 import ru.miem.psychoEvaluation.dataStore
 
@@ -14,6 +15,7 @@ import ru.miem.psychoEvaluation.dataStore
     includes = [
         DataStorageApiProvider::class,
         UsbDeviceRepositoryApiProvider::class,
+        BluetoothDeviceRepositoryApiProvider::class,
     ]
 )
 interface CoreAggregationModule {

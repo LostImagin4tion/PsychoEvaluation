@@ -106,9 +106,17 @@ object Dependencies {
             val allCoilDeps = listOf(COIL_COMPOSE)
         }
 
+        object Accompanist {
+            private const val VERSION = "0.34.0"
+
+            private const val PERMISSIONS ="com.google.accompanist:accompanist-permissions:$VERSION"
+
+            val allDeps = listOf(PERMISSIONS)
+        }
+
         val allDeps = Core.allCoreDeps + Tooling.allToolingDeps + Navigation.allNavigationDeps +
             Foundation.allFoundationDeps + Material.allMaterialDeps +
-            Lifecycle.allLifecycleDeps + Coil.allCoilDeps
+            Lifecycle.allLifecycleDeps + Coil.allCoilDeps + Accompanist.allDeps
 
         val allDebugDeps = Tooling.allToolingDebugDeps
     }
