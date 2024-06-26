@@ -10,6 +10,6 @@ interface AirplaneGameScreen {
     @SuppressLint("NotConstructor")
     fun AirplaneGameScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit,
+        showMessage: (String) -> Unit,
     )
 }

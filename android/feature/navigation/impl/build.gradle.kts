@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":android:feature:authorization:api"))
     implementation(project(":android:feature:registration:api"))
     implementation(project(":android:feature:userProfile:api"))
+    implementation(project(":android:feature:settings:api"))
     implementation(project(":android:feature:trainingsList:api"))
     implementation(project(":android:feature:trainings:debugTraining:api"))
     implementation(project(":android:feature:trainings:airplaneGame:api"))

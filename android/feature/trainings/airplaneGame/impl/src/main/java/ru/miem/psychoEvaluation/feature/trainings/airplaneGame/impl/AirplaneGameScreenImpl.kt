@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import ru.miem.psychoEvaluation.common.designSystem.system.RequestBluetoothPermi
 import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
 import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
@@ -46,7 +48,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     @Composable
     override fun AirplaneGameScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -55,11 +57,17 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
         val viewModel: AirplaneGameScreenViewModel = viewModel()
 
+        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
+
         var isDeviceAccessGranted by remember {
             mutableStateOf(viewModel.isUsbDeviceAccessGranted(usbManager))
         }
         var isBluetoothAccessGranted by remember {
             mutableStateOf(false)
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.subscribeForSettingsChanges()
         }
 
         ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
@@ -107,18 +115,24 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         }
 
         AirplaneGameScreenContent(
+            showMessage = showMessage,
             dataFlow = viewModel.stressData,
             modelProducer = viewModel.chartModelProducer,
+            sensorDeviceType = sensorDeviceType.value,
         )
     }
 
     @Composable
     private fun AirplaneGameScreenContent(
+        showMessage: (String) -> Unit,
         dataFlow: StateFlow<UsbDeviceData>,
         modelProducer: CartesianChartModelProducer,
+        sensorDeviceType: SensorDeviceType
     ) = Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        showMessage("Current device type: $sensorDeviceType")
+
         AndroidView(
             factory = { context ->
                 val displayMetrics = context.resources.displayMetrics

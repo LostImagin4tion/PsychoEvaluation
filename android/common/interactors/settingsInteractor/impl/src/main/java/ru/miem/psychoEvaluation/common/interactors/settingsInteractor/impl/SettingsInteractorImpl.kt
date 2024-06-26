@@ -19,7 +19,7 @@ class SettingsInteractorImpl @Inject constructor() : SettingsInteractor {
 
     override fun getCurrentSensorDeviceType(): Flow<SensorDeviceType> {
         return dataStorage[DataStorageKeys.sensorDeviceConnectionType]
-            .map {  data ->
+            .map { data ->
                 SensorDeviceType.entries
                     .find { it.name == data }
                     ?: SensorDeviceType.UNKNOWN

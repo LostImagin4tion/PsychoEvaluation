@@ -4,8 +4,8 @@ import android.hardware.usb.UsbManager
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisDiApi
-import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepositoryDiApi
+import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.core.utils.coroutines.withIO
 import javax.inject.Inject
 

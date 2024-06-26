@@ -76,6 +76,9 @@ include(":android:feature:registration:impl")
 include(":android:feature:userProfile:api")
 include(":android:feature:userProfile:impl")
 
+include(":android:feature:settings:api")
+include(":android:feature:settings:impl")
+
 include(":android:feature:trainingsList:api")
 include(":android:feature:trainingsList:impl")
 
@@ -84,4 +87,3 @@ include(":android:feature:trainings:debugTraining:impl")
 
 include(":android:feature:trainings:airplaneGame:api")
 include(":android:feature:trainings:airplaneGame:impl")
-include(":android:common:interactors:settings")

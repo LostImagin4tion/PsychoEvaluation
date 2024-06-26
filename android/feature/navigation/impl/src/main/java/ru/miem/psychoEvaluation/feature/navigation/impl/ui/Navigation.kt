@@ -21,6 +21,8 @@ import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
+import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
+import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
@@ -39,16 +41,16 @@ fun Navigation(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val showMessage: (Int) -> Unit = { message ->
-        val strMessage = context.getString(message)
+    val showMessage: (String) -> Unit = { message ->
         scope.launch {
-            snackbarHostState.showSnackbar(strMessage)
+            snackbarHostState.showSnackbar(message)
         }
     }
 
     val authorizationScreen by diApi(AuthorizationDiApi::authorizationScreen)
     val registrationScreen by diApi(RegistrationDiApi::registrationScreen)
     val userProfileScreen by diApi(UserProfileDiApi::userProfileScreen)
+    val settingsScreen by diApi(SettingsScreenDiApi::settingsScreen)
     val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
@@ -61,6 +63,7 @@ fun Navigation(
         authorizationScreen = authorizationScreen,
         registrationScreen = registrationScreen,
         userProfileScreen = userProfileScreen,
+        settingsScreen = settingsScreen,
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
         airplaneGameScreen = airplaneGameScreen,
@@ -71,11 +74,12 @@ fun Navigation(
 fun NavigationContent(
     paddingValues: PaddingValues,
     navController: NavHostController,
-    showMessage: (Int) -> Unit,
+    showMessage: (String) -> Unit,
     setupSystemBarColors: @Composable () -> Unit,
     authorizationScreen: AuthorizationScreen,
     registrationScreen: RegistrationScreen,
     userProfileScreen: UserProfileScreen,
+    settingsScreen: SettingsScreen,
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
@@ -111,6 +115,14 @@ fun NavigationContent(
                 userProfileScreen.UserProfileScreen(
                     navController = navController,
                     showMessage = showMessage
+                )
+            }
+
+            composable(Routes.settings) {
+                setupSystemBarColors()
+                settingsScreen.SettingsScreen(
+                    navController = navController,
+                    showMessage = showMessage,
                 )
             }
 

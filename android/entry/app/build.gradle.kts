@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":android:feature:authorization:impl"))
     implementation(project(":android:feature:registration:impl"))
     implementation(project(":android:feature:userProfile:impl"))
+    implementation(project(":android:feature:settings:impl"))
     implementation(project(":android:feature:trainingsList:impl"))
     implementation(project(":android:feature:trainings:debugTraining:impl"))
     implementation(project(":android:feature:trainings:airplaneGame:impl"))

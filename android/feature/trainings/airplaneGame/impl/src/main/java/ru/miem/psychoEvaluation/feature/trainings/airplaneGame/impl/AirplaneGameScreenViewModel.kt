@@ -68,7 +68,7 @@ class AirplaneGameScreenViewModel : ViewModel() {
     fun scanBluetoothDevices(
         bluetoothScanner: BluetoothLeScanner
     ) {
-        val scanCallback = object: ScanCallback() {
+        val scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult?) {
                 super.onScanResult(callbackType, result)
                 Log.d("HELLO", "FOUND device ${result?.device?.name}")

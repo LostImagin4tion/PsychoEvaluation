@@ -10,6 +10,6 @@ interface TrainingsListScreen {
     @SuppressLint("NotConstructor")
     fun TrainingsListScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     )
 }

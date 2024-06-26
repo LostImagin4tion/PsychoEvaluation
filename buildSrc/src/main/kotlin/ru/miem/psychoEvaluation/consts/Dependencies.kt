@@ -109,7 +109,7 @@ object Dependencies {
         object Accompanist {
             private const val VERSION = "0.34.0"
 
-            private const val PERMISSIONS ="com.google.accompanist:accompanist-permissions:$VERSION"
+            private const val PERMISSIONS = "com.google.accompanist:accompanist-permissions:$VERSION"
 
             val allDeps = listOf(PERMISSIONS)
         }

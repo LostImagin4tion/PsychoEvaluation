@@ -10,6 +10,6 @@ interface AuthorizationScreen {
     @SuppressLint("NotConstructor")
     fun AuthorizationScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit,
+        showMessage: (String) -> Unit,
     )
 }

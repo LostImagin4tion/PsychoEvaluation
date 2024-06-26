@@ -15,7 +15,7 @@ class DataStorageImpl @Inject constructor(
     private val dataStore = dataStoreProvider()
 
     override fun <T> get(dataStorageKey: DataStorageKey<T>): Flow<T> {
-        return dataStore.data.map {  prefs ->
+        return dataStore.data.map { prefs ->
             prefs[dataStorageKey.key] ?: dataStorageKey.default
         }
     }

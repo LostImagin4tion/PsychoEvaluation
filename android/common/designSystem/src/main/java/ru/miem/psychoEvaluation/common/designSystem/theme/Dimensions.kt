@@ -9,6 +9,8 @@ object Dimensions {
     val halfMainVerticalPadding = mainVerticalPadding / 2
     val halfMainHorizontalPadding = mainHorizontalPadding / 2
 
-    val commonPadding = 10.dp
-    val commonSpacing = 16.dp
+    val commonPadding = 16.dp
+    val commonSpacing = 10.dp
+
+    val dividerThickness = 1.dp
 }
