@@ -1,15 +1,12 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter.LeScanCallback
 import android.bluetooth.BluetoothManager
-import android.companion.AssociationInfo
-import android.companion.AssociationRequest
-import android.companion.BluetoothLeDeviceFilter
-import android.companion.CompanionDeviceManager
 import android.content.Context
-import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
-import android.os.Build
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +42,6 @@ import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.mode
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import timber.log.Timber
-import java.util.concurrent.Executor
 import javax.inject.Inject
 
 class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
@@ -76,7 +72,9 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         }
 
         if (isBluetoothAccessGranted) {
-            EnableBluetoothIfNeeded(bluetoothAdapter)
+            EnableBluetoothIfNeeded(bluetoothAdapter) {
+                viewModel.scanBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
+            }
         }
 
         // TODO listen for bluetooth state via broadcast receiver

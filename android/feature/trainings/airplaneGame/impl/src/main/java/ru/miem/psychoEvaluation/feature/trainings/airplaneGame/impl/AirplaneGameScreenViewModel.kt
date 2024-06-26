@@ -1,6 +1,12 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.hardware.usb.UsbManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -44,6 +50,22 @@ class AirplaneGameScreenViewModel : ViewModel() {
     }
 
     fun disconnect() = usbDeviceInteractor.disconnect()
+
+    @SuppressLint("MissingPermission")
+    fun scanBluetoothDevices(
+        bluetoothScanner: BluetoothLeScanner
+    ) {
+        val scanCallback = object: ScanCallback() {
+            override fun onScanResult(callbackType: Int, result: ScanResult?) {
+                super.onScanResult(callbackType, result)
+                Log.d("HELLO", "FOUND device ${result?.device?.name}")
+            }
+        }
+
+        viewModelScope.launch {
+            bluetoothScanner.startScan(scanCallback)
+        }
+    }
 
     private companion object {
         val TAG: String = AirplaneGameScreenViewModel::class.java.simpleName
