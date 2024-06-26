@@ -1,7 +1,7 @@
-package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.impl.di
+package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 
 @Component(
     modules = [

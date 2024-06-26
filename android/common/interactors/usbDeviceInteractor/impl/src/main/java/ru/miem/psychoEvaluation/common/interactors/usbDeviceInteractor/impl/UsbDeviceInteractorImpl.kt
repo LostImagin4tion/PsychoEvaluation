@@ -1,8 +1,8 @@
-package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.impl
+package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.impl
 
 import android.hardware.usb.UsbManager
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.UsbDeviceInteractor
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.UsbDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepositoryDiApi

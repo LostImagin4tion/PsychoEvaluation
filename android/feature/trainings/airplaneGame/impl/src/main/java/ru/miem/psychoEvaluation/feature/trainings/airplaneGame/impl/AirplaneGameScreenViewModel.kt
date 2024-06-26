@@ -1,7 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
@@ -14,19 +13,33 @@ import com.patrykandpatrick.vico.core.model.lineSeries
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 
 class AirplaneGameScreenViewModel : ViewModel() {
 
     private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
+    private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _stressData = MutableStateFlow(UsbDeviceData(0, 0.0))
+    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.UNKNOWN)
 
+    val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
     val stressData: StateFlow<UsbDeviceData> = _stressData
+
     val allStress = mutableListOf<Int>()
     val chartModelProducer = CartesianChartModelProducer.build()
+
+    fun subscribeForSettingsChanges() {
+        viewModelScope.launch {
+            settingsInteractor.getCurrentSensorDeviceType().collect {
+                _sensorDeviceType.emit(it)
+            }
+        }
+    }
 
     fun isUsbDeviceAccessGranted(
         usbManager: UsbManager,

@@ -1,7 +1,7 @@
-package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api
+package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api
 
 import android.hardware.usb.UsbManager
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 
 interface UsbDeviceInteractor {
 

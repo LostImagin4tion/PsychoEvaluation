@@ -1,9 +1,9 @@
-package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.impl.di
+package ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.impl.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.ApiKey
 import ru.miem.psychoEvaluation.core.di.impl.ApiProvider
 
