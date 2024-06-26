@@ -10,6 +10,6 @@ interface DebugTrainingScreen {
     @SuppressLint("NotConstructor")
     fun DebugTrainingScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     )
 }

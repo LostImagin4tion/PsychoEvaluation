@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,11 +30,14 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.soywiz.korge.android.KorgeAndroidView
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
+import ru.miem.psychoEvaluation.common.designSystem.system.EnableBluetoothIfNeeded
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
+import ru.miem.psychoEvaluation.common.designSystem.system.RequestBluetoothPermissionsIfNeeded
 import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
 import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import timber.log.Timber
@@ -43,18 +48,42 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     @Composable
     override fun AirplaneGameScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+        val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
+            .adapter
 
         val viewModel: AirplaneGameScreenViewModel = viewModel()
+
+        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
         var isDeviceAccessGranted by remember {
             mutableStateOf(viewModel.isUsbDeviceAccessGranted(usbManager))
         }
+        var isBluetoothAccessGranted by remember {
+            mutableStateOf(false)
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.subscribeForSettingsChanges()
+        }
 
         ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+
+        RequestBluetoothPermissionsIfNeeded { permissionsGranted ->
+            isBluetoothAccessGranted = permissionsGranted
+        }
+
+        if (isBluetoothAccessGranted) {
+            EnableBluetoothIfNeeded(bluetoothAdapter) {
+                viewModel.scanBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
+            }
+        }
+
+        // TODO listen for bluetooth state via broadcast receiver
+        //  https://developer.android.com/develop/connectivity/bluetooth/setup#kotlin
 
         SystemBroadcastReceiver(
             isExported = true,
@@ -86,18 +115,24 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         }
 
         AirplaneGameScreenContent(
+            showMessage = showMessage,
             dataFlow = viewModel.stressData,
             modelProducer = viewModel.chartModelProducer,
+            sensorDeviceType = sensorDeviceType.value,
         )
     }
 
     @Composable
     private fun AirplaneGameScreenContent(
+        showMessage: (String) -> Unit,
         dataFlow: StateFlow<UsbDeviceData>,
         modelProducer: CartesianChartModelProducer,
+        sensorDeviceType: SensorDeviceType
     ) = Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        showMessage("Current device type: $sensorDeviceType")
+
         AndroidView(
             factory = { context ->
                 val displayMetrics = context.resources.displayMetrics

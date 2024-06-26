@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -45,7 +46,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
     @Composable
     override fun RegistrationScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         val navigateToAuthorization = { navController.navigate(Routes.authorization) }
 
@@ -57,7 +58,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
 
     @Composable
     private fun RegistrationScreenContent(
-        showMessage: (Int) -> Unit,
+        showMessage: (String) -> Unit,
         navigateToAuthorization: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,6 +77,8 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         var isEmailInputError by remember { mutableStateOf(false) }
         var isPasswordInputError by remember { mutableStateOf(false) }
 
+        val invalidDataMessage = stringResource(R.string.registration_invalid_data_alert)
+
         val isContinueButtonEnabled = emailInput.text.isNotBlank() && passwordInput.text.isNotBlank()
 
         val onContinueButtonClick = {
@@ -83,7 +86,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
             isPasswordInputError = passwordInput.text.isBlank()
 
             if (isEmailInputError || isPasswordInputError) {
-                showMessage(R.string.registration_invalid_data_alert)
+                showMessage(invalidDataMessage)
             }
         }
 

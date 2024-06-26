@@ -34,7 +34,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
     @Composable
     override fun DebugTrainingScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager

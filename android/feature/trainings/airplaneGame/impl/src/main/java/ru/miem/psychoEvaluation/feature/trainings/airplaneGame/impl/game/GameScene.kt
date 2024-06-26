@@ -5,7 +5,7 @@ import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.SContainer
 import com.soywiz.korge.view.addUpdater
 import kotlinx.coroutines.flow.StateFlow
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.GameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.gameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader

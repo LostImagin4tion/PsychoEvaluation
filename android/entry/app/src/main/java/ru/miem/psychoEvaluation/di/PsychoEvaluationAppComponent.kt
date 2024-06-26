@@ -1,5 +1,7 @@
 package ru.miem.psychoEvaluation.di
 
+import android.content.Context
+import dagger.BindsInstance
 import dagger.Component
 import ru.miem.psychoEvaluation.core.di.impl.ApiRegistry
 import ru.miem.psychoEvaluation.core.di.impl.ApiResolver
@@ -17,14 +19,20 @@ import ru.miem.psychoEvaluation.di.modules.FeatureAggregationModule
 interface PsychoEvaluationAppComponent {
 
     val apiResolver: ApiResolver
+
+    @Component.Builder
+    interface Builder {
+        @BindsInstance fun context(context: Context): Builder
+        fun build(): PsychoEvaluationAppComponent
+    }
 }
 
 /**
  * Initialization of application's **DI graph**
- *
  */
-fun initApis(): PsychoEvaluationAppComponent = DaggerPsychoEvaluationAppComponent
+fun initApis(context: Context): PsychoEvaluationAppComponent = DaggerPsychoEvaluationAppComponent
     .builder()
+    .context(context)
     .build()
     .also {
         ApiRegistry.init(it.apiResolver)

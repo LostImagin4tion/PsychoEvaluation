@@ -12,7 +12,7 @@ dependencies {
 
     implementation(project(":android:core:utils"))
 
-    implementation(project(":android:core:usbDeviceApi:api"))
+    implementation(project(":android:core:deviceApi:usbDeviceApi:api"))
     implementation(project(":android:core:dataAnalysis:airplaneGame:api"))
 
     // ==== Common layer ====

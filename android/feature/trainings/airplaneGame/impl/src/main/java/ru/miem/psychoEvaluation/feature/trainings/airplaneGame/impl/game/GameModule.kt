@@ -7,7 +7,7 @@ import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korma.geom.ScaleMode
 import com.soywiz.korma.geom.SizeInt
 import kotlinx.coroutines.flow.StateFlow
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractors.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import kotlin.reflect.KClass
 
 class GameModule(

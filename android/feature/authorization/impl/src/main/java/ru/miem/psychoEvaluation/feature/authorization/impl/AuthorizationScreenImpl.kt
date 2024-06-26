@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -41,7 +42,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
     @Composable
     override fun AuthorizationScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         val navigateToRegistration = { navController.navigate(Routes.registration) }
         val navigateToUserProfile = { navController.navigate(Routes.userProfile) }
@@ -55,7 +56,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
     @Composable
     private fun AuthorizationScreenContent(
-        showMessage: (Int) -> Unit,
+        showMessage: (String) -> Unit,
         navigateToRegistration: () -> Unit = {},
         navigateToUserProfile: () -> Unit = {},
     ) = Column(
@@ -75,6 +76,8 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         var isEmailInputError by remember { mutableStateOf(false) }
         var isPasswordInputError by remember { mutableStateOf(false) }
 
+        val invalidDataMessage = stringResource(R.string.authorization_invalid_data_alert)
+
         val isContinueButtonEnabled = emailInput.text.isNotBlank() && passwordInput.text.isNotBlank()
 
         val onContinueButtonClick = {
@@ -82,7 +85,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
             isPasswordInputError = passwordInput.text.isBlank()
 
             if (isEmailInputError || isPasswordInputError) {
-                showMessage(R.string.authorization_invalid_data_alert)
+                showMessage(invalidDataMessage)
             } else {
                 navigateToUserProfile()
             }

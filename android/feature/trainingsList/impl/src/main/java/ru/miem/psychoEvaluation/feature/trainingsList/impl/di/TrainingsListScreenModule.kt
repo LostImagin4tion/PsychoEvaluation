@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.trainingsList.impl.TrainingsListScreenIm
 interface TrainingsListScreenModule {
 
     @Binds
-    fun provideTrainingsListScreen(impl: TrainingsListScreenImpl): TrainingsListScreen
+    fun bindTrainingsListScreen(impl: TrainingsListScreenImpl): TrainingsListScreen
 }

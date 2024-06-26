@@ -23,7 +23,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
     @Composable
     override fun TrainingsListScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     ) {
         TrainingsScreenContent(
             navigateToDebugTraining = { navController.navigate(Routes.debugTraining) },

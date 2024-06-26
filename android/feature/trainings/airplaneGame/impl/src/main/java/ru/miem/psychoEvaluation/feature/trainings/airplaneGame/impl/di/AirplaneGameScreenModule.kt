@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.AirplaneGame
 interface AirplaneGameScreenModule {
 
     @Binds
-    fun provideAirplaneGameScreen(impl: AirplaneGameScreenImpl): AirplaneGameScreen
+    fun bindAirplaneGameScreen(impl: AirplaneGameScreenImpl): AirplaneGameScreen
 }

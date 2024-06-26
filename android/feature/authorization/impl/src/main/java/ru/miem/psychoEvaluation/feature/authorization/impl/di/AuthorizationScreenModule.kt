@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.authorization.impl.AuthorizationScreenIm
 interface AuthorizationScreenModule {
 
     @Binds
-    fun provideAuthorizationScreen(impl: AuthorizationScreenImpl): AuthorizationScreen
+    fun bindAuthorizationScreen(impl: AuthorizationScreenImpl): AuthorizationScreen
 }

@@ -10,6 +10,6 @@ interface UserProfileScreen {
     @SuppressLint("NotConstructor")
     fun UserProfileScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit
+        showMessage: (String) -> Unit
     )
 }

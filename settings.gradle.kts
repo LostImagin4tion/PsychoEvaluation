@@ -40,8 +40,14 @@ include(":android:entry:app")
 include(":android:core:di:api")
 include(":android:core:di:impl")
 
-include(":android:core:usbDeviceApi:api")
-include(":android:core:usbDeviceApi:impl")
+include(":android:core:dataStorage:api")
+include(":android:core:dataStorage:impl")
+
+include(":android:core:deviceApi:api")
+include(":android:core:deviceApi:usbDeviceApi:api")
+include(":android:core:deviceApi:usbDeviceApi:impl")
+include(":android:core:deviceApi:bleDeviceApi:api")
+include(":android:core:deviceApi:bleDeviceApi:impl")
 
 include(":android:core:dataAnalysis:airplaneGame:api")
 include(":android:core:dataAnalysis:airplaneGame:impl")
@@ -53,6 +59,9 @@ include(":android:common:designSystem")
 
 include(":android:common:interactors:usbDeviceInteractor:api")
 include(":android:common:interactors:usbDeviceInteractor:impl")
+
+include(":android:common:interactors:settingsInteractor:api")
+include(":android:common:interactors:settingsInteractor:impl")
 
 // Features
 include(":android:feature:navigation:api")
@@ -66,6 +75,9 @@ include(":android:feature:registration:impl")
 
 include(":android:feature:userProfile:api")
 include(":android:feature:userProfile:impl")
+
+include(":android:feature:settings:api")
+include(":android:feature:settings:impl")
 
 include(":android:feature:trainingsList:api")
 include(":android:feature:trainingsList:impl")

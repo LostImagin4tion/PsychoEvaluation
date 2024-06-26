@@ -20,25 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
  */
 @Composable
 fun LabelText(
-    @StringRes textRes: Int,
-    modifier: Modifier = Modifier,
-    textColor: Color = MaterialTheme.colorScheme.onPrimary,
-    textAlign: TextAlign = TextAlign.Start,
-    isLarge: Boolean = false
-) = Text(
-    text = stringResource(textRes),
-    style = if (isLarge) {
-        MaterialTheme.typography.labelLarge
-    } else {
-        MaterialTheme.typography.labelMedium
-    },
-    modifier = modifier,
-    textAlign = textAlign,
-    color = textColor
-)
-
-@Composable
-fun LabelText(
     text: String,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onPrimary,

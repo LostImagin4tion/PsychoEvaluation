@@ -10,6 +10,6 @@ interface RegistrationScreen {
     @SuppressLint("NotConstructor")
     fun RegistrationScreen(
         navController: NavHostController,
-        showMessage: (Int) -> Unit,
+        showMessage: (String) -> Unit,
     )
 }
