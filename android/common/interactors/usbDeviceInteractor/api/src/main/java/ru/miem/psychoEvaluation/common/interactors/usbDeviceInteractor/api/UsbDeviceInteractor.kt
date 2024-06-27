@@ -21,5 +21,6 @@ interface UsbDeviceInteractor {
         onNewValueEmitted: suspend (UsbDeviceData) -> Unit
     )
 
+    fun connectToUsbDevice(usbManager: UsbManager)
     fun disconnect()
 }

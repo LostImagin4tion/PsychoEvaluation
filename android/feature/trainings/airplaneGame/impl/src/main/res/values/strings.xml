@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_header_text">Connect device</string>
+    <string name="dialog_description_text">Looks like you\'are using BLE device. You need to connect it manually</string>
+</resources>

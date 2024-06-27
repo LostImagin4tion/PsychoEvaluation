@@ -50,13 +50,13 @@ fun TrainingCard(
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(10.dp)
             )
-            .padding(Dimensions.commonSpacing)
+            .padding(Dimensions.commonPadding)
             .fillMaxWidth()
     ) {
         Column(modifier = Modifier.weight(1f)) {
             LabelText(textRes = titleRes, isLarge = true)
 
-            Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+            Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
             BodyText(textRes = descriptionRes)
         }

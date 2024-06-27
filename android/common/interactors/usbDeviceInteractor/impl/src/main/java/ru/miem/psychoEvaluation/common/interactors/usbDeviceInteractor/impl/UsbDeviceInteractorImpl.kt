@@ -49,9 +49,7 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
         normalizationFactor: Double,
         onNewValueEmitted: suspend (UsbDeviceData) -> Unit
     ) {
-        if (usbDeviceRepository.isNotConnected) {
-            usbDeviceRepository.connectToUsbDevice(usbManager)
-        }
+        connectToUsbDevice(usbManager)
 
         withIO {
             usbDeviceRepository.deviceDataFlow.collect { rawData ->
@@ -62,6 +60,12 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
                     )
                 )
             }
+        }
+    }
+
+    override fun connectToUsbDevice(usbManager: UsbManager) {
+        if (usbDeviceRepository.isNotConnected) {
+            usbDeviceRepository.connectToUsbDevice(usbManager)
         }
     }
 

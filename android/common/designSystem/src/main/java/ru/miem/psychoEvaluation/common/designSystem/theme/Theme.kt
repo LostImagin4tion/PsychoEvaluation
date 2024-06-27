@@ -22,7 +22,8 @@ private val DarkColorPalette = darkColorScheme(
     onTertiary = Color.White,
     background = psychoDarkBackground,
     onBackground = Color.White,
-    surface = psychoDarkBackground
+    surface = psychoDarkBackground,
+    surfaceTint = psychoDarkBackground,
 )
 
 private val LightColorPalette = lightColorScheme(
@@ -40,7 +41,8 @@ private val LightColorPalette = lightColorScheme(
     onTertiary = psychoOnGray,
     background = psychoLightGrayBackground,
     onBackground = Color.Black,
-    surface = psychoLightGrayBackground
+    surface = psychoLightGrayBackground,
+    surfaceTint = psychoLightGrayBackground,
 )
 
 @Composable

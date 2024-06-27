@@ -2,13 +2,13 @@ package ru.miem.psychoEvaluation.common.designSystem.system
 
 import android.Manifest
 import android.os.Build
-import android.util.Log
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import ru.miem.psychoEvaluation.common.designSystem.R
+import ru.miem.psychoEvaluation.common.designSystem.dialogs.SystemDialog
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -30,16 +30,16 @@ fun RequestBluetoothPermissionsIfNeeded(
         }
     )
 
-    if (permissionsToRequest.shouldShowRationale) {
-        Log.d("HELLO", "SHOULD SHOW RATIONALE")
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {
-                Button(
-                    onClick = {
-                        permissionsToRequest.launchMultiplePermissionRequest()
-                    }
-                ) {}
+    if (permissionsToRequest.allPermissionsGranted) {
+        arePermissionsGranted(true)
+    }
+    else if (permissionsToRequest.shouldShowRationale) {
+        SystemDialog(
+            headerText = stringResource(R.string.request_bluetooth_permission_rationale_header_text),
+            descriptionText = stringResource(R.string.request_bluetooth_permission_rationale_description_text),
+            iconRes = R.drawable.bluetooth_icon,
+            onConfirmTapped = {
+                permissionsToRequest.launchMultiplePermissionRequest()
             }
         )
     } else {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="request_bluetooth_permission_rationale_header_text">Bluetooth permission</string>
+    <string name="request_bluetooth_permission_rationale_description_text">Bluetooth permission is required to connect to a Bluetooth sensor. Please grant in next dialog.</string>
+
+    <string name="system_dialog_dismiss_button_default_text">Cancel</string>
+    <string name="system_dialog_confirm_button_default_text">OK</string>
+</resources>
