@@ -59,7 +59,7 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
             isLarge = false,
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding * 2))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 
         NeuronsTextBlock()
 
@@ -67,15 +67,9 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
         FilledTextButton(
             textRes = R.string.open_settings_button_text,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.mainHorizontalPadding),
+                .padding(horizontal = Dimensions.primaryHorizontalPadding),
             onClick = navigateToSettings
         )
 
@@ -83,19 +77,13 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
         FilledTextButton(
             textRes = R.string.logout_button_text,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.mainHorizontalPadding),
+                .padding(horizontal = Dimensions.primaryHorizontalPadding),
             onClick = {}
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
     }
 
     private companion object {

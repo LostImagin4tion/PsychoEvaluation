@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_manager_header">Device Manager</string>
+    <string name="continue_button_text">Continue</string>
+    <string name="device_name_default">Unknown</string>
+</resources>

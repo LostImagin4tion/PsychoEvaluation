@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,6 +17,9 @@ import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
+import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDeviceManagerScreen
+import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.di.BluetoothDeviceManagerScreenDiApi
+import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManagerRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
@@ -40,7 +42,6 @@ fun Navigation(
     setupSystemBarColors: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     val showMessage: (String) -> Unit = { message ->
         scope.launch {
             snackbarHostState.showSnackbar(message)
@@ -51,6 +52,7 @@ fun Navigation(
     val registrationScreen by diApi(RegistrationDiApi::registrationScreen)
     val userProfileScreen by diApi(UserProfileDiApi::userProfileScreen)
     val settingsScreen by diApi(SettingsScreenDiApi::settingsScreen)
+    val deviceManagerScreen by diApi(BluetoothDeviceManagerScreenDiApi::bluetoothDeviceManagerScreen)
     val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
@@ -64,6 +66,7 @@ fun Navigation(
         registrationScreen = registrationScreen,
         userProfileScreen = userProfileScreen,
         settingsScreen = settingsScreen,
+        bluetoothDeviceManagerScreen = deviceManagerScreen,
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
         airplaneGameScreen = airplaneGameScreen,
@@ -80,6 +83,7 @@ fun NavigationContent(
     registrationScreen: RegistrationScreen,
     userProfileScreen: UserProfileScreen,
     settingsScreen: SettingsScreen,
+    bluetoothDeviceManagerScreen: BluetoothDeviceManagerScreen,
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
@@ -123,6 +127,22 @@ fun NavigationContent(
                 settingsScreen.SettingsScreen(
                     navController = navController,
                     showMessage = showMessage,
+                )
+            }
+
+            composable(
+                route = Routes.bluetoothDeviceManager,
+                arguments = BluetoothDeviceManagerRouteArgs.args,
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                bluetoothDeviceManagerScreen.DeviceManagerScreen(
+                    navController = navController,
+                    showMessage = showMessage,
+                    navigateToTraining = {
+                        backStackEntry.arguments
+                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
+                            ?.let(navController::navigate)
+                    }
                 )
             }
 

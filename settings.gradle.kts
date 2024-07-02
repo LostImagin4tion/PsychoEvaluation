@@ -79,6 +79,9 @@ include(":android:feature:userProfile:impl")
 include(":android:feature:settings:api")
 include(":android:feature:settings:impl")
 
+include(":android:feature:bluetoothDeviceManager:api")
+include(":android:feature:bluetoothDeviceManager:impl")
+
 include(":android:feature:trainingsList:api")
 include(":android:feature:trainingsList:impl")
 

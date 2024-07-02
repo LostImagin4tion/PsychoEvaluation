@@ -64,7 +64,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Dimensions.mainHorizontalPadding)
+            .padding(horizontal = Dimensions.primaryHorizontalPadding)
             .imePadding()
     ) {
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -146,12 +146,6 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         FilledTextButton(
             isEnabled = isContinueButtonEnabled,
             textRes = R.string.registration_continue_button,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier.fillMaxWidth(),
             onClick = onContinueButtonClick
         )

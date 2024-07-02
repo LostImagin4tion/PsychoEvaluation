@@ -85,7 +85,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Dimensions.mainHorizontalPadding)
+            .padding(horizontal = Dimensions.primaryHorizontalPadding)
             .imePadding()
     ) {
         SingleLineChart(

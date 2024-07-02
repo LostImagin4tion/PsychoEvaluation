@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="device_manager_header">Устройства</string>
+    <string name="continue_button_text">Продолжить</string>
+    <string name="device_name_default">Неизвестно</string>
+</resources>

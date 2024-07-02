@@ -63,7 +63,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = Dimensions.mainHorizontalPadding)
+            .padding(horizontal = Dimensions.primaryHorizontalPadding)
             .imePadding()
     ) {
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -132,12 +132,6 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         FilledTextButton(
             isEnabled = isContinueButtonEnabled,
             textRes = R.string.authorization_continue_button,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier.fillMaxWidth(),
             onClick = onContinueButtonClick
         )

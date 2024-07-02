@@ -73,7 +73,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
             isLarge = false,
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding * 2))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 
         LazyColumn(
             modifier = Modifier.fillMaxSize()

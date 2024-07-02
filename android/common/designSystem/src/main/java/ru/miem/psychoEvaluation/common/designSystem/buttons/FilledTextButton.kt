@@ -4,13 +4,17 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoGray
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 
 /**
  * [FilledTextButton] - basic Material You filled button
@@ -20,12 +24,17 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun FilledTextButton(
-    onClick: () -> Unit = {},
-    colors: ButtonColors,
-    modifier: Modifier,
-    @StringRes textRes: Int,
-    textStyle: TextStyle = MaterialTheme.typography.labelMedium,
     isEnabled: Boolean = true,
+    @StringRes textRes: Int,
+    modifier: Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium,
+    colors: ButtonColors = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = Color.White,
+        disabledContainerColor = psychoGray,
+        disabledContentColor = psychoOnGray
+    ),
+    onClick: () -> Unit = {},
 ) {
     Button(
         onClick = onClick,

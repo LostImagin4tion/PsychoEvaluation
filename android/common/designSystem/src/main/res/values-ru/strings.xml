@@ -5,4 +5,6 @@
 
     <string name="system_dialog_confirm_button_default_text">Ок</string>
     <string name="system_dialog_dismiss_button_default_text">Отмена</string>
+
+    <string name="unknown_device_alert">Вы не выбрали устройство</string>
 </resources>
