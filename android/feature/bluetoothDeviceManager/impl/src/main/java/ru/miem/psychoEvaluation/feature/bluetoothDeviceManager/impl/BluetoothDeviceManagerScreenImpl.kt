@@ -2,6 +2,8 @@ package ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,9 +29,12 @@ import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.models.BluetoothDevice
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDeviceManagerScreen
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.ui.BluetoothDeviceItem
+import ru.miem.psychoEvaluation.feature.navigation.impl.MainActivity
+import timber.log.Timber
 import javax.inject.Inject
 
 class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceManagerScreen {
@@ -56,8 +61,11 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
         DeviceManagerScreenContent(
             devices.value.values.toList(),
             isAnyDevicesConnected,
-            onDeviceTapped = {
-
+            onDeviceTapped = { deviceAddress ->
+                val activity = context.findActivity() as? MainActivity
+                Timber.tag("HELLO").d("TAPPED DEVICE $activity")
+                activity?.startSerialService(bluetoothAdapter, deviceAddress)
+//                viewModel.startService(context, bluetoothAdapter, deviceAddress)
             },
             navigateToTraining = navigateToTraining,
         )
@@ -67,7 +75,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
     private fun DeviceManagerScreenContent(
         devices: List<BluetoothDevice>,
         isAnyDeviceConnected: Boolean,
-        onDeviceTapped: () -> Unit,
+        onDeviceTapped: (deviceAddress: String) -> Unit,
         navigateToTraining: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
@@ -93,7 +101,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                         deviceName = item.name,
                         hardwareAddress = item.hardwareAddress,
                         onClick = {
-                            onDeviceTapped()
+                            onDeviceTapped(item.hardwareAddress)
                         },
                     )
 

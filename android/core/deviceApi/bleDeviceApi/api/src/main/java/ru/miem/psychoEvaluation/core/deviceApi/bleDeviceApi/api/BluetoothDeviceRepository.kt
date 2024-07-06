@@ -1,13 +1,15 @@
 package ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api
 
-import android.bluetooth.le.BluetoothLeScanner
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import kotlinx.coroutines.flow.Flow
 import ru.miem.psychoEvaluation.core.deviceApi.api.DeviceRepository
-import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.models.BluetoothDevice
 
 interface BluetoothDeviceRepository : DeviceRepository {
-    val devicesFlow: Flow<BluetoothDevice>
-
-    fun scanForDevices(scanner: BluetoothLeScanner)
-    fun connectToBluetoothDevice()
+    fun connectToBluetoothDevice(
+        activity: Activity,
+        bluetoothAdapter: BluetoothAdapter,
+        deviceHardwareAddress: String,
+        onDeviceConnected: () -> Unit,
+    )
 }

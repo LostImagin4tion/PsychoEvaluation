@@ -21,4 +21,5 @@ dependencies {
     api(project(":android:feature:bluetoothDeviceManager:api"))
 
     implementation(project(":android:feature:navigation:api"))
+    implementation(project(":android:feature:navigation:impl"))
 }

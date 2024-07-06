@@ -38,4 +38,8 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
             }
         }
     }
+
+    private companion object {
+        val TAG: String = BluetoothDeviceManagerScreenImpl::class.java.name
+    }
 }

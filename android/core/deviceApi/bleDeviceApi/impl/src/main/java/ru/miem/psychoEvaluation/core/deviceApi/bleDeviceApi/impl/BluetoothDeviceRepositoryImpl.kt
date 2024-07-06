@@ -1,120 +1,153 @@
 package ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl
 
-import android.annotation.SuppressLint
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
-import android.bluetooth.le.ScanSettings
-import android.os.Build
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.timeout
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.BluetoothDeviceRepository
-import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.models.BluetoothDevice
-import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.models.BluetoothDeviceStatus
+import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.SerialListener
+import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.SerialService
+import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.SerialSocket
+import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.utils.TextUtil
 import timber.log.Timber
-import java.security.InvalidParameterException
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
-class BluetoothDeviceRepositoryImpl @Inject constructor() : BluetoothDeviceRepository {
+class BluetoothDeviceRepositoryImpl @Inject constructor() :
+    BluetoothDeviceRepository,
+    ServiceConnection {
 
-    private val devicesScanCallback = object: ScanCallback() {
-        var onScanResultCallback: (Int, ScanResult?) -> Unit = { _, _ -> }
-        var onScanCompleted: () -> Unit = {}
+    private var pendingNewline = false
+    private var newline = TextUtil.NEWLINE_CRLF
 
-        override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            super.onScanResult(callbackType, result)
-            onScanResultCallback(callbackType, result)
+    private val serialListener = object : SerialListener {
+        var onSerialReadCallback: (ByteArray) -> Unit = {}
+
+        override fun onSerialConnect() {
+            isConnected = true
+            onDeviceConnected()
         }
 
-        override fun onScanFailed(errorCode: Int) {
-            super.onScanFailed(errorCode)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Timber.tag(TAG)
-                    .e("Bluetooth LE Scan failed, reason: ${errorCode.toScanErrorMessage()}")
+        override fun onSerialConnectError(e: Exception?) {
+            disconnect()
+        }
+
+        override fun onSerialRead(data: ByteArray) {
+            onSerialReadCallback(data)
+        }
+
+        override fun onSerialIoError(e: Exception?) {
+            disconnect()
+        }
+    }
+
+    private var isFirstStart = true
+    private var service: SerialService? = null
+    private var context: Context? = null
+    private var bluetoothAdapter: BluetoothAdapter? = null
+    private var deviceAddress: String? = null
+    private var onDeviceConnected: () -> Unit = {}
+
+    override val deviceDataFlow: Flow<Int> = createSerialListenerCallbackFlow()
+
+    override var isConnected: Boolean = false
+        private set
+
+    override fun connectToBluetoothDevice(
+        activity: Activity,
+        bluetoothAdapter: BluetoothAdapter,
+        deviceHardwareAddress: String,
+        onDeviceConnected: () -> Unit,
+    ) {
+        this.context = activity
+        this.bluetoothAdapter = bluetoothAdapter
+        this.deviceAddress = deviceHardwareAddress
+        this.onDeviceConnected = onDeviceConnected
+
+        service?.attach(serialListener)
+            ?: run {
+                activity.bindService(
+                    Intent(activity, SerialService::class.java),
+                    this,
+                    Context.BIND_AUTO_CREATE
+                )
             }
-        }
-    }
-
-    override val devicesFlow: Flow<BluetoothDevice> = createScanCallbackFlow()
-
-    override val deviceDataFlow: Flow<Int>
-        get() = TODO("Not yet implemented")
-
-    override val isConnected: Boolean
-        get() = TODO("Not yet implemented")
-
-    @SuppressLint("MissingPermission")
-    override fun scanForDevices(scanner: BluetoothLeScanner) {
-        devicesScanCallback.onScanCompleted = { scanner.stopScan(devicesScanCallback) }
-        scanner.startScan(devicesScanCallback)
-    }
-
-    override fun connectToBluetoothDevice() {
-        TODO("Not yet implemented")
     }
 
     override fun disconnect() {
-        TODO("Not yet implemented")
+        service?.disconnect()
     }
 
-    @OptIn(FlowPreview::class)
-    private fun createScanCallbackFlow(): Flow<BluetoothDevice> = callbackFlow {
-        devicesScanCallback.apply {
-            onScanResultCallback = { callbackType, result ->
-                result.toBluetoothDevice(callbackType)
-                    ?.let {
-                        trySendBlocking(it).onFailure {  throwable ->
-                            Timber.tag(TAG).d("Failed to send new bluetooth device $it " +
-                                    "with error $throwable ${throwable?.message}"
-                            )
-                        }
-                    }
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        Timber.tag(TAG).d("onServiceConnected(ComponentName?, IBinder?)")
+        this.service = (service as? SerialService.SerialBinder)
+            ?.service
+            ?.apply { attach(serialListener) }
+
+        if (isFirstStart) {
+            isFirstStart = false
+            connectToSerialSocket()
+        }
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        service = null
+    }
+
+    private fun connectToSerialSocket() {
+        val context = this.context
+        val bluetoothAdapter = this.bluetoothAdapter
+        val deviceAddress = this.deviceAddress
+
+        if (context != null && bluetoothAdapter != null && deviceAddress != null) {
+            val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
+            val socket = SerialSocket(context, device)
+
+            service?.connect(socket)
+        }
+    }
+
+    private fun createSerialListenerCallbackFlow(): Flow<Int> = callbackFlow {
+        serialListener.apply {
+            onSerialReadCallback = { bytes ->
+                val stressData = convertData(bytes)
+                trySendBlocking(stressData).onFailure { throwable ->
+                    Timber.tag(TAG)
+                        .e(
+                            message = "Failed to send new bytes from bluetooth device %s " +
+                                    "with error %s, %s",
+                            bytes.joinToString(","),
+                            throwable.toString(),
+                            throwable?.message
+                        )
+                }
             }
         }
 
-        awaitClose(devicesScanCallback.onScanCompleted)
-    }
-        .timeout(10.seconds)
-        .catch { throwable ->
-            val exceptionMessage = if (throwable is TimeoutCancellationException) {
-                "Scan flow completed with timeout exception $throwable ${throwable.message}"
-            } else {
-                "Scan flow failed with exception $throwable ${throwable.message}"
-            }
-            Timber.tag(TAG).e(exceptionMessage)
+        awaitClose {
+            disconnect()
         }
-        .flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO)
 
-    @SuppressLint("MissingPermission")
-    private fun ScanResult?.toBluetoothDevice(callbackType: Int) = this
-        ?.takeIf { it.isConnectable }
-        ?.device
-        ?.let {
-            BluetoothDevice(
-                it.name,
-                it.address,
-                callbackType.callbackTypeToStatus()
-            )
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun convertData(data: ByteArray): Int {
+        val stringBuilder = StringBuilder().apply {
+            append(String(data))
         }
 
-    private fun Int.callbackTypeToStatus(): BluetoothDeviceStatus = when (this) {
-        ScanSettings.CALLBACK_TYPE_FIRST_MATCH,
-        ScanSettings.CALLBACK_TYPE_ALL_MATCHES,
-        ScanSettings.CALLBACK_TYPE_ALL_MATCHES_AUTO_BATCH,
-        -> BluetoothDeviceStatus.AVAILABLE
-
-        ScanSettings.CALLBACK_TYPE_MATCH_LOST -> BluetoothDeviceStatus.NOT_AVAILABLE
-        else -> throw InvalidParameterException("Got unexpected code of scan callback type: $this")
+        return stringBuilder.removePrefix("M")
+            .toString()
+            .trim()
+            .hexToInt(HexFormat.UpperCase)
     }
 
     private companion object {

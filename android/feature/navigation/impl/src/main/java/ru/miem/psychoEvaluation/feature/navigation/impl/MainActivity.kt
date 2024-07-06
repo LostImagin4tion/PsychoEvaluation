@@ -1,10 +1,21 @@
 package ru.miem.psychoEvaluation.feature.navigation.impl
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.hardware.usb.UsbManager
 import android.os.Bundle
+import android.os.IBinder
+import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.BackgroundColorSpan
+import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.RowScope
@@ -41,12 +52,28 @@ import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.PsychoEvaluationTheme
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Screens
+import ru.miem.psychoEvaluation.feature.navigation.impl.service.SerialListener
+import ru.miem.psychoEvaluation.feature.navigation.impl.service.SerialService
+import ru.miem.psychoEvaluation.feature.navigation.impl.service.SerialSocket
+import ru.miem.psychoEvaluation.feature.navigation.impl.service.utils.TextUtil
 import ru.miem.psychoEvaluation.feature.navigation.impl.ui.Navigation
 import timber.log.Timber
+import java.util.ArrayDeque
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ServiceConnection, SerialListener {
 
     private lateinit var navController: NavHostController
+
+    var bluetoothAdapter: BluetoothAdapter? = null
+    var deviceAddress: String? = null
+
+    private var initialStart = true
+    var isConnected = false
+
+    private var pendingNewline = false
+    private var newline = TextUtil.newline_crlf
+
+    private var service: SerialService? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,6 +200,146 @@ class MainActivity : AppCompatActivity() {
                     .clip(CircleShape),
             )
         }
+    }
+
+    fun startSerialService(bluetoothAdapter: BluetoothAdapter, deviceAddress: String) {
+        this.bluetoothAdapter = bluetoothAdapter
+        this.deviceAddress = deviceAddress
+
+        service?.attach(this)
+            ?: run {
+                Timber.tag("HELLO").d("ACTIVITY $this")
+                this.bindService(
+                    Intent(this, SerialService::class.java),
+                    this,
+                    Context.BIND_AUTO_CREATE
+                )
+            }
+    }
+
+    fun stopService() {
+        service?.detach()
+    }
+
+    fun unbindService(context: Context) {
+        context.unbindService(this)
+    }
+
+    fun connect(context: Context, bluetoothAdapter: BluetoothAdapter, deviceAddress: String) {
+        val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
+        val socket = SerialSocket(context, device)
+        service?.connect(socket)
+    }
+
+    fun disconnect() {
+        service?.disconnect()
+    }
+
+    private fun receive(datas: ArrayDeque<ByteArray>) {
+        val spn = SpannableStringBuilder()
+        for (data in datas) {
+            var msg = String(data)
+            Timber.tag("HELLO").d("NEW MESSAGE $msg")
+
+            if (newline == TextUtil.newline_crlf && msg.isNotEmpty()) {
+                // don't show CR as ^M if directly before LF
+                msg = msg.replace(TextUtil.newline_crlf, TextUtil.newline_lf)
+
+                // special handling if CR and LF come in separate fragments
+                if (pendingNewline && msg[0] == '\n') {
+                    if (spn.length >= 2) {
+                        spn.delete(spn.length - 2, spn.length)
+                    }
+                }
+                pendingNewline = msg[msg.length - 1] == '\r'
+            }
+            Timber.tag("HELLO").d("NEW MESSAGE AFTER REPLACE $msg")
+            spn.append(toCaretString(msg))
+        }
+        Timber.tag(TAG).d("HELLO NEW DATA $spn")
+    }
+
+    private fun toCaretString(string: CharSequence): CharSequence {
+        var found = false
+
+        for (i in string.indices) {
+            if (string[i].code < 32 && string[i] != '\n') {
+                found = true
+                break
+            }
+        }
+        if (!found) {
+            return string
+        }
+
+        val sb = SpannableStringBuilder()
+
+        for (pos in string.indices) {
+            if (string[pos].code < 32 && string[pos] != '\n') {
+                sb.append('^')
+                sb.append(
+                    (string[pos].code + 64).toChar()
+                )
+                sb.setSpan(
+                    BackgroundColorSpan(caretBackground),
+                    sb.length - 2,
+                    sb.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            } else {
+                sb.append(string[pos])
+            }
+        }
+        return sb
+    }
+
+    @ColorInt
+    var caretBackground: Int = -0x99999a
+
+
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        Timber.tag("HELLO").d("SERVICE CONNECTED")
+        this.service = (service as SerialService.SerialBinder).service
+            .apply {
+                attach(this@MainActivity)
+            }
+
+        if (initialStart) {
+            initialStart = false
+            val bluetoothAdapter = this.bluetoothAdapter
+            val deviceAddress = this.deviceAddress
+
+            if (bluetoothAdapter != null && deviceAddress != null) {
+                connect(this, bluetoothAdapter, deviceAddress)
+            }
+        }
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        service = null
+    }
+
+    override fun onSerialConnect() {
+        isConnected = true
+
+    }
+
+    override fun onSerialConnectError(e: Exception?) {
+        disconnect()
+    }
+
+    override fun onSerialRead(data: ByteArray?) {
+        val datas = ArrayDeque<ByteArray>()
+        datas.add(data)
+        receive(datas)
+    }
+
+    override fun onSerialRead(datas: ArrayDeque<ByteArray>?) {
+        datas?.let { receive(it) }
+    }
+
+    override fun onSerialIoError(e: Exception?) {
+        disconnect()
     }
 
     private companion object {
