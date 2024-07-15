@@ -7,7 +7,10 @@ import timber.log.Timber
 import java.io.IOException
 
 class NrfDelegate(
-    private val onCharacteristicsCreated: (read: BluetoothGattCharacteristic, write: BluetoothGattCharacteristic) -> Unit,
+    private val onCharacteristicsCreated: (
+        read: BluetoothGattCharacteristic,
+        write: BluetoothGattCharacteristic
+    ) -> Unit,
     private val onSerialConnectError: (Exception) -> Unit,
 ) : DeviceDelegate() {
     override fun connectCharacteristics(gattService: BluetoothGattService): Boolean {
@@ -27,11 +30,9 @@ class NrfDelegate(
 
             if (rw2write && rw3write) {
                 onSerialConnectError(IOException("Multiple write characteristics ($rw2prop/$rw3prop)"))
-            }
-            else if (rw2write) {
+            } else if (rw2write) {
                 onCharacteristicsCreated(rw2, rw3)
-            }
-            else if (rw3write) {
+            } else if (rw3write) {
                 onCharacteristicsCreated(rw3, rw2)
             } else {
                 onSerialConnectError(IOException("No write characteristic ($rw2prop/$rw3prop)"))

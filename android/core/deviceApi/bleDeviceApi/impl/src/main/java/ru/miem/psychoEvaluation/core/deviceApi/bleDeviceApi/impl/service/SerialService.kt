@@ -70,7 +70,6 @@ class SerialService : Service(), SerialListener {
         if (connected) {
             synchronized(this) {
                 listener?.let {
-
                     mainLooper.post {
                         listener?.onSerialConnect() ?: queue1.add(QueueItem(QueueType.CONNECT))
                     }
@@ -83,7 +82,6 @@ class SerialService : Service(), SerialListener {
         if (connected) {
             synchronized(this) {
                 listener?.let {
-
                     mainLooper.post {
                         listener?.onSerialIoError(e)
                             ?: run {

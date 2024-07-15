@@ -94,6 +94,8 @@ fun NavigationContent(
             .padding(paddingValues),
         color = MaterialTheme.colorScheme.background
     ) {
+        val navigateToRoute: (String) -> Unit = { route -> navController.navigate(route) }
+
         NavHost(
             navController = navController,
             startDestination = remember { Routes.userProfile }
@@ -101,7 +103,7 @@ fun NavigationContent(
             composable(Routes.authorization) {
                 setupSystemBarColors()
                 authorizationScreen.AuthorizationScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
@@ -109,7 +111,7 @@ fun NavigationContent(
             composable(Routes.registration) {
                 setupSystemBarColors()
                 registrationScreen.RegistrationScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
@@ -117,7 +119,7 @@ fun NavigationContent(
             composable(Routes.userProfile) {
                 setupSystemBarColors()
                 userProfileScreen.UserProfileScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
@@ -125,7 +127,7 @@ fun NavigationContent(
             composable(Routes.settings) {
                 setupSystemBarColors()
                 settingsScreen.SettingsScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                 )
             }
@@ -136,7 +138,7 @@ fun NavigationContent(
             ) { backStackEntry ->
                 setupSystemBarColors()
                 bluetoothDeviceManagerScreen.DeviceManagerScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                     navigateToTraining = {
                         backStackEntry.arguments
@@ -149,7 +151,7 @@ fun NavigationContent(
             composable(Routes.trainingsList) {
                 setupSystemBarColors()
                 trainingsListScreen.TrainingsListScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
@@ -157,7 +159,7 @@ fun NavigationContent(
             composable(Routes.debugTraining) {
                 setupSystemBarColors()
                 debugTrainingScreen.DebugTrainingScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
@@ -165,7 +167,7 @@ fun NavigationContent(
             composable(Routes.airplaneGame) {
                 setupSystemBarColors()
                 airplaneGameScreen.AirplaneGameScreen(
-                    navController = navController,
+                    navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                 )
             }

@@ -8,10 +8,10 @@ object Routes {
     const val settings = "settings"
 
     val bluetoothDeviceManagerRouteTemplate = "bluetoothDeviceManager?" +
-            "${BluetoothDeviceManagerRouteArgs.trainingRoute}=%s"
-                .format(
-                    BluetoothDeviceManagerRouteArgs.trainingRoute,
-                )
+        "${BluetoothDeviceManagerRouteArgs.trainingRoute}=%s"
+            .format(
+                BluetoothDeviceManagerRouteArgs.trainingRoute,
+            )
 
     val bluetoothDeviceManager = bluetoothDeviceManagerRouteTemplate
         .format(

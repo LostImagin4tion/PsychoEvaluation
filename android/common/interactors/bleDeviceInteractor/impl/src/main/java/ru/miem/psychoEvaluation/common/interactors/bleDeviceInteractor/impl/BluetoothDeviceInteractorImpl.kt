@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.timeout
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.BluetoothDevice
@@ -37,7 +36,7 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
     private val bleDeviceRepository by diApi(BluetoothDeviceRepositoryDiApi::bluetoothDeviceRepository)
 
-    private val devicesScanCallback = object: ScanCallback() {
+    private val devicesScanCallback = object : ScanCallback() {
         var onScanResultCallback: (Int, ScanResult?) -> Unit = { _, _ -> }
         var onScanCompleted: () -> Unit = {}
 
@@ -150,7 +149,7 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
         awaitClose(devicesScanCallback.onScanCompleted)
     }
-        .timeout(10.seconds)
+        .timeout(30.seconds)
         .catch { throwable ->
             val exceptionMessage = if (throwable is TimeoutCancellationException) {
                 "Scan flow completed with timeout exception $throwable ${throwable.message}"

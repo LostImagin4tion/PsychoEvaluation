@@ -7,7 +7,7 @@ import timber.log.Timber
 
 class Cc245XDelegate(
     private val onCharacteristicsCreated:
-        (read: BluetoothGattCharacteristic, write: BluetoothGattCharacteristic) -> Unit
+    (read: BluetoothGattCharacteristic, write: BluetoothGattCharacteristic) -> Unit
 ) : DeviceDelegate() {
 
     override fun connectCharacteristics(gattService: BluetoothGattService): Boolean {

@@ -3,6 +3,7 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,13 +21,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.soywiz.korge.android.KorgeAndroidView
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
@@ -37,7 +38,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
     @Composable
     override fun AirplaneGameScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
@@ -49,6 +50,10 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
+        }
+
+        BackHandler {
+            navigateToRoute(Routes.trainingsList)
         }
 
         ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)

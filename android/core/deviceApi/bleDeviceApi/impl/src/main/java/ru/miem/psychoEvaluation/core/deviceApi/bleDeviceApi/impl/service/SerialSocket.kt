@@ -43,7 +43,7 @@ class SerialSocket(
     private var writePending = false
     private var canceled = false
     private var connected = false
-    private var payloadSize = DEFAULT_MTU - 3
+    private var payloadSize = DEFAULT_MTU - MTU_NUM
 
     fun disconnect() {
         Timber.tag(TAG).d("disconnect()")
@@ -112,10 +112,12 @@ class SerialSocket(
             if (!gatt.discoverServices()) {
                 onSerialConnectError(IOException("Discover services failed"))
             }
-        }
-        else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-            if (connected) onSerialIoError(IOException("GATT status $status"))
-            else onSerialConnectError(IOException("GATT status $status"))
+        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+            if (connected) {
+                onSerialIoError(IOException("GATT status $status"))
+            } else {
+                onSerialConnectError(IOException("GATT status $status"))
+            }
         } else {
             Timber.tag(TAG).d("Unknown connect state $newState $status")
         }
@@ -136,8 +138,10 @@ class SerialSocket(
         var sync = true
         writePending = false
         for (gattService in gatt.services) {
-
-            val onCharacteristicsCreated: (BluetoothGattCharacteristic, BluetoothGattCharacteristic) -> Unit = { read, write ->
+            val onCharacteristicsCreated: (
+                BluetoothGattCharacteristic,
+                BluetoothGattCharacteristic
+            ) -> Unit = { read, write ->
                 readCharacteristic = read
                 writeCharacteristic = write
             }
@@ -194,7 +198,7 @@ class SerialSocket(
         Timber.tag(TAG).d("MTU size $mtu, status=$status")
 
         if (status == BluetoothGatt.GATT_SUCCESS) {
-            payloadSize = mtu - 3
+            payloadSize = mtu - MTU_NUM
             Timber.tag(TAG).d("Payload size $payloadSize")
         }
         connectCharacteristics3(gatt)
@@ -205,7 +209,7 @@ class SerialSocket(
         writeCharacteristic?.properties
             ?.let {
                 val secondOperand = BluetoothGattCharacteristic.PROPERTY_WRITE +
-                        BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                    BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
 
                 if (it and secondOperand == 0) { // HM10,TI uart,Telit have only WRITE_NO_RESPONSE
                     onSerialConnectError(IOException("Write characteristic not writable"))
@@ -228,15 +232,22 @@ class SerialSocket(
         readCharacteristic?.properties
             ?.let {
                 if (it and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) {
-                    val result = writeDescriptor(gatt, readDescriptor, BluetoothGattDescriptor.ENABLE_INDICATION_VALUE)
+                    val result = writeDescriptor(
+                        gatt,
+                        readDescriptor,
+                        BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                    )
                     Timber.tag(TAG).d("Enable read indication result=$result")
 
                     if (!result) {
                         onSerialConnectError(IOException("Read characteristic CCCD descriptor not writable"))
                     }
-                }
-                else if (it and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
-                    val result = writeDescriptor(gatt, readDescriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+                } else if (it and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
+                    val result = writeDescriptor(
+                        gatt,
+                        readDescriptor,
+                        BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                    )
                     Timber.tag(TAG).d("Enable read notification result=$result")
 
                     if (!result) {
@@ -271,8 +282,10 @@ class SerialSocket(
             if (status != BluetoothGatt.GATT_SUCCESS) {
                 onSerialConnectError(IOException("Write descriptor failed"))
             } else {
-                // onCharacteristicChanged with incoming data can happen after writeDescriptor(ENABLE_INDICATION/NOTIFICATION)
-                // before confirmed by this method, so receive data can be shown before device is shown as 'Connected'.
+                // onCharacteristicChanged with incoming data
+                // can happen after writeDescriptor(ENABLE_INDICATION/NOTIFICATION)
+                // before confirmed by this method,
+                // so receive data can be shown before device is shown as 'Connected'.
                 onSerialConnect()
                 connected = true
                 Timber.tag(TAG).d("Connected")
@@ -401,7 +414,6 @@ class SerialSocket(
         val data: ByteArray?
 
         synchronized(writeBuffer) {
-
             if (writeBuffer.isNotEmpty() && delegate?.canWrite() == true) {
                 writePending = true
                 data = writeBuffer.removeAt(0)
@@ -452,7 +464,7 @@ class SerialSocket(
         }
     }
 
-    private  fun writeCharacteristic(
+    private fun writeCharacteristic(
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic,
         value: ByteArray
@@ -469,8 +481,8 @@ class SerialSocket(
         // BLE standard does not limit, some BLE 4.2 devices support 251,
         // various source say that Android has max 512
         private const val MAX_MTU = 512
-
         private const val DEFAULT_MTU = 23
+        private const val MTU_NUM = 3
 
         private val TAG: String = SerialSocket::class.java.simpleName
     }

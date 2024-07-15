@@ -1,7 +1,6 @@
 package ru.miem.psychoEvaluation.feature.navigation.impl
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.hardware.usb.UsbManager
 import android.os.Bundle
@@ -43,14 +42,10 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.PsychoEvaluationTheme
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Screens
 import ru.miem.psychoEvaluation.feature.navigation.impl.ui.Navigation
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavHostController
-
-    var bluetoothAdapter: BluetoothAdapter? = null
-    var deviceAddress: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +87,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.tag("HELLO").e("HELLO ON NEW INTENT")
         if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
             navController.navigate(Routes.debugTraining)
         }
@@ -178,14 +172,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-//    fun stopService() {
-//        service?.detach()
-//    }
-//
-//    fun unbindService(context: Context) {
-//        context.unbindService(this)
-//    }
 
     private companion object {
         val TAG: String = MainActivity::class.java.simpleName

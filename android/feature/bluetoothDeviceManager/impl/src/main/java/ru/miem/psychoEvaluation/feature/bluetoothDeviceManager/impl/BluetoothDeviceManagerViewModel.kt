@@ -22,7 +22,6 @@ import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceState
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.toDeviceState
-import timber.log.Timber
 
 class BluetoothDeviceManagerViewModel : ViewModel() {
 
@@ -76,7 +75,6 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
         ) {
             changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.CONNECTED)
             onDeviceConnected()
-            collectData()
         }
     }
 
@@ -98,14 +96,6 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
                 .toImmutableMap()
 
             _devices.emit(newMap)
-        }
-    }
-
-    private fun collectData() {
-        viewModelScope.launch {
-            bleDeviceInteractor.getRawDeviceData {
-                Timber.tag(TAG).d("HELLO new device data $it")
-            }
         }
     }
 

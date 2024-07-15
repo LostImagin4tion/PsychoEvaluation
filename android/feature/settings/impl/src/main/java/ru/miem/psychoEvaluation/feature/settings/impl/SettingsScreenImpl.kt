@@ -8,23 +8,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
-import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
+import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
@@ -37,7 +32,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
 
     @Composable
     override fun SettingsScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
         val viewModel: SettingsScreenViewModel = viewModel()
@@ -60,10 +55,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
         changeSensorDeviceType: (SensorDeviceType) -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .imePadding()
+        modifier = Modifier.screenPaddings()
     ) {
         val context = LocalContext.current
 

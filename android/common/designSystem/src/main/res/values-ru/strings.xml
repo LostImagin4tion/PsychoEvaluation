@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="request_bluetooth_permission_rationale_header_text">Доступ к Bluetooth</string>
-    <string name="request_bluetooth_permission_rationale_description_text">Доступ к Bluetooth permission необходим для подключения к Bluetooth-датчику. Пожалуйста, выдайте его в следующем диалоге.</string>
+    <string name="request_bluetooth_permission_rationale_description_text">Доступ к Bluetooth необходим для подключения к Bluetooth-датчику. Пожалуйста, выдайте его в следующем диалоге.</string>
 
     <string name="system_dialog_confirm_button_default_text">Ок</string>
     <string name="system_dialog_dismiss_button_default_text">Отмена</string>

@@ -18,16 +18,12 @@ import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.BluetoothDeviceR
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.SerialListener
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.SerialService
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.SerialSocket
-import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.utils.TextUtil
 import timber.log.Timber
 import javax.inject.Inject
 
 class BluetoothDeviceRepositoryImpl @Inject constructor() :
     BluetoothDeviceRepository,
     ServiceConnection {
-
-    private var pendingNewline = false
-    private var newline = TextUtil.NEWLINE_CRLF
 
     private val serialListener = object : SerialListener {
         var onSerialReadCallback: (ByteArray) -> Unit = {}
@@ -124,7 +120,7 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
                     Timber.tag(TAG)
                         .e(
                             message = "Failed to send new bytes from bluetooth device %s " +
-                                    "with error %s, %s",
+                                "with error %s, %s",
                             bytes.joinToString(","),
                             throwable.toString(),
                             throwable?.message

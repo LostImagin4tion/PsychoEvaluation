@@ -2,13 +2,13 @@ package ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,9 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
+import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
@@ -29,18 +30,17 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDevi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceState
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.ui.BluetoothDeviceItem
-import timber.log.Timber
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import javax.inject.Inject
 
 class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceManagerScreen {
 
     @Composable
     override fun DeviceManagerScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit,
         navigateToTraining: () -> Unit,
     ) {
-        Timber.tag(TAG).w("HELLO DEVICE MANAGER SCREEN")
         val context = LocalContext.current
         val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .adapter
@@ -53,6 +53,10 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
 
         LaunchedEffect(Unit) {
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
+        }
+
+        BackHandler { // TODO its a hack for handling one excessive recomposition
+            navigateToRoute(Routes.trainingsList)
         }
 
         DeviceManagerScreenContent(
@@ -72,16 +76,13 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
 
     @Composable
     private fun DeviceManagerScreenContent(
-        devices: List<BluetoothDeviceState>,
+        devices: ImmutableList<BluetoothDeviceState>,
         isAnyDeviceConnected: Boolean,
         onDeviceTapped: (device: BluetoothDeviceState) -> Unit,
         navigateToTraining: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Dimensions.primaryHorizontalPadding)
-            .imePadding(),
+        modifier = Modifier.screenPaddings()
     ) {
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 

@@ -6,7 +6,10 @@ import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service.utils.B
 import timber.log.Timber
 
 class MicrochipDelegate(
-    private val onCharacteristicsCreated: (read: BluetoothGattCharacteristic, write: BluetoothGattCharacteristic) -> Unit
+    private val onCharacteristicsCreated: (
+        read: BluetoothGattCharacteristic,
+        write: BluetoothGattCharacteristic
+    ) -> Unit
 ) : DeviceDelegate() {
 
     override fun connectCharacteristics(gattService: BluetoothGattService): Boolean {

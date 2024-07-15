@@ -17,7 +17,6 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
-import timber.log.Timber
 
 class AirplaneGameScreenViewModel : ViewModel() {
 
@@ -51,7 +50,6 @@ class AirplaneGameScreenViewModel : ViewModel() {
     fun retrieveDataFromBluetoothDevice(screenHeight: Double) {
         viewModelScope.launch {
             bleDeviceInteractor.getNormalizedDeviceData(screenHeight) {
-                Timber.tag(TAG).d("HELLO new device data $it")
                 emitNewData(it.toSensorData())
             }
         }
