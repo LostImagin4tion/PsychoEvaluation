@@ -1,82 +1,73 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
-import android.annotation.SuppressLint
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
 import android.hardware.usb.UsbManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.lineSeries
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.di.UsbDeviceInteractorDiApi
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.core.di.impl.diApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
 
 class AirplaneGameScreenViewModel : ViewModel() {
 
     private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
+    private val bleDeviceInteractor by diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
-    private val _stressData = MutableStateFlow(UsbDeviceData(0, 0.0))
+    private val _stressData = MutableStateFlow(SensorData(0, 0.0))
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.UNKNOWN)
 
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
-    val stressData: StateFlow<UsbDeviceData> = _stressData
+    val stressData: StateFlow<SensorData> = _stressData
 
     val allStress = mutableListOf<Int>()
     val chartModelProducer = CartesianChartModelProducer.build()
 
     fun subscribeForSettingsChanges() {
-        viewModelScope.launch {
-            settingsInteractor.getCurrentSensorDeviceType().collect {
-                _sensorDeviceType.emit(it)
-            }
-        }
+        settingsInteractor.getCurrentSensorDeviceType()
+            .onEach { _sensorDeviceType.emit(it) }
+            .launchIn(viewModelScope)
     }
-
-    fun isUsbDeviceAccessGranted(
-        usbManager: UsbManager,
-    ): Boolean {
-        val device = usbManager.deviceList.values.lastOrNull()
-        return device != null && usbManager.hasPermission(device)
-    }
-
-    fun hasConnectedDevices(usbManager: UsbManager) = usbManager.deviceList.isNotEmpty()
 
     fun connectToUsbDevice(usbManager: UsbManager, screenHeight: Double) {
         viewModelScope.launch {
             usbDeviceInteractor.getNormalizedDeviceData(usbManager, screenHeight) {
-                _stressData.emit(it)
-                allStress.add(it.rawData)
-                chartModelProducer.runTransaction {
-                    lineSeries { series(allStress) }
-                }
+                emitNewData(it.toSensorData())
             }
         }
     }
 
-    fun disconnect() = usbDeviceInteractor.disconnect()
-
-    @SuppressLint("MissingPermission")
-    fun scanBluetoothDevices(
-        bluetoothScanner: BluetoothLeScanner
-    ) {
-        val scanCallback = object : ScanCallback() {
-            override fun onScanResult(callbackType: Int, result: ScanResult?) {
-                super.onScanResult(callbackType, result)
-                Log.d("HELLO", "FOUND device ${result?.device?.name}")
+    fun retrieveDataFromBluetoothDevice(screenHeight: Double) {
+        viewModelScope.launch {
+            bleDeviceInteractor.getNormalizedDeviceData(screenHeight) {
+                emitNewData(it.toSensorData())
             }
         }
+    }
 
-        viewModelScope.launch {
-            bluetoothScanner.startScan(scanCallback)
+    fun disconnect() {
+        when (_sensorDeviceType.value) {
+            SensorDeviceType.USB -> usbDeviceInteractor.disconnect()
+            SensorDeviceType.BLUETOOTH -> bleDeviceInteractor.disconnect()
+            SensorDeviceType.UNKNOWN -> {}
+        }
+    }
+
+    private suspend fun emitNewData(data: SensorData) {
+        _stressData.emit(data)
+        allStress.add(data.rawData)
+        chartModelProducer.runTransaction {
+            lineSeries { series(allStress) }
         }
     }
 

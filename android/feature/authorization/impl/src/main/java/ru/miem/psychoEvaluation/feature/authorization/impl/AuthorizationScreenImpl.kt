@@ -2,13 +2,8 @@ package ru.miem.psychoEvaluation.feature.authorization.impl
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,21 +12,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.logo.SimpleAppLogo
+import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.textfields.LoginTextField
-import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.common.designSystem.theme.psychoGray
-import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 import ru.miem.psychoEvaluation.common.designSystem.utils.isValidEmail
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
@@ -41,16 +32,13 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
     @Composable
     override fun AuthorizationScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
-        val navigateToRegistration = { navController.navigate(Routes.registration) }
-        val navigateToUserProfile = { navController.navigate(Routes.userProfile) }
-
         AuthorizationScreenContent(
             showMessage = showMessage,
-            navigateToRegistration = navigateToRegistration,
-            navigateToUserProfile = navigateToUserProfile
+            navigateToRegistration = { navigateToRoute(Routes.registration) },
+            navigateToUserProfile = { navigateToRoute(Routes.userProfile) }
         )
     }
 
@@ -61,10 +49,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         navigateToUserProfile: () -> Unit = {},
     ) = Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Dimensions.mainHorizontalPadding)
-            .imePadding()
+        modifier = Modifier.screenPaddings()
     ) {
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue())
@@ -132,12 +117,6 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         FilledTextButton(
             isEnabled = isContinueButtonEnabled,
             textRes = R.string.authorization_continue_button,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier.fillMaxWidth(),
             onClick = onContinueButtonClick
         )

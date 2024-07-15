@@ -2,6 +2,10 @@
 <resources>
     <string name="trainings_header">Trainings</string>
 
+    <string name="dialog_header_text">Connect device</string>
+    <string name="dialog_description_text">Looks like you are using Bluetooth device. You need to connect it manually</string>
+    <string name="snackbar_bluetooth_permission_permanently_denied">You should grant Bluetooth permission in app\'s settings because you denied permission requests multiple times</string>
+
     <!--  Debug Training  -->
     <string name="debug_training_title">Debug Training</string>
     <string name="debug_training_description">This training is used for debugging connection with sensor and retrieving data from it</string>

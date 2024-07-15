@@ -42,7 +42,6 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.PsychoEvaluationTheme
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Screens
 import ru.miem.psychoEvaluation.feature.navigation.impl.ui.Navigation
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -88,7 +87,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.tag("HELLO").e("HELLO ON NEW INTENT")
         if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
             navController.navigate(Routes.debugTraining)
         }

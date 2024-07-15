@@ -7,5 +7,5 @@
     <string name="sensor_device_type_option_bluetooth" translatable="false">Bluetooth</string>
     <string name="sensor_device_type_option_unknown">Unknown</string>
 
-    <string name="export_stress_data">Export stress data</string>
+    <string name="export_stress_data">Export sensor data</string>
 </resources>

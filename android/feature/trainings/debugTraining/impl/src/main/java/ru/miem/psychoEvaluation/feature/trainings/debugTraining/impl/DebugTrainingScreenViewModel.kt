@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.lineSeries
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 
 class DebugTrainingScreenViewModel : ViewModel() {

@@ -60,6 +60,9 @@ include(":android:common:designSystem")
 include(":android:common:interactors:usbDeviceInteractor:api")
 include(":android:common:interactors:usbDeviceInteractor:impl")
 
+include(":android:common:interactors:bleDeviceInteractor:api")
+include(":android:common:interactors:bleDeviceInteractor:impl")
+
 include(":android:common:interactors:settingsInteractor:api")
 include(":android:common:interactors:settingsInteractor:impl")
 
@@ -78,6 +81,9 @@ include(":android:feature:userProfile:impl")
 
 include(":android:feature:settings:api")
 include(":android:feature:settings:impl")
+
+include(":android:feature:bluetoothDeviceManager:api")
+include(":android:feature:bluetoothDeviceManager:impl")
 
 include(":android:feature:trainingsList:api")
 include(":android:feature:trainingsList:impl")

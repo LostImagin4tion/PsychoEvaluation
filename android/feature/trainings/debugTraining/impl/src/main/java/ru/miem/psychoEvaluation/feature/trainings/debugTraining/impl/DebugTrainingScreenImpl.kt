@@ -5,8 +5,6 @@ import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -18,14 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
+import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
 import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
-import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import javax.inject.Inject
 
@@ -33,7 +30,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
 
     @Composable
     override fun DebugTrainingScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
@@ -83,10 +80,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         modelProducer: CartesianChartModelProducer,
     ) = Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = Dimensions.mainHorizontalPadding)
-            .imePadding()
+        modifier = Modifier.screenPaddings()
     ) {
         SingleLineChart(
             modelProducer = modelProducer,

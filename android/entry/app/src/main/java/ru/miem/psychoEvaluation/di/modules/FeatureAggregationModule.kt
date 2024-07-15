@@ -2,6 +2,7 @@ package ru.miem.psychoEvaluation.di.modules
 
 import dagger.Module
 import ru.miem.psychoEvaluation.feature.authorization.impl.di.AuthorizationScreenApiProvider
+import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.di.BluetoothDeviceManagerScreenApiProvider
 import ru.miem.psychoEvaluation.feature.registration.impl.di.RegistrationScreenApiProvider
 import ru.miem.psychoEvaluation.feature.settings.impl.di.SettingsScreenApiProvider
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.di.AirplaneGameScreenApiProvider
@@ -15,6 +16,7 @@ import ru.miem.psychoEvaluation.feature.userProfile.impl.di.UserProfileScreenApi
         RegistrationScreenApiProvider::class,
         UserProfileScreenApiProvider::class,
         SettingsScreenApiProvider::class,
+        BluetoothDeviceManagerScreenApiProvider::class,
 
         TrainingsListScreenApiProvider::class,
         DebugTrainingScreenApiProvider::class,

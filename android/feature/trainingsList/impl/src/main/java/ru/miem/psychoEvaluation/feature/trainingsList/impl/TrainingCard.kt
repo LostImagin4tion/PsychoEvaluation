@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,10 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,27 +40,34 @@ fun TrainingCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
 ) {
+    val shape = RoundedCornerShape(10.dp)
+
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .clickable { onClick() }
+            .clip(shape)
+            .clickable(
+                onClick = onClick,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple()
+            )
             .shadow(
                 elevation = 5.dp,
-                shape = RoundedCornerShape(10.dp),
+                shape = shape,
                 clip = true
             )
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(10.dp)
+                shape = shape
             )
-            .padding(Dimensions.commonSpacing)
+            .padding(Dimensions.commonPadding)
             .fillMaxWidth()
     ) {
         Column(modifier = Modifier.weight(1f)) {
             LabelText(textRes = titleRes, isLarge = true)
 
-            Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+            Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
             BodyText(textRes = descriptionRes)
         }

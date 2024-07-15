@@ -57,7 +57,7 @@ fun NeuronsTextBlock(
                         color = redNeuronTextBackgroundColor,
                         shape = RoundedCornerShape(30.dp)
                     )
-                    .padding(all = Dimensions.commonSpacing)
+                    .padding(all = Dimensions.commonPadding)
                     .weight(1.0f)
             )
         }
@@ -79,7 +79,7 @@ fun NeuronsTextBlock(
                         color = blueNeuronTextBackgroundColor,
                         shape = RoundedCornerShape(30.dp)
                     )
-                    .padding(all = Dimensions.commonSpacing)
+                    .padding(all = Dimensions.commonPadding)
                     .weight(1.0f)
             )
 

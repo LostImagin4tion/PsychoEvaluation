@@ -2,24 +2,16 @@ package ru.miem.psychoEvaluation.feature.userProfile.impl
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
+import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.common.designSystem.theme.psychoGray
-import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
 import javax.inject.Inject
@@ -28,14 +20,12 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
     @Composable
     override fun UserProfileScreen(
-        navController: NavHostController,
+        navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
         UserProfileScreenContent(
             showMessage = showMessage,
-            navigateToSettings = {
-                navController.navigate(Routes.settings)
-            }
+            navigateToSettings = { navigateToRoute(Routes.settings) }
         )
     }
 
@@ -45,10 +35,7 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
         navigateToSettings: () -> Unit = {},
     ) = Column(
         horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp)
-            .imePadding()
+        modifier = Modifier.screenPaddings()
     ) {
         // ===== UI SECTION =====
 
@@ -59,7 +46,7 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
             isLarge = false,
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding * 2))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 
         NeuronsTextBlock()
 
@@ -67,15 +54,9 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
         FilledTextButton(
             textRes = R.string.open_settings_button_text,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.mainHorizontalPadding),
+                .padding(horizontal = Dimensions.primaryHorizontalPadding),
             onClick = navigateToSettings
         )
 
@@ -83,19 +64,13 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
 
         FilledTextButton(
             textRes = R.string.logout_button_text,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                disabledContainerColor = psychoGray,
-                disabledContentColor = psychoOnGray
-            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.mainHorizontalPadding),
+                .padding(horizontal = Dimensions.primaryHorizontalPadding),
             onClick = {}
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.mainVerticalPadding))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
     }
 
     private companion object {

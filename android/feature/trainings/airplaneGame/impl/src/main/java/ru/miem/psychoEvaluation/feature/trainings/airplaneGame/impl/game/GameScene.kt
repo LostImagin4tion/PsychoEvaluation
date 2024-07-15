@@ -5,17 +5,17 @@ import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.SContainer
 import com.soywiz.korge.view.addUpdater
 import kotlinx.coroutines.flow.StateFlow
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.GameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.gameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
 
 class GameScene(
     private val screenWidth: Double,
     private val screenHeight: Double,
     private val context: Context,
-    private val dataFlow: StateFlow<UsbDeviceData>
+    private val dataFlow: StateFlow<SensorData>
 ) : Scene() {
 
     private var gameWorld: GameWorld? = null
