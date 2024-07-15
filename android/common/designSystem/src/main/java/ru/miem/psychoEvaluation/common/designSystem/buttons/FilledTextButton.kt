@@ -26,7 +26,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 fun FilledTextButton(
     isEnabled: Boolean = true,
     @StringRes textRes: Int,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.labelMedium,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = MaterialTheme.colorScheme.primary,

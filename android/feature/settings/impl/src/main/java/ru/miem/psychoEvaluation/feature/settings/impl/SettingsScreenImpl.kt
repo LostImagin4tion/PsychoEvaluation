@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
@@ -86,31 +87,19 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
                 )
 
                 Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = Dimensions.dividerThickness,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
             }
 
             item {
                 Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-                SimpleTextButton(
+                FilledTextButton(
                     textRes = R.string.export_stress_data,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimensions.primaryHorizontalPadding),
                     onClick = {
                         createShareDataChooser(context)
                     }
-                )
-
-                Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
-
-                HorizontalDivider(
-                    modifier = Modifier.fillMaxWidth(),
-                    thickness = Dimensions.dividerThickness,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }

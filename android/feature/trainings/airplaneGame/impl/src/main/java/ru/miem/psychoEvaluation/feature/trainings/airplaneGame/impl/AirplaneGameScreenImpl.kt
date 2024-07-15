@@ -1,6 +1,5 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
@@ -28,9 +27,9 @@ import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -43,8 +42,6 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
-        val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
-            .adapter
 
         val viewModel: AirplaneGameScreenViewModel = viewModel()
 
@@ -60,11 +57,13 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             SensorDeviceType.USB -> {
                 viewModel.connectToUsbDevice(
                     usbManager = usbManager,
-                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble()
+                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
                 )
             }
             SensorDeviceType.BLUETOOTH -> {
-
+                viewModel.retrieveDataFromBluetoothDevice(
+                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
+                )
             }
             SensorDeviceType.UNKNOWN -> {}
         }
@@ -85,7 +84,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     @Composable
     private fun AirplaneGameScreenContent(
         showMessage: (String) -> Unit,
-        dataFlow: StateFlow<UsbDeviceData>,
+        dataFlow: StateFlow<SensorData>,
         modelProducer: CartesianChartModelProducer,
     ) = Box(
         modifier = Modifier.fillMaxSize()

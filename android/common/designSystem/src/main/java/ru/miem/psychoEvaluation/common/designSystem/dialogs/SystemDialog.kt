@@ -15,7 +15,6 @@ import ru.miem.psychoEvaluation.common.designSystem.R
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.SubtitleText
-import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 
 @Composable
 fun SystemDialog(
@@ -24,8 +23,8 @@ fun SystemDialog(
     @DrawableRes iconRes: Int,
     @StringRes confirmButtonRes: Int = R.string.system_dialog_confirm_button_default_text,
     @StringRes dismissButtonRes: Int = R.string.system_dialog_dismiss_button_default_text,
-    onConfirmTapped: () -> Unit = {},
-    onDismissTapped: () -> Unit = {},
+    onConfirm: () -> Unit = {},
+    onDismiss: () -> Unit = {},
 ) {
     AlertDialog(
         title = {
@@ -47,17 +46,17 @@ fun SystemDialog(
                 contentDescription = null
             )
         },
-        onDismissRequest = onDismissTapped,
+        onDismissRequest = onDismiss,
         dismissButton = {
             SimpleTextButton(
                 textRes = dismissButtonRes,
-                onClick = onDismissTapped,
+                onClick = onDismiss,
             )
         },
         confirmButton = {
             SimpleTextButton(
                 textRes = confirmButtonRes,
-                onClick = onConfirmTapped,
+                onClick = onConfirm,
             )
         },
         modifier = Modifier.background(

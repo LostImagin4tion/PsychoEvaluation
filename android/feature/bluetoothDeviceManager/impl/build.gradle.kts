@@ -15,6 +15,7 @@ dependencies {
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))
+    implementation(project(":android:common:interactors:bleDeviceInteractor:api"))
 
     // ==== Feature layer ====
 

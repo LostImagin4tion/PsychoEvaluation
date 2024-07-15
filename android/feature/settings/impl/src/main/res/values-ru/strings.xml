@@ -5,5 +5,5 @@
     <string name="sensor_device_type_radio_button_text">Тип датчика</string>
     <string name="sensor_device_type_option_unknown">Неизвестно</string>
 
-    <string name="export_stress_data">Экспортировать стрессовые данные</string>
+    <string name="export_stress_data">Экспорт показаний датчика</string>
 </resources>

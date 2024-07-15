@@ -34,6 +34,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
+import timber.log.Timber
 import javax.inject.Inject
 
 class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
@@ -46,31 +47,31 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         val viewModel = TrainingsListScreenViewModel()
 
         var tappedTraining: String? by remember { mutableStateOf(null) }
-        var isDeviceConnected by remember { mutableStateOf(false) }
+        var isUsbDeviceConnected by remember { mutableStateOf(false) }
 
-        tappedTraining?.let {
-            ConnectDeviceOnTrainingOpen(
+        Timber.tag(TAG).w("HELLO TRAINING LIST SCREEN")
+
+        tappedTraining?.let { training ->
+            ConnectDeviceOnTrainingTapped(
                 showMessage,
                 viewModel,
+                onUsbDeviceAccessGranted = {
+                    Timber.tag(TAG).w("HELLO TRAINING LIST SCREEN")
+                    isUsbDeviceConnected  = true
+                },
                 navigateToBluetoothDeviceManager = {
+                    Timber.tag(TAG).w("HELLO NAVIGATION TO MANAGER")
                     val route = Routes.bluetoothDeviceManagerRouteTemplate
-                        .format(tappedTraining)
+                        .format(training)
                     navController.navigate(route)
                 },
-                onDeviceAccessGranted = {
-                    isDeviceConnected  = true
-                }
             )
         }
 
         TrainingsScreenContent(
-            isDeviceConnected = isDeviceConnected,
-            onTrainingTapped = { route ->
-                if (isDeviceConnected) {
-                    navController.navigate(route)
-                } else {
-                    tappedTraining = route
-                }
+            isUsbDeviceConnected = isUsbDeviceConnected,
+            rememberRouteForBluetoothDeviceManager = { route ->
+                tappedTraining = route
             },
             navigateToDebugTraining = { navController.navigate(Routes.debugTraining) },
             navigateToAirplaneGame = { navController.navigate(Routes.airplaneGame) },
@@ -79,8 +80,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
 
     @Composable
     private fun TrainingsScreenContent(
-        isDeviceConnected: Boolean,
-        onTrainingTapped: (trainingRoute: String) -> Unit,
+        isUsbDeviceConnected: Boolean,
+        rememberRouteForBluetoothDeviceManager: (trainingRoute: String) -> Unit,
         navigateToDebugTraining: () -> Unit,
         navigateToAirplaneGame: () -> Unit,
     ) = Column(
@@ -91,6 +92,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             .imePadding()
     ) {
         // ===== UI SECTION =====
+        Timber.tag("HELLO TRAINING SCREEN CONTENT")
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
@@ -108,25 +110,27 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                     imageRes = R.drawable.debug_training_icon,
                     modifier = Modifier.padding(bottom = Dimensions.primaryVerticalPadding),
                     onClick = {
-                        if (isDeviceConnected) {
+                        Timber.tag("HELLO TRAINING TAPPED")
+                        if (isUsbDeviceConnected) {
                             navigateToDebugTraining()
                         } else {
-                            onTrainingTapped(Routes.debugTraining)
+                            rememberRouteForBluetoothDeviceManager(Routes.debugTraining)
                         }
                     }
                 )
             }
 
-            item { // === Concentration Training ===
+            item { // === Airplane Training ===
                 TrainingCard(
                     titleRes = R.string.concentration_training_title,
                     descriptionRes = R.string.concentration_training_description,
                     imageRes = R.drawable.concentration_training_icon,
                     onClick = {
-                        if (isDeviceConnected) {
+                        Timber.tag("HELLO TRAINING TAPPED")
+                        if (isUsbDeviceConnected) {
                             navigateToAirplaneGame()
                         } else {
-                            onTrainingTapped(Routes.airplaneGame)
+                            rememberRouteForBluetoothDeviceManager(Routes.airplaneGame)
                         }
                     }
                 )
@@ -135,23 +139,24 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
     }
 
     @Composable
-    private fun ConnectDeviceOnTrainingOpen(
+    private fun ConnectDeviceOnTrainingTapped(
         showMessage: (String) -> Unit,
         viewModel: TrainingsListScreenViewModel,
-        navigateToBluetoothDeviceManager: () -> Unit,
-        onDeviceAccessGranted: () -> Unit = {}
+        onUsbDeviceAccessGranted: () -> Unit = {},
+        navigateToBluetoothDeviceManager: () -> Unit = {},
     ) {
+        Timber.tag(TAG).w("HELLO CONNECT DEVICE ON TRAINING TAPPED")
         val unknownDeviceAlertText = stringResource(ru.miem.psychoEvaluation.common.designSystem.R.string.unknown_device_alert)
-
-        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
         }
 
+        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
+
         when (sensorDeviceType.value) {
-            SensorDeviceType.USB -> ConnectUsbDevice(viewModel, onDeviceAccessGranted)
-            SensorDeviceType.BLUETOOTH -> ConnectBluetoothDevice(viewModel, navigateToBluetoothDeviceManager)
+            SensorDeviceType.USB -> ConnectUsbDevice(viewModel, onUsbDeviceAccessGranted)
+            SensorDeviceType.BLUETOOTH -> ConnectBluetoothDevice(navigateToBluetoothDeviceManager)
             SensorDeviceType.UNKNOWN -> showMessage(unknownDeviceAlertText)
             null -> {}
         }
@@ -162,6 +167,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         viewModel: TrainingsListScreenViewModel,
         onDeviceAccessGranted: () -> Unit,
     ) {
+        Timber.tag(TAG).w("HELLO CONNECT USB DEVICE")
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
@@ -201,38 +207,55 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
 
     @Composable
     private fun ConnectBluetoothDevice(
-        viewModel: TrainingsListScreenViewModel,
         navigateToBluetoothDeviceManager: () -> Unit,
     ) {
         val context = LocalContext.current
         val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .adapter
 
+        var shouldShowSystemDialog by remember { mutableStateOf(true) }
         var isBluetoothAccessGranted by remember { mutableStateOf(false) }
         var tryRequestingBluetoothPermission by remember { mutableStateOf(false) }
 
-        SystemDialog(
-            headerText = stringResource(R.string.dialog_header_text),
-            descriptionText = stringResource(R.string.dialog_description_text),
-            iconRes = ru.miem.psychoEvaluation.common.designSystem.R.drawable.bluetooth_icon,
-            onConfirmTapped = {
-                tryRequestingBluetoothPermission = true
-            }
-        )
+        Timber.tag(TAG).w("HELLO CONNECT BLUETOOTH DEVICE")
 
-        if (tryRequestingBluetoothPermission && !isBluetoothAccessGranted) {
+        if (shouldShowSystemDialog) {
+            SystemDialog(
+                headerText = stringResource(R.string.dialog_header_text),
+                descriptionText = stringResource(R.string.dialog_description_text),
+                iconRes = ru.miem.psychoEvaluation.common.designSystem.R.drawable.bluetooth_icon,
+                onConfirm = {
+                    Timber.tag(TAG).w("HELLO TAPPED SYSTEM DIALOG CONNECT DEVICE")
+                    shouldShowSystemDialog = false
+                    tryRequestingBluetoothPermission = true
+                },
+                onDismiss = {
+                    shouldShowSystemDialog = false
+                }
+            )
+        }
+
+        if (tryRequestingBluetoothPermission) {
+            Timber.tag(TAG).w("HELLO REQUEST PERMISSIONS IF NEEDED")
             RequestBluetoothPermissionsIfNeeded { permissionsGranted ->
+                Timber.tag(TAG).w("HELLO PERMISSION GRANTED? $permissionsGranted")
                 tryRequestingBluetoothPermission = false
                 isBluetoothAccessGranted = permissionsGranted
             }
         }
         else if (isBluetoothAccessGranted) {
+            Timber.tag(TAG).w("HELLO ENABLE BLUETOOTH")
             EnableBluetoothIfNeeded(bluetoothAdapter) {
+                Timber.tag(TAG).w("HELLO ON BLUETOOTH ENABLED")
                 navigateToBluetoothDeviceManager()
             }
         }
 
         // TODO listen for bluetooth state via broadcast receiver
         //  https://developer.android.com/develop/connectivity/bluetooth/setup#kotlin
+    }
+
+    private companion object {
+        val TAG: String = TrainingsListScreenImpl::class.java.simpleName
     }
 }

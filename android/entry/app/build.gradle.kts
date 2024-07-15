@@ -29,6 +29,7 @@ dependencies {
     implementation(project(":android:common:designSystem"))
 
     implementation(project(":android:common:interactors:usbDeviceInteractor:impl"))
+    implementation(project(":android:common:interactors:bleDeviceInteractor:impl"))
     implementation(project(":android:common:interactors:settingsInteractor:impl"))
 
     // ==== Feature layer ====

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,17 +19,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.R
+import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 
 @Composable
 fun BluetoothDeviceItem(
     deviceName: String? = null,
     hardwareAddress: String,
+    connectionStatus: BluetoothDeviceConnectionStatus = BluetoothDeviceConnectionStatus.UNKNOWN,
     onClick: () -> Unit = {},
 ) = Row(
     verticalAlignment = Alignment.CenterVertically,
@@ -51,9 +55,7 @@ fun BluetoothDeviceItem(
 
     Spacer(modifier = Modifier.width(Dimensions.commonPadding))
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+    Column {
         LabelText(
             text = deviceName ?: stringResource(R.string.device_name_default),
         )
@@ -64,5 +66,27 @@ fun BluetoothDeviceItem(
             text = hardwareAddress,
             isMedium = false
         )
+    }
+
+    Spacer(modifier = Modifier.weight(1f))
+
+    when (connectionStatus) {
+        BluetoothDeviceConnectionStatus.UNKNOWN -> {}
+        BluetoothDeviceConnectionStatus.IN_PROGRESS -> {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = 2.dp,
+                strokeCap = StrokeCap.Round,
+                modifier = Modifier.size(28.dp),
+            )
+        }
+        BluetoothDeviceConnectionStatus.CONNECTED -> {
+            Icon(
+                painter = painterResource(R.drawable.ready_circle),
+                tint = MaterialTheme.colorScheme.primary,
+                contentDescription = null,
+                modifier = Modifier.size(28.dp),
+            )
+        }
     }
 }

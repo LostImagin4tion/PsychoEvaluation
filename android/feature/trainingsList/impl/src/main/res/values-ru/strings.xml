@@ -3,7 +3,7 @@
     <string name="trainings_header">Тренировки</string>
 
     <string name="dialog_header_text">Подключение устройства</string>
-    <string name="dialog_description_text">Похоже, Вы используете BLE-устройство. Его нужно подключить вручную</string>
+    <string name="dialog_description_text">Похоже, Вы используете Bluetooth-устройство. Его нужно подключить вручную</string>
 
     <!--  Debug Training  -->
     <string name="debug_training_title">Дебаг тренировка</string>

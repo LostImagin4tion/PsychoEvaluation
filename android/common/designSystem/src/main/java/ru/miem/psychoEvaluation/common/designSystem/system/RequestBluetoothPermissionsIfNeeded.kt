@@ -38,7 +38,7 @@ fun RequestBluetoothPermissionsIfNeeded(
             headerText = stringResource(R.string.request_bluetooth_permission_rationale_header_text),
             descriptionText = stringResource(R.string.request_bluetooth_permission_rationale_description_text),
             iconRes = R.drawable.bluetooth_icon,
-            onConfirmTapped = {
+            onConfirm = {
                 permissionsToRequest.launchMultiplePermissionRequest()
             }
         )

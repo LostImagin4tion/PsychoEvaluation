@@ -60,6 +60,9 @@ include(":android:common:designSystem")
 include(":android:common:interactors:usbDeviceInteractor:api")
 include(":android:common:interactors:usbDeviceInteractor:impl")
 
+include(":android:common:interactors:bleDeviceInteractor:api")
+include(":android:common:interactors:bleDeviceInteractor:impl")
+
 include(":android:common:interactors:settingsInteractor:api")
 include(":android:common:interactors:settingsInteractor:impl")
 

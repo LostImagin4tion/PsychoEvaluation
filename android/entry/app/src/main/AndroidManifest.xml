@@ -49,7 +49,7 @@
                 android:resource="@xml/device_filter" />
         </activity>
 
-        <service android:name=".feature.navigation.impl.service.SerialService"
+        <service android:name=".core.deviceApi.bleDeviceApi.impl.service.SerialService"
             android:exported="false" />
 
         <provider

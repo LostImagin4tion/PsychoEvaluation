@@ -7,14 +7,14 @@ import com.soywiz.korinject.AsyncInjector
 import com.soywiz.korma.geom.ScaleMode
 import com.soywiz.korma.geom.SizeInt
 import kotlinx.coroutines.flow.StateFlow
-import ru.miem.psychoEvaluation.common.interactors.usbDeviceInteractor.api.models.UsbDeviceData
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import kotlin.reflect.KClass
 
 class GameModule(
     private val screenWidth: Int,
     private val screenHeight: Int,
     private val context: Context,
-    private val dataFlow: StateFlow<UsbDeviceData>
+    private val dataFlow: StateFlow<SensorData>
 ) : Module() {
 
     override val scaleMode: ScaleMode = ScaleMode.FILL
