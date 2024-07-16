@@ -29,22 +29,18 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "httpClient"
+            baseName = "utils"
             isStatic = true
         }
     }
 
     sourceSets {
         commonMain.dependencies {
-            Dependencies.Network.multiplatformDeps.forEach { implementation(it) }
-
-            implementation(project(":multiplatform:core:utils"))
         }
         androidMain.dependencies {
-            Dependencies.Network.androidDeps.forEach { implementation(it) }
+            Dependencies.Logger.allDeps.forEach { implementation(it) }
         }
         iosMain.dependencies {
-            Dependencies.Network.iosDeps.forEach { implementation(it) }
         }
         commonTest.dependencies {
         }
@@ -52,7 +48,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.multiplatform.core.httpClient"
+    namespace = "ru.miem.psychoEvaluation.multiplatform.core.utils"
     compileSdk = CompileVersions.CURRENT_COMPILE_VERSION
 
     defaultConfig {

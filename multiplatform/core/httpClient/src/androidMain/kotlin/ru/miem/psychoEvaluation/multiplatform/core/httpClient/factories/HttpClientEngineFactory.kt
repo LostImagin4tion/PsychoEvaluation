@@ -1,10 +1,15 @@
 package ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories
 
-import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
+import okhttp3.OkHttpClient
 
-actual object HttpClientEngineFactory {
-    actual fun create(): HttpClientEngine = OkHttp.create {
-        // TODO ADD CONFIG?
+actual fun HttpClientEngineFactory.Creator.newInstance(): HttpClientEngineFactory = createInstance()
+
+fun HttpClientEngineFactory.Creator.createInstance(
+    okHttpClient: OkHttpClient = OkHttpClient(),
+) : HttpClientEngineFactory = HttpClientEngineFactory {
+    OkHttp.create {
+        preconfigured = okHttpClient
     }
 }
+

@@ -23,6 +23,7 @@ rootProject.name = "PsychoEvaluation"
 // ==== MULTIPLATFORM ====
 
 // Core
+include(":multiplatform:core:utils")
 include(":multiplatform:core:httpClient")
 
 // Common
