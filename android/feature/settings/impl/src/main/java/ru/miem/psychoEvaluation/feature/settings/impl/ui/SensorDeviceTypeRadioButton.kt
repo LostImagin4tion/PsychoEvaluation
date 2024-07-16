@@ -37,9 +37,9 @@ fun SensorDeviceTypeRadioButton(
     optionsList.forEach { deviceType ->
         val isSelected = deviceType == currentType
         val deviceTypeRes = when (deviceType) {
-            SensorDeviceType.USB -> R.string.sensor_device_type_option_usb
-            SensorDeviceType.BLUETOOTH -> R.string.sensor_device_type_option_bluetooth
-            SensorDeviceType.UNKNOWN -> R.string.sensor_device_type_option_unknown
+            SensorDeviceType.Usb -> R.string.sensor_device_type_option_usb
+            SensorDeviceType.Bluetooth -> R.string.sensor_device_type_option_bluetooth
+            SensorDeviceType.Unknown -> R.string.sensor_device_type_option_unknown
         }
         val deviceTypeText = stringResource(deviceTypeRes)
 

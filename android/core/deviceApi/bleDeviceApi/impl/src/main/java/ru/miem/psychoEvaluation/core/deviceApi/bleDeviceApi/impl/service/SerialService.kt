@@ -21,10 +21,10 @@ class SerialService : Service(), SerialListener {
     }
 
     private enum class QueueType {
-        CONNECT,
-        CONNECT_ERROR,
-        READ,
-        IO_ERROR
+        Connect,
+        ConnectError,
+        Read,
+        IoError
     }
 
     private class QueueItem(
@@ -50,7 +50,7 @@ class SerialService : Service(), SerialListener {
     private val binder: IBinder = SerialBinder()
     private val queue1: ArrayDeque<QueueItem> = ArrayDeque()
     private val queue2: ArrayDeque<QueueItem> = ArrayDeque()
-    private val lastRead: QueueItem = QueueItem(QueueType.READ)
+    private val lastRead: QueueItem = QueueItem(QueueType.Read)
 
     private var socket: SerialSocket? = null
     private var listener: SerialListener? = null
@@ -71,9 +71,9 @@ class SerialService : Service(), SerialListener {
             synchronized(this) {
                 listener?.let {
                     mainLooper.post {
-                        listener?.onSerialConnect() ?: queue1.add(QueueItem(QueueType.CONNECT))
+                        listener?.onSerialConnect() ?: queue1.add(QueueItem(QueueType.Connect))
                     }
-                } ?: queue2.add(QueueItem(QueueType.CONNECT))
+                } ?: queue2.add(QueueItem(QueueType.Connect))
             }
         }
     }
@@ -85,12 +85,12 @@ class SerialService : Service(), SerialListener {
                     mainLooper.post {
                         listener?.onSerialIoError(e)
                             ?: run {
-                                queue1.add(QueueItem(QueueType.CONNECT_ERROR, e))
+                                queue1.add(QueueItem(QueueType.ConnectError, e))
                                 disconnect()
                             }
                     }
                 } ?: run {
-                    queue2.add(QueueItem(QueueType.CONNECT_ERROR, e))
+                    queue2.add(QueueItem(QueueType.ConnectError, e))
                     disconnect()
                 }
             }
@@ -125,12 +125,12 @@ class SerialService : Service(), SerialListener {
                             }
 
                             this.listener?.onSerialRead(newData)
-                                ?: queue1.add(QueueItem(QueueType.READ, newData))
+                                ?: queue1.add(QueueItem(QueueType.Read, newData))
                         }
                     }
                 } ?: run {
-                    if (queue2.isEmpty() || queue2.last().type != QueueType.READ) {
-                        queue2.add(QueueItem(QueueType.READ))
+                    if (queue2.isEmpty() || queue2.last().type != QueueType.Read) {
+                        queue2.add(QueueItem(QueueType.Read))
                     }
                     queue2.last().add(data)
                 }
@@ -145,12 +145,12 @@ class SerialService : Service(), SerialListener {
                     mainLooper.post {
                         listener?.onSerialIoError(e)
                             ?: run {
-                                queue1.add(QueueItem(QueueType.IO_ERROR, e))
+                                queue1.add(QueueItem(QueueType.IoError, e))
                                 disconnect()
                             }
                     }
                 } ?: run {
-                    queue2.add(QueueItem(QueueType.IO_ERROR, e))
+                    queue2.add(QueueItem(QueueType.IoError, e))
                     disconnect()
                 }
             }
@@ -196,19 +196,19 @@ class SerialService : Service(), SerialListener {
 
         for (item in queue1) {
             when (item.type) {
-                QueueType.CONNECT -> listener.onSerialConnect()
-                QueueType.CONNECT_ERROR -> listener.onSerialConnectError(item.exception)
-                QueueType.READ -> listener.onSerialRead(item.data)
-                QueueType.IO_ERROR -> listener.onSerialIoError(item.exception)
+                QueueType.Connect -> listener.onSerialConnect()
+                QueueType.ConnectError -> listener.onSerialConnectError(item.exception)
+                QueueType.Read -> listener.onSerialRead(item.data)
+                QueueType.IoError -> listener.onSerialIoError(item.exception)
             }
         }
 
         for (item in queue2) {
             when (item.type) {
-                QueueType.CONNECT -> listener.onSerialConnect()
-                QueueType.CONNECT_ERROR -> listener.onSerialConnectError(item.exception)
-                QueueType.READ -> listener.onSerialRead(item.data)
-                QueueType.IO_ERROR -> listener.onSerialIoError(item.exception)
+                QueueType.Connect -> listener.onSerialConnect()
+                QueueType.ConnectError -> listener.onSerialConnectError(item.exception)
+                QueueType.Read -> listener.onSerialRead(item.data)
+                QueueType.IoError -> listener.onSerialIoError(item.exception)
             }
         }
 

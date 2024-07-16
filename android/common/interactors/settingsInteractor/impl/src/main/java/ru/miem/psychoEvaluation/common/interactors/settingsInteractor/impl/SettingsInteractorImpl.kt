@@ -22,7 +22,7 @@ class SettingsInteractorImpl @Inject constructor() : SettingsInteractor {
             .map { data ->
                 SensorDeviceType.entries
                     .find { it.name == data }
-                    ?: SensorDeviceType.UNKNOWN
+                    ?: SensorDeviceType.Unknown
             }
     }
 }

@@ -13,7 +13,7 @@ class SettingsScreenViewModel : ViewModel() {
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
-    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.UNKNOWN)
+    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
 

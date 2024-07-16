@@ -49,7 +49,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
 
         val devices = viewModel.devices.collectAsState(persistentListOf())
         var isAnyDevicesConnected = devices.value
-            .any { it.connectionStatus == BluetoothDeviceConnectionStatus.CONNECTED }
+            .any { it.connectionStatus == BluetoothDeviceConnectionStatus.Connected }
 
         LaunchedEffect(Unit) {
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)

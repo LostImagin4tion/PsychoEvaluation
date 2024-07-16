@@ -149,14 +149,14 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
         when (sensorDeviceType.value) {
-            SensorDeviceType.USB -> ConnectUsbDevice(viewModel, onUsbDeviceAccessGranted)
-            SensorDeviceType.BLUETOOTH -> ConnectBluetoothDevice(
+            SensorDeviceType.Usb -> ConnectUsbDevice(viewModel, onUsbDeviceAccessGranted)
+            SensorDeviceType.Bluetooth -> ConnectBluetoothDevice(
                 showMessage,
                 shouldShowBluetoothRequestDialog,
                 hideBluetoothRequestDialog,
                 navigateToBluetoothDeviceManager
             )
-            SensorDeviceType.UNKNOWN -> showMessage(unknownDeviceAlertText)
+            SensorDeviceType.Unknown -> showMessage(unknownDeviceAlertText)
             null -> {}
         }
     }

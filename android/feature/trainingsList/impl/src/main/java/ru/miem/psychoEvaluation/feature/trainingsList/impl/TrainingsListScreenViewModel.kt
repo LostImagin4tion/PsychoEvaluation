@@ -46,9 +46,9 @@ class TrainingsListScreenViewModel : ViewModel() {
 
     fun disconnect() {
         when (_sensorDeviceType.value) {
-            SensorDeviceType.USB -> usbDeviceInteractor.disconnect()
-            SensorDeviceType.BLUETOOTH -> bleDeviceInteractor.disconnect()
-            SensorDeviceType.UNKNOWN, null -> {}
+            SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
+            SensorDeviceType.Unknown, null -> {}
         }
     }
 

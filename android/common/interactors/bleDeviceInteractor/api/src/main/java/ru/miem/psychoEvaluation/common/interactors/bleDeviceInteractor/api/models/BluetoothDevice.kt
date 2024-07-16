@@ -17,8 +17,8 @@ data class BluetoothDevice(
 }
 
 enum class BluetoothAdvertisementStatus {
-    AVAILABLE,
-    NOT_AVAILABLE,
+    Available,
+    NotAvailable,
 }
 
 @SuppressLint("MissingPermission")
@@ -37,8 +37,8 @@ fun Int.callbackTypeToStatus(): BluetoothAdvertisementStatus? = when (this) {
     ScanSettings.CALLBACK_TYPE_FIRST_MATCH,
     ScanSettings.CALLBACK_TYPE_ALL_MATCHES,
     ScanSettings.CALLBACK_TYPE_ALL_MATCHES_AUTO_BATCH,
-    -> BluetoothAdvertisementStatus.AVAILABLE
+    -> BluetoothAdvertisementStatus.Available
 
-    ScanSettings.CALLBACK_TYPE_MATCH_LOST -> BluetoothAdvertisementStatus.NOT_AVAILABLE
+    ScanSettings.CALLBACK_TYPE_MATCH_LOST -> BluetoothAdvertisementStatus.NotAvailable
     else -> null
 }
