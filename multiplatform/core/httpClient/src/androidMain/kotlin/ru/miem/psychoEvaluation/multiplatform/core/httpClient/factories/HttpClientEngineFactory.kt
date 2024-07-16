@@ -7,9 +7,8 @@ actual fun HttpClientEngineFactory.Creator.newInstance(): HttpClientEngineFactor
 
 fun HttpClientEngineFactory.Creator.createInstance(
     okHttpClient: OkHttpClient = OkHttpClient(),
-) : HttpClientEngineFactory = HttpClientEngineFactory {
+): HttpClientEngineFactory = HttpClientEngineFactory {
     OkHttp.create {
         preconfigured = okHttpClient
     }
 }
-

@@ -20,12 +20,12 @@ class SafeHttpClient internal constructor(baseHttpClient: HttpClient) {
     @PublishedApi
     internal val httpClient = baseHttpClient.config { expectSuccess = false }
 
-    suspend inline fun <reified DataType: Any, ErrorType: Any> requestOnBackground(
+    @Suppress("TooGenericExceptionCaught")
+    suspend inline fun <reified DataType : Any, ErrorType : Any> requestOnBackground(
         url: String,
         crossinline responseValidator: HttpResponseCodeValidator = ::generalHttpResponseCodeValidator,
         crossinline requestBuilder: HttpRequestBuilder.() -> Unit,
-    ) : NetworkResponse<DataType, ErrorType> {
-
+    ): NetworkResponse<DataType, ErrorType> {
         return withContext(Dispatchers.IO) {
             val client = httpClient
             var httpInfo: NetworkResponse.HttpInfo? = null

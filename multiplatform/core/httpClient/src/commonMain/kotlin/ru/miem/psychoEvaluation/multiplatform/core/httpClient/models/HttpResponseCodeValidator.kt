@@ -10,6 +10,7 @@ enum class NetworkResponseType {
 
 typealias HttpResponseCodeValidator = (HttpStatusCode) -> NetworkResponseType
 
+@Suppress("MagicNumber")
 fun generalHttpResponseCodeValidator(code: HttpStatusCode): NetworkResponseType {
     return when (code.value) {
         in 200..299 -> NetworkResponseType.Success

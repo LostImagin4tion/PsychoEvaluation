@@ -8,12 +8,15 @@ import ru.miem.psychoEvaluation.core.di.impl.ApiResolver
 import ru.miem.psychoEvaluation.di.modules.CommonAggregationModule
 import ru.miem.psychoEvaluation.di.modules.CoreAggregationModule
 import ru.miem.psychoEvaluation.di.modules.FeatureAggregationModule
+import ru.miem.psychoEvaluation.di.modules.MultiplatformCoreModule
 
 @Component(
     modules = [
         CoreAggregationModule::class,
         CommonAggregationModule::class,
         FeatureAggregationModule::class,
+
+        MultiplatformCoreModule::class,
     ]
 )
 interface PsychoEvaluationAppComponent {

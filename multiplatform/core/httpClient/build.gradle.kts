@@ -42,6 +42,11 @@ kotlin {
         }
         androidMain.dependencies {
             Dependencies.Network.androidDeps.forEach { implementation(it) }
+
+            Dependencies.Dagger.implDeps.forEach { implementation(it) }
+//            Dependencies.Dagger.kaptDeps.forEach { kapt(it) }
+
+            api(project(":android:core:di:api"))
         }
         iosMain.dependencies {
             Dependencies.Network.iosDeps.forEach { implementation(it) }
