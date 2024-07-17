@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
@@ -95,15 +96,17 @@ fun NavigationContent(
         color = MaterialTheme.colorScheme.background
     ) {
         val navigateToRoute: (String) -> Unit = { route -> navController.navigate(route) }
+        val navigateToRouteWithOptions: (route: String, builder: NavOptionsBuilder.() -> Unit) -> Unit =
+            { route, builder -> navController.navigate(route, builder) }
 
         NavHost(
             navController = navController,
-            startDestination = remember { Routes.userProfile }
+            startDestination = remember { Routes.authorization }
         ) {
             composable(Routes.authorization) {
                 setupSystemBarColors()
                 authorizationScreen.AuthorizationScreen(
-                    navigateToRoute = navigateToRoute,
+                    navigateToRoute = navigateToRouteWithOptions,
                     showMessage = showMessage
                 )
             }

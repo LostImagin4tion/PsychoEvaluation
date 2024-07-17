@@ -5,7 +5,7 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.Bl
 
 @Component(
     modules = [
-        BluetoothDeviceInteractorModule::class
+        BluetoothDeviceInteractorModule::class,
     ]
 )
 interface BluetoothDeviceInteractorComponent : BluetoothDeviceInteractorDiApi {

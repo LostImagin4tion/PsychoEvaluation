@@ -181,9 +181,7 @@ object Dependencies {
         )
     }
 
-    object Serialization {
-
-    }
+    object Serialization
 
     object UI {
         private const val MATERIAL_VERSION = "1.9.0"

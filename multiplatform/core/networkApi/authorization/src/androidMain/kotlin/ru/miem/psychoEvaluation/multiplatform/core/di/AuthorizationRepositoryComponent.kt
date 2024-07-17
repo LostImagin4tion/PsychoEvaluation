@@ -1,8 +1,6 @@
 package ru.miem.psychoEvaluation.multiplatform.core.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.multiplatform.core.di.AuthorizationRepositoryDiApi
-import ru.miem.psychoEvaluation.multiplatform.core.di.AuthorizationRepositoryModule
 
 @Component(
     modules = [

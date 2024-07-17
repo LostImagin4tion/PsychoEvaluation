@@ -11,6 +11,7 @@ dependencies {
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))
+    implementation(project(":android:common:interactors:networkApi:authorization:api"))
 
     // ==== Feature layer ====
 
