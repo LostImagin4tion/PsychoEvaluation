@@ -16,6 +16,10 @@ dependencies {
 
     Dependencies.DataStore.allDeps.forEach { implementation(it) }
 
+    // ==== Multiplatform Core Layer ====
+
+    implementation(project(":multiplatform:core:httpClient"))
+
     // ==== Core layer ====
 
     implementation(project(":android:core:di:impl"))

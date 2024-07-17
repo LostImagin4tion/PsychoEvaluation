@@ -14,9 +14,9 @@ fun Container.gameWorld(
 ) = GameWorld(screenWidth, screenHeight, context).addTo(this)
 
 private enum class GameState {
-    READY,
-    RUNNING,
-    GAME_OVER,
+    Ready,
+    Running,
+    GameOver,
 }
 
 class GameWorld(
@@ -30,11 +30,11 @@ class GameWorld(
 
     private var score = 0
 
-    val isReady get() = currentState == GameState.READY
-    val isRunning get() = currentState == GameState.RUNNING
-    val isGameOver get() = currentState == GameState.GAME_OVER
+    val isReady get() = currentState == GameState.Ready
+    val isRunning get() = currentState == GameState.Running
+    val isGameOver get() = currentState == GameState.GameOver
 
-    private var currentState = GameState.READY
+    private var currentState = GameState.Ready
 
     private val backgroundView = backgroundView(width, height)
     private val airplane = airplaneView(x = 700.0, y = midPointY)
@@ -44,12 +44,12 @@ class GameWorld(
     private val gameOverText = gameOverText(x = midPointX, y = 300.0)
 
     fun start() {
-        currentState = GameState.RUNNING
+        currentState = GameState.Running
         airplane.onStart(context)
     }
 
     fun restart() {
-        currentState = GameState.READY
+        currentState = GameState.Ready
         score = 0
         scroller.onRestart()
         airplane.onRestart(midPointY, context)
@@ -57,15 +57,15 @@ class GameWorld(
 
     fun update(delta: TimeSpan) {
         when (currentState) {
-            GameState.READY -> {
+            GameState.Ready -> {
                 welcomeText.visible = true
                 gameOverText.visible = false
             }
-            GameState.RUNNING -> {
+            GameState.Running -> {
                 gameOverText.visible = false
                 updateRunning(delta)
             }
-            GameState.GAME_OVER -> {
+            GameState.GameOver -> {
                 gameOverText.visible = true
                 updateRunning(delta)
             }
@@ -84,13 +84,13 @@ class GameWorld(
         airplane.update(delta)
         scroller.update(delta)
 
-        if (currentState == GameState.RUNNING &&
+        if (currentState == GameState.Running &&
             (airplane.highestY <= 0 || airplane.lowestY > height)
         ) {
             scroller.stop()
             airplane.die()
 
-            currentState = GameState.GAME_OVER
+            currentState = GameState.GameOver
         }
     }
 }

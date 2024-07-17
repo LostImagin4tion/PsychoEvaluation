@@ -59,18 +59,18 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
         when (sensorDeviceType.value) {
-            SensorDeviceType.USB -> {
+            SensorDeviceType.Usb -> {
                 viewModel.connectToUsbDevice(
                     usbManager = usbManager,
                     screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
                 )
             }
-            SensorDeviceType.BLUETOOTH -> {
+            SensorDeviceType.Bluetooth -> {
                 viewModel.retrieveDataFromBluetoothDevice(
                     screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
                 )
             }
-            SensorDeviceType.UNKNOWN -> {}
+            SensorDeviceType.Unknown -> {}
         }
 
         DisposableEffect(viewModel) {

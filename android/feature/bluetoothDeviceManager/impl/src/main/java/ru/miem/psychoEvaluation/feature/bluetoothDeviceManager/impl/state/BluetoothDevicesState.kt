@@ -9,13 +9,13 @@ data class BluetoothDeviceState(
 )
 
 enum class BluetoothDeviceConnectionStatus {
-    UNKNOWN,
-    IN_PROGRESS,
-    CONNECTED
+    Unknown,
+    InProgress,
+    Connected
 }
 
 fun BluetoothDevice.toDeviceState(): BluetoothDeviceState = BluetoothDeviceState(
     name = name,
     hardwareAddress = hardwareAddress,
-    connectionStatus = BluetoothDeviceConnectionStatus.UNKNOWN,
+    connectionStatus = BluetoothDeviceConnectionStatus.Unknown,
 )

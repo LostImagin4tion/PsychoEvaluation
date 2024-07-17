@@ -32,7 +32,7 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.Blueto
 fun BluetoothDeviceItem(
     deviceName: String? = null,
     hardwareAddress: String,
-    connectionStatus: BluetoothDeviceConnectionStatus = BluetoothDeviceConnectionStatus.UNKNOWN,
+    connectionStatus: BluetoothDeviceConnectionStatus = BluetoothDeviceConnectionStatus.Unknown,
     onClick: () -> Unit = {},
 ) = Row(
     verticalAlignment = Alignment.CenterVertically,
@@ -71,8 +71,8 @@ fun BluetoothDeviceItem(
     Spacer(modifier = Modifier.weight(1f))
 
     when (connectionStatus) {
-        BluetoothDeviceConnectionStatus.UNKNOWN -> {}
-        BluetoothDeviceConnectionStatus.IN_PROGRESS -> {
+        BluetoothDeviceConnectionStatus.Unknown -> {}
+        BluetoothDeviceConnectionStatus.InProgress -> {
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.primary,
                 strokeWidth = 2.dp,
@@ -80,7 +80,7 @@ fun BluetoothDeviceItem(
                 modifier = Modifier.size(28.dp),
             )
         }
-        BluetoothDeviceConnectionStatus.CONNECTED -> {
+        BluetoothDeviceConnectionStatus.Connected -> {
             Icon(
                 painter = painterResource(R.drawable.ready_circle),
                 tint = MaterialTheme.colorScheme.primary,

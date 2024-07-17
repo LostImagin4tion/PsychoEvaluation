@@ -45,11 +45,11 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
                     .toPersistentHashMap()
                     .mutate {
                         when (device.advertisementStatus) {
-                            BluetoothAdvertisementStatus.AVAILABLE -> {
+                            BluetoothAdvertisementStatus.Available -> {
                                 it[device.hardwareAddress] = newDevice
                             }
 
-                            BluetoothAdvertisementStatus.NOT_AVAILABLE,
+                            BluetoothAdvertisementStatus.NotAvailable,
                             null
                             -> it.remove(device.hardwareAddress)
                         }
@@ -67,13 +67,13 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
         deviceState: BluetoothDeviceState,
         onDeviceConnected: () -> Unit = {}
     ) {
-        changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.IN_PROGRESS)
+        changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.InProgress)
         bleDeviceInteractor.connectToBluetoothDevice(
             activity,
             bluetoothAdapter,
             deviceState.hardwareAddress,
         ) {
-            changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.CONNECTED)
+            changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Connected)
             onDeviceConnected()
         }
     }

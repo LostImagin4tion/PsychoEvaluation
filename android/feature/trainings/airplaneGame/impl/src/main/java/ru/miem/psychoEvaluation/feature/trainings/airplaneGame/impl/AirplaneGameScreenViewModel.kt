@@ -25,7 +25,7 @@ class AirplaneGameScreenViewModel : ViewModel() {
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _stressData = MutableStateFlow(SensorData(0, 0.0))
-    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.UNKNOWN)
+    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
     val stressData: StateFlow<SensorData> = _stressData
@@ -57,9 +57,9 @@ class AirplaneGameScreenViewModel : ViewModel() {
 
     fun disconnect() {
         when (_sensorDeviceType.value) {
-            SensorDeviceType.USB -> usbDeviceInteractor.disconnect()
-            SensorDeviceType.BLUETOOTH -> bleDeviceInteractor.disconnect()
-            SensorDeviceType.UNKNOWN -> {}
+            SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
+            SensorDeviceType.Unknown -> {}
         }
     }
 
