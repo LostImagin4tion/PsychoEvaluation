@@ -58,9 +58,8 @@ class AuthorizationViewModel : ViewModel() {
 
     private fun <T>AuthorizationState.toResult(): Result<T> = when (this.state) {
         AuthorizationResponseType.Authorized -> SuccessResult()
-
-        AuthorizationResponseType.RefreshTokenExpired,
-        AuthorizationResponseType.WrongCredentials -> ErrorResult()
+        AuthorizationResponseType.RefreshTokenExpired -> ErrorResult(R.string.session_expired_alert)
+        AuthorizationResponseType.WrongCredentials -> ErrorResult(R.string.wrong_credentials_alert)
     }
 
     private companion object {

@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -33,6 +34,7 @@ import ru.miem.psychoEvaluation.common.designSystem.state.StateHolder
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.textfields.LoginTextField
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.FullScreenLoadingResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.SuccessResult
@@ -46,25 +48,28 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
     @Composable
     override fun AuthorizationScreen(
         navigateToRoute: (route: String, builder: NavOptionsBuilder.() -> Unit) -> Unit,
-        showMessage: (String) -> Unit
+        showMessage: (String) -> Unit,
     ) {
+        val context = LocalContext.current
         val viewModel: AuthorizationViewModel = viewModel()
 
         val authorizationState = viewModel.authorizationState.collectAsState()
 
-        if (authorizationState.value is SuccessResult) {
-            navigateToRoute(Routes.userProfile) {
+        when (authorizationState.value) {
+            is SuccessResult -> navigateToRoute(Routes.userProfile) {
                 popUpTo(Routes.authorization) { inclusive = true }
             }
+            is ErrorResult -> (authorizationState.value as? ErrorResult<Unit>)?.message?.let {
+                showMessage(context.getString(it))
+            }
+            else -> {}
         }
 
         LaunchedEffect(Unit) {
             viewModel.tryAuthorizationWithRefreshToken()
         }
 
-        StateHolder(
-            state = authorizationState.value
-        )
+        StateHolder(state = authorizationState.value)
 
         if (authorizationState.value !is FullScreenLoadingResult) {
             AuthorizationScreenContent(

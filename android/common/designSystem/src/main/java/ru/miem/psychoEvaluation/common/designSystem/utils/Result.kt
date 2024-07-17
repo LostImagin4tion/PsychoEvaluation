@@ -1,5 +1,7 @@
 package ru.miem.psychoEvaluation.common.designSystem.utils
 
+import androidx.annotation.StringRes
+
 sealed class Result<T>
 
 class NothingResult<T> : Result<T>()
@@ -13,7 +15,7 @@ data class SuccessResult<T>(
 ) : Result<T>()
 
 data class ErrorResult<T>(
-    val message: String? = null,
+    @StringRes val message: Int? = null,
 ) : Result<T>()
 
 object ResultNames {
