@@ -1,11 +1,13 @@
 package ru.miem.psychoEvaluation.di.modules
 
 import dagger.Module
-import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.di.HttpClientModule
+import ru.miem.psychoEvaluation.di.apiProviders.multiplatform.AuthorizationRepositoryApiProvider
+import ru.miem.psychoEvaluation.di.apiProviders.multiplatform.HttpClientFactoryApiProvider
 
 @Module(
     includes = [
-        HttpClientModule::class,
+        HttpClientFactoryApiProvider::class,
+        AuthorizationRepositoryApiProvider::class,
     ]
 )
 interface MultiplatformCoreModule

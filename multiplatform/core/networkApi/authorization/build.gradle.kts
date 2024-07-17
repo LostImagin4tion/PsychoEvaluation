@@ -1,4 +1,3 @@
-import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import ru.miem.psychoEvaluation.consts.CompileVersions
 import ru.miem.psychoEvaluation.consts.Dependencies
@@ -31,22 +30,24 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "multiplatform-core-httpClient"
+            baseName = "multiplatform-networkApi-authorization"
             isStatic = true
         }
     }
 
     sourceSets {
         commonMain.dependencies {
-            Dependencies.Network.multiplatformDeps.forEach { implementation(it) }
+            Dependencies.Network.serializationDeps.forEach { implementation(it) }
 
             implementation(project(":multiplatform:core:utils"))
+            implementation(project(":multiplatform:core:httpClient"))
         }
         androidMain.dependencies {
             Dependencies.Network.androidDeps.forEach { implementation(it) }
+
             Dependencies.Dagger.implDeps.forEach { implementation(it) }
 
-            api(project(":android:core:di:api"))
+            api(project(":android:core:di:impl"))
         }
         iosMain.dependencies {
             Dependencies.Network.iosDeps.forEach { implementation(it) }
@@ -57,7 +58,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.multiplatform.core.httpClient"
+    namespace = "ru.miem.psychoEvaluation.multiplatform.core.networkApi"
     compileSdk = CompileVersions.CURRENT_COMPILE_VERSION
 
     defaultConfig {
@@ -70,8 +71,6 @@ android {
     }
 
     dependencies {
-        Dependencies.Dagger.kaptDeps.forEach {
-            add("kapt", it)
-        }
+        Dependencies.Dagger.kaptDeps.forEach { add("kapt", it) }
     }
 }

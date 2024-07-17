@@ -25,6 +25,7 @@ rootProject.name = "PsychoEvaluation"
 // Core
 include(":multiplatform:core:utils")
 include(":multiplatform:core:httpClient")
+include(":multiplatform:core:networkApi:authorization")
 
 // Common
 include(":multiplatform:common")
@@ -66,6 +67,9 @@ include(":android:common:interactors:bleDeviceInteractor:impl")
 
 include(":android:common:interactors:settingsInteractor:api")
 include(":android:common:interactors:settingsInteractor:impl")
+
+include(":android:common:interactors:networkApi:authorization:api")
+include(":android:common:interactors:networkApi:authorization:impl")
 
 // Features
 include(":android:feature:navigation:api")

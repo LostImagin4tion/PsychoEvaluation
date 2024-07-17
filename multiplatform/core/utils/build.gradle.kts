@@ -5,7 +5,6 @@ import ru.miem.psychoEvaluation.consts.Dependencies
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
 }
 
 kotlin {
@@ -29,7 +28,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "utils"
+            baseName = "multiplatform-core-utils"
             isStatic = true
         }
     }

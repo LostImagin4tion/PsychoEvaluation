@@ -16,7 +16,7 @@ class SafeHttpClientFactory(
     @Volatile
     private var safeHttpClient: SafeHttpClient? = null
 
-    suspend fun getSafeHttpClient(): SafeHttpClient {
+    suspend fun get(): SafeHttpClient {
         return safeHttpClient ?: mutex.withLock {
             safeHttpClient ?: withContext(Dispatchers.Default) {
                 SafeHttpClient(baseClientProvider()).also { safeHttpClient = it }
