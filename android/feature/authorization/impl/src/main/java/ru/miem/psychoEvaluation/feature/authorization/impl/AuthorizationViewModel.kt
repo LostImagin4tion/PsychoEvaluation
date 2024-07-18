@@ -34,6 +34,7 @@ class AuthorizationViewModel : ViewModel() {
             authorizationInteractor.authorization()
                 .run {
                     val result = this.toResult<Unit>()
+                    Timber.tag(TAG).d("Got new UI state $result")
                     _authorizationState.emit(result)
                 }
         }
@@ -58,6 +59,7 @@ class AuthorizationViewModel : ViewModel() {
 
     private fun <T>AuthorizationState.toResult(): Result<T> = when (this.state) {
         AuthorizationResponseType.Authorized -> SuccessResult()
+        AuthorizationResponseType.NoRefreshToken -> ErrorResult()
         AuthorizationResponseType.RefreshTokenExpired -> ErrorResult(R.string.session_expired_alert)
         AuthorizationResponseType.WrongCredentials -> ErrorResult(R.string.wrong_credentials_alert)
     }

@@ -6,18 +6,18 @@ import ru.miem.psychoEvaluation.multiplatform.core.utils.logger.Logger
 
 sealed class NetworkResponse<out DataType : Any, out ErrorType : Any> {
 
-    class Success<DataType : Any>(
+    data class Success<DataType : Any>(
         val data: DataType,
         val httpInfo: HttpInfo,
     ) : NetworkResponse<DataType, Nothing>()
 
-    class Error<out ErrorType : Any>(
+    data class Error<out ErrorType : Any>(
         val httpInfo: HttpInfo? = null
     ) : NetworkResponse<Nothing, ErrorType>() {
         // TODO design errors hierarchy?
     }
 
-    class HttpInfo(
+    data class HttpInfo(
         val httpCode: HttpStatusCode,
         val headers: Headers,
     )

@@ -25,11 +25,13 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
         email: String?,
         password: String?,
     ): AuthorizationState {
-        val authorizedWithRefreshToken = tryAuthorizationWithRefreshToken()
+        val authorizationWithRefreshTokenResponse = tryAuthorizationWithRefreshToken()
 
         return when {
-            authorizedWithRefreshToken -> AuthorizationState((AuthorizationResponseType.Authorized))
-            email == null || password == null -> AuthorizationState(AuthorizationResponseType.RefreshTokenExpired)
+            email == null || password == null ||
+                authorizationWithRefreshTokenResponse == AuthorizationResponseType.Authorized
+            -> AuthorizationState(authorizationWithRefreshTokenResponse)
+
             else -> {
                 val requestEntity = AuthorizationRequest(email, password)
 
@@ -47,11 +49,11 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
         }
     }
 
-    private suspend fun tryAuthorizationWithRefreshToken(): Boolean {
+    private suspend fun tryAuthorizationWithRefreshToken(): AuthorizationResponseType {
         val refreshToken = dataStore[DataStorageKeys.refreshToken]
             .first()
             .takeIf { it.isNotBlank() }
-            ?: return false
+            ?: return AuthorizationResponseType.NoRefreshToken
 
         val requestEntity = RefreshAccessTokenRequest(refreshToken)
 
@@ -62,9 +64,9 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
             ?.run {
                 dataStore.set(DataStorageKeys.refreshToken, refreshToken)
                 apiAccessToken = accessToken
-                true
+                AuthorizationResponseType.Authorized
             }
-            ?: false
+            ?: AuthorizationResponseType.RefreshTokenExpired
     }
 
     private companion object {

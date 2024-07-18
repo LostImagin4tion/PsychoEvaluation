@@ -6,7 +6,7 @@
     <string name="authorization_continue_button">Продолжить</string>
     <string name="authorization_create_account_button">Создать аккаунт</string>
 
-    <string name="authorization_invalid_data_alert">Пожалуйста, введите правильные email и пароль</string>
-    <string name="session_expired_alert">Похоже, Ваша сессия истекла. Пожалуйста, авторизуйтесь заново</string>
+    <string name="authorization_invalid_data_alert">Пожалуйста, введите правильные email и пароль.</string>
+    <string name="session_expired_alert">Похоже, Ваша сессия истекла. Пожалуйста, авторизуйтесь заново.</string>
     <string name="wrong_credentials_alert">Упс, что-то пошло не так. Проверьте введённые почту и пароль на правильность.</string>
 </resources>

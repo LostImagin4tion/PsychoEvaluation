@@ -95,9 +95,18 @@ fun NavigationContent(
             .padding(paddingValues),
         color = MaterialTheme.colorScheme.background
     ) {
-        val navigateToRoute: (String) -> Unit = { route -> navController.navigate(route) }
-        val navigateToRouteWithOptions: (route: String, builder: NavOptionsBuilder.() -> Unit) -> Unit =
-            { route, builder -> navController.navigate(route, builder) }
+        val navigateToRoute: (String) -> Unit = { route ->
+            navController.navigate(route) {
+                launchSingleTop = true
+            }
+        }
+        val navigateToRouteWithOptions: (String, NavOptionsBuilder.() -> Unit) -> Unit =
+            { route, builder ->
+                navController.navigate(route) {
+                    apply { launchSingleTop = true }
+                    apply(builder)
+                }
+            }
 
         NavHost(
             navController = navController,

@@ -6,6 +6,7 @@ data class AuthorizationState(
 
 enum class AuthorizationResponseType {
     Authorized,
+    NoRefreshToken,
     RefreshTokenExpired,
     WrongCredentials
 }

@@ -59,9 +59,9 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
             is SuccessResult -> navigateToRoute(Routes.userProfile) {
                 popUpTo(Routes.authorization) { inclusive = true }
             }
-            is ErrorResult -> (authorizationState.value as? ErrorResult<Unit>)?.message?.let {
-                showMessage(context.getString(it))
-            }
+            is ErrorResult -> (authorizationState.value as? ErrorResult<Unit>)
+                ?.message
+                ?.let { showMessage(context.getString(it)) }
             else -> {}
         }
 
@@ -106,8 +106,8 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         val isContinueButtonEnabled = emailInput.text.isNotBlank() && passwordInput.text.isNotBlank()
 
         val onContinueButtonClick = {
-            val email = emailInput.text
-            val password = passwordInput.text
+            val email = emailInput.text.trim()
+            val password = passwordInput.text.trim()
 
             isEmailInputError = email.isBlank() || !email.isValidEmail()
             isPasswordInputError = password.isBlank()
