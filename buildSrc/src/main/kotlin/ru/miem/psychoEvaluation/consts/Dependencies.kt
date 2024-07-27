@@ -156,6 +156,8 @@ object Dependencies {
 
     object Network {
         private const val KTOR_VERSION = "2.3.11"
+        private const val LOGGING_INTERCEPTOR_VERSION = "4.12.0"
+        private const val KOTLIN_SERIALIZATION_VERSION = "1.6.3"
 
         private const val KTOR_CORE = "io.ktor:ktor-client-core:$KTOR_VERSION"
         private const val KTOR_OKHTTP = "io.ktor:ktor-client-okhttp:$KTOR_VERSION"
@@ -163,14 +165,23 @@ object Dependencies {
         private const val KTOR_SERIALIZATION = "io.ktor:ktor-serialization-kotlinx-json:$KTOR_VERSION"
         private const val KTOR_CONTENT_NEGOTIATION = "io.ktor:ktor-client-content-negotiation:$KTOR_VERSION"
         private const val KTOR_LOGGING = "io.ktor:ktor-client-logging:$KTOR_VERSION"
+        private const val OKHTTP_LOGGING_INTERCEPTOR =
+            "com.squareup.okhttp3:logging-interceptor:$LOGGING_INTERCEPTOR_VERSION"
 
-        val androidDeps = listOf(KTOR_OKHTTP)
+        private const val KOTLIN_SERIALIZATION =
+            "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLIN_SERIALIZATION_VERSION"
+
+        val androidDeps = listOf(KTOR_OKHTTP, OKHTTP_LOGGING_INTERCEPTOR)
         val iosDeps = listOf(KTOR_DARWIN)
         val multiplatformDeps = listOf(
-            KTOR_CORE, KTOR_SERIALIZATION, KTOR_CONTENT_NEGOTIATION,
-            KTOR_LOGGING
+            KTOR_CORE, KTOR_SERIALIZATION, KTOR_CONTENT_NEGOTIATION, KTOR_LOGGING,
+        )
+        val serializationDeps = listOf(
+            KOTLIN_SERIALIZATION
         )
     }
+
+    object Serialization
 
     object UI {
         private const val MATERIAL_VERSION = "1.9.0"

@@ -2,7 +2,6 @@ package ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +29,6 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDevi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceState
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.ui.BluetoothDeviceItem
-import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import javax.inject.Inject
 
 class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceManagerScreen {
@@ -53,10 +51,6 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
 
         LaunchedEffect(Unit) {
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
-        }
-
-        BackHandler { // TODO its a hack for handling one excessive recomposition
-            navigateToRoute(Routes.trainingsList)
         }
 
         DeviceManagerScreenContent(

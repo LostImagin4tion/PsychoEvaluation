@@ -19,6 +19,7 @@ dependencies {
     // ==== Multiplatform Core Layer ====
 
     implementation(project(":multiplatform:core:httpClient"))
+    implementation(project(":multiplatform:core:networkApi:authorization"))
 
     // ==== Core layer ====
 
@@ -35,6 +36,7 @@ dependencies {
     implementation(project(":android:common:interactors:usbDeviceInteractor:impl"))
     implementation(project(":android:common:interactors:bleDeviceInteractor:impl"))
     implementation(project(":android:common:interactors:settingsInteractor:impl"))
+    implementation(project(":android:common:interactors:networkApi:authorization:impl"))
 
     // ==== Feature layer ====
 

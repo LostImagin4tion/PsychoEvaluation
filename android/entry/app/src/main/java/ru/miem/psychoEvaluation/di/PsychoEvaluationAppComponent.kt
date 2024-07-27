@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.di
 
+import android.app.Application
 import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
@@ -25,6 +26,8 @@ interface PsychoEvaluationAppComponent {
 
     @Component.Builder
     interface Builder {
+        @BindsInstance fun application(application: Application): Builder
+
         @BindsInstance fun context(context: Context): Builder
         fun build(): PsychoEvaluationAppComponent
     }
@@ -33,9 +36,10 @@ interface PsychoEvaluationAppComponent {
 /**
  * Initialization of application's **DI graph**
  */
-fun initApis(context: Context): PsychoEvaluationAppComponent = DaggerPsychoEvaluationAppComponent
+fun initApis(application: Application): PsychoEvaluationAppComponent = DaggerPsychoEvaluationAppComponent
     .builder()
-    .context(context)
+    .application(application)
+    .context(application)
     .build()
     .also {
         ApiRegistry.init(it.apiResolver)

@@ -1,3 +1,4 @@
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import ru.miem.psychoEvaluation.consts.CompileVersions
 import ru.miem.psychoEvaluation.consts.Dependencies
@@ -6,6 +7,7 @@ plugins {
     id("com.android.library")
     kotlin("multiplatform")
     kotlin("plugin.serialization")
+    kotlin("kapt")
 }
 
 kotlin {
@@ -29,7 +31,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "httpClient"
+            baseName = "multiplatform-core-httpClient"
             isStatic = true
         }
     }
@@ -42,9 +44,7 @@ kotlin {
         }
         androidMain.dependencies {
             Dependencies.Network.androidDeps.forEach { implementation(it) }
-
             Dependencies.Dagger.implDeps.forEach { implementation(it) }
-//            Dependencies.Dagger.kaptDeps.forEach { kapt(it) }
 
             api(project(":android:core:di:api"))
         }
@@ -67,5 +67,11 @@ android {
     compileOptions {
         sourceCompatibility = CompileVersions.JAVA_COMPILE_VERSION
         targetCompatibility = CompileVersions.JAVA_COMPILE_VERSION
+    }
+
+    dependencies {
+        Dependencies.Dagger.kaptDeps.forEach {
+            add("kapt", it)
+        }
     }
 }
