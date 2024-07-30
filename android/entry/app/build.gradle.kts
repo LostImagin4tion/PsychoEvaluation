@@ -20,6 +20,7 @@ dependencies {
 
     implementation(project(":multiplatform:core:httpClient"))
     implementation(project(":multiplatform:core:networkApi:authorization"))
+    implementation(project(":multiplatform:core:networkApi:registration"))
 
     // ==== Core layer ====
 
@@ -37,6 +38,7 @@ dependencies {
     implementation(project(":android:common:interactors:bleDeviceInteractor:impl"))
     implementation(project(":android:common:interactors:settingsInteractor:impl"))
     implementation(project(":android:common:interactors:networkApi:authorization:impl"))
+    implementation(project(":android:common:interactors:networkApi:registration:impl"))
 
     // ==== Feature layer ====
 

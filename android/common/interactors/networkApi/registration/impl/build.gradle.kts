@@ -23,4 +23,5 @@ dependencies {
 
     api(project(":android:common:interactors:networkApi:authorization:api"))
     api(project(":android:common:interactors:networkApi:registration:api"))
+    implementation(project(":android:common:interactors:networkApi:registration:api"))
 }
