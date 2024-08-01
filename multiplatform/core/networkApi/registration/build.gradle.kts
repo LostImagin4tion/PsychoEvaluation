@@ -58,7 +58,7 @@ kotlin {
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.multiplatform.core.networkApi"
+    namespace = "ru.miem.psychoEvaluation.multiplatform.core.networkApi.registration"
     compileSdk = CompileVersions.CURRENT_COMPILE_VERSION
 
     defaultConfig {
@@ -74,8 +74,4 @@ android {
         Dependencies.Dagger.kaptDeps.forEach { add("kapt", it) }
     }
 }
-dependencies {
-    implementation(project(":multiplatform:core:networkApi:authorization"))
-    implementation(project(":multiplatform:core:networkApi:authorization"))
-    implementation(project(":multiplatform:core:networkApi:authorization"))
-}
+

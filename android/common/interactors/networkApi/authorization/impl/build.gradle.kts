@@ -4,7 +4,6 @@ plugins {
 
 android {
     namespace = "ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api"
-    namespace = "ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api"
 }
 
 dependencies {
@@ -12,7 +11,6 @@ dependencies {
     // ==== Multiplatform Core Layer ====
 
     implementation(project(":multiplatform:core:networkApi:authorization"))
-    implementation(project(":multiplatform:core:networkApi:registration"))
 
     // ==== Core layer ====
 
@@ -22,5 +20,4 @@ dependencies {
     // ==== Common layer ====
 
     api(project(":android:common:interactors:networkApi:authorization:api"))
-    api(project(":android:common:interactors:networkApi:registration:api"))
 }

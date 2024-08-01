@@ -12,5 +12,4 @@ interface RegistrationScreen {
         navigateToRoute: (route: String, builder: NavOptionsBuilder.() -> Unit) -> Unit,
         showMessage: (String) -> Unit,
     )
-
 }

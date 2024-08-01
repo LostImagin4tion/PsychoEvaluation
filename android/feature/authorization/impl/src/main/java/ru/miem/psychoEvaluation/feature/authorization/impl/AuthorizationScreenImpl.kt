@@ -41,7 +41,6 @@ import ru.miem.psychoEvaluation.common.designSystem.utils.SuccessResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.isValidEmail
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
-import ru.miem.psychoEvaluation.feature.registration.impl.R
 import javax.inject.Inject
 
 class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {

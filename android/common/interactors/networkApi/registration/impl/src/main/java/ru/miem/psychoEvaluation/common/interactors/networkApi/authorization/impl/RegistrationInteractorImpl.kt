@@ -1,6 +1,5 @@
 package ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl
 
-import kotlinx.coroutines.flow.first
 import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.RegistrationInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.model.RegistrationResponseType
 import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.model.RegistrationState
@@ -9,8 +8,6 @@ import ru.miem.psychoEvaluation.core.dataStorage.api.di.DataStorageDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.multiplatform.core.di.RegistrationRepositoryDiApi
 import ru.miem.psychoEvaluation.multiplatform.core.models.RegistrationRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshAccessTokenRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshAccessTokenRequest1
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,49 +36,10 @@ class RegistrationInteractorImpl @Inject constructor() : RegistrationInteractor 
                         dataStore.set(DataStorageKeys.refreshToken, refreshToken)
                         apiAccessToken = accessToken
                         RegistrationState(RegistrationResponseType.Registered)
-                    } ?: RegistrationState(RegistrationResponseType.AlreadyRegistered)
+                    }
+                    ?: RegistrationState(RegistrationResponseType.AlreadyRegistered)
             }
         }
-
-//        return when {
-//            registrationWithRefreshToken -> RegistrationState((RegistrationResponseType.Registered))
-//            email == null || password == null -> RegistrationState(RegistrationResponseType.RefreshTokenExpired)
-//            else -> {
-//                val requestEntity = RegistrationRequest(email, password)
-//
-//                registrationRepository.registration(requestEntity)
-//                    .also {
-//                        Timber.tag(TAG).d("Got registration response $it")
-//                    }
-//                    ?.run {
-//                        dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-//                        apiAccessToken = accessToken
-//                        RegistrationState(RegistrationResponseType.AlreadyRegistered)
-//                    }
-//                    ?: RegistrationState(RegistrationResponseType.Registered)
-//            }
-//        }
-
-    }
-
-    private suspend fun tryRegistration(): Boolean {
-        val refreshToken = dataStore[DataStorageKeys.refreshToken]
-            .first()
-            .takeIf { it.isNotBlank() }
-            ?: return false
-
-        val requestEntity = RefreshAccessTokenRequest1(refreshToken)
-
-        return registrationRepository.refreshAccessToken(requestEntity)
-            .also {
-                Timber.tag(TAG).d("Got refresh token response $it")
-            }
-            ?.run {
-                dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                apiAccessToken = accessToken
-                true
-            }
-            ?: false
     }
 
     private companion object {

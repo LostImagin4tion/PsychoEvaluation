@@ -9,7 +9,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,8 +56,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         val registrationState = viewModel.registrationState.collectAsState()
 
         when (registrationState.value) {
-            is SuccessResult -> navigateToRoute(Routes.userProfile)
-            {
+            is SuccessResult -> navigateToRoute(Routes.userProfile) {
                 popUpTo(Routes.registration) { inclusive = true }
             }
             is ErrorResult -> (registrationState.value as? ErrorResult<Unit>)?.message?.let {

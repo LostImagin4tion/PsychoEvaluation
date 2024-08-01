@@ -15,7 +15,6 @@ import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.d
 import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.model.RegistrationResponseType
 import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.model.RegistrationState
 import ru.miem.psychoEvaluation.core.di.impl.diApi
-import ru.miem.psychoEvaluation.feature.registration.impl.R
 import timber.log.Timber
 
 class RegistrationViewModel : ViewModel() {
@@ -25,19 +24,6 @@ class RegistrationViewModel : ViewModel() {
     private val _registrationState = MutableStateFlow<Result<Unit>>(NothingResult())
 
     val registrationState: StateFlow<Result<Unit>> = _registrationState
-
-//    fun tryAuthorizationWithRefreshToken() {
-//        viewModelScope.launch {
-//            _authorizationState.emit(FullScreenLoadingResult())
-//            Timber.tag(TAG).d("Got new UI state ${ResultNames.fullScreenLoading}")
-//
-//            authorizationInteractor.authorization()
-//                .run {
-//                    val result = this.toResult<Unit>()
-//                    _authorizationState.emit(result)
-//                }
-//        }
-//    }
 
     fun registration(
         email: String,
@@ -56,7 +42,7 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    private fun <T>RegistrationState.toResult(): Result<T> = when (this.state) {
+    private fun <T> RegistrationState.toResult(): Result<T> = when (this.state) {
         RegistrationResponseType.Registered -> SuccessResult()
         RegistrationResponseType.AlreadyRegistered -> ErrorResult(R.string.already_registered_alert)
         else -> ErrorResult(R.string.registration_invalid_data_alert)

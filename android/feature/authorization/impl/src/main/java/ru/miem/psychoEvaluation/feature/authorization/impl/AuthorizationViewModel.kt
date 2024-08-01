@@ -16,7 +16,6 @@ import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.
 import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.model.AuthorizationResponseType
 import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.model.AuthorizationState
 import ru.miem.psychoEvaluation.core.di.impl.diApi
-import ru.miem.psychoEvaluation.feature.registration.impl.R
 import timber.log.Timber
 
 class AuthorizationViewModel : ViewModel() {

@@ -9,7 +9,4 @@ data class RegistrationRequest(
     @SerialName("password") val password: String,
 )
 
-@Serializable
-data class RefreshAccessTokenRequest1(
-    val refreshToken: String,
-)
+
