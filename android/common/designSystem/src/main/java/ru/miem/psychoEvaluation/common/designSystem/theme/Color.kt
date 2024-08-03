@@ -24,3 +24,5 @@ val psychoSecondaryContainerDark = Color(0xFF364B6D)
  */
 val psychoLightGrayBackground = Color(0xFFE9ECF0)
 val psychoDarkBackground = Color(0xFF1B1F1D)
+
+val psychoBackgroundDecoration = Color(0xFFEB7096)

@@ -12,10 +12,6 @@ dependencies {
 
     Dependencies.GameEngine.allDeps.forEach { implementation(it) }
 
-    // ==== Core layer ====
-
-    implementation(project(":android:core:deviceApi:api"))
-
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))

@@ -69,7 +69,8 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
         this.deviceAddress = deviceHardwareAddress
         this.onDeviceConnected = onDeviceConnected
 
-        service?.attach(serialListener)
+        service
+            ?.attach(serialListener)
             ?: run {
                 activity.bindService(
                     Intent(activity, SerialService::class.java),
@@ -87,7 +88,10 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
         Timber.tag(TAG).d("onServiceConnected(ComponentName?, IBinder?)")
         this.service = (service as? SerialService.SerialBinder)
             ?.service
-            ?.apply { attach(serialListener) }
+            ?.apply {
+                attach(serialListener)
+            }
+        Timber.tag(TAG).d("onServiceConnected $name ${this.service} $service")
 
         if (isFirstStart) {
             isFirstStart = false
@@ -113,18 +117,20 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
     }
 
     private fun createSerialListenerCallbackFlow(): Flow<Int> = callbackFlow {
+        Timber.tag(TAG).d("HELLO CREATE CALLBACK FLOW")
         serialListener.apply {
+            Timber.tag(TAG).d("HELLO CHANGE CALLBACK")
             onSerialReadCallback = { bytes ->
                 val stressData = convertData(bytes)
+                Timber.tag(TAG).d("NEW STRESS DATA $stressData")
+
                 trySendBlocking(stressData).onFailure { throwable ->
-                    Timber.tag(TAG)
-                        .e(
-                            message = "Failed to send new bytes from bluetooth device %s " +
-                                "with error %s, %s",
-                            bytes.joinToString(","),
-                            throwable.toString(),
-                            throwable?.message
-                        )
+                    Timber.tag(TAG).e(
+                        message = "Failed to send new bytes from bluetooth device %s with error %s, %s",
+                        bytes.joinToString(","),
+                        throwable.toString(),
+                        throwable?.message
+                    )
                 }
             }
         }

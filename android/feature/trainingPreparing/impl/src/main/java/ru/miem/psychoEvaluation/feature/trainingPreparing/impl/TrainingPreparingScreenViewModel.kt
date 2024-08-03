@@ -1,0 +1,110 @@
+package ru.miem.psychoEvaluation.feature.trainingPreparing.impl
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
+import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.launch
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
+import ru.miem.psychoEvaluation.core.di.impl.diApi
+import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScreen
+import timber.log.Timber
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+
+class TrainingPreparingScreenViewModel : ViewModel() {
+
+    private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
+    private val bleDeviceInteractor by diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
+    private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
+
+    private val _currentScreen = MutableStateFlow(CurrentScreen.Welcome)
+
+    val currentScreen: StateFlow<CurrentScreen> = _currentScreen
+
+    fun startCollectingAndNormalizingSensorData(
+        onTimerEnded: () -> Unit,
+    ) {
+        viewModelScope.launch {
+            val deviceType = settingsInteractor.getCurrentSensorDeviceType()
+                .first()
+
+            when (deviceType) {
+                SensorDeviceType.Usb -> {
+                    Timber.tag(TAG).e("Got unexpected device type $deviceType")
+                }
+                SensorDeviceType.Bluetooth -> findDataBordersWithBleDevice()
+                SensorDeviceType.Unknown -> {
+                    Timber.tag(TAG).e("Got unexpected device type $deviceType")
+                }
+            }
+        }
+
+        tickerFlow(period = DEFAULT_PERIOD)
+            .cancellable()
+            .scan(initial = 0) { numberOfTicks, _ ->
+                numberOfTicks + 1
+            }
+            .onEach {  numberOfTicks ->
+                check(numberOfTicks / NUMBER_OF_SCREENS < NUMBER_OF_ROUNDS)
+            }
+            .catch { throwable ->
+                _currentScreen.emit(CurrentScreen.Exhale)
+                onTimerEnded()
+                Timber.tag(TAG).e("HELLO THROWABLE $throwable")
+            }
+            .zip(_currentScreen) { _, screen ->
+                when (screen) {
+                    CurrentScreen.Welcome -> CurrentScreen.TakeABreath
+                    CurrentScreen.TakeABreath -> CurrentScreen.Exhale
+                    CurrentScreen.Exhale -> CurrentScreen.TakeABreath
+                }
+            }
+            .onEach { newScreen ->
+                _currentScreen.emit(newScreen)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun findDataBordersWithUsbDevice() {
+        viewModelScope.launch {
+
+        }
+    }
+
+    private fun findDataBordersWithBleDevice() {
+        viewModelScope.launch {
+            bleDeviceInteractor.findDataBorders {
+                Timber.tag("HELLO found borders")
+            }
+        }
+    }
+
+    private fun tickerFlow(period: Duration) = flow {
+        while (true) {
+            emit(Unit)
+            delay(period)
+        }
+    }
+
+    private companion object {
+        val TAG: String = TrainingPreparingScreenViewModel::class.java.simpleName
+
+        val DEFAULT_PERIOD = 3.seconds
+        val NUMBER_OF_SCREENS = CurrentScreen.entries.size - 1
+
+        const val NUMBER_OF_ROUNDS = 3
+    }
+}

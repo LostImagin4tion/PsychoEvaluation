@@ -5,7 +5,7 @@ import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
 
 @Component(
     modules = [
-        SettingsScreenModule::class
+        SettingsScreenModule::class,
     ]
 )
 interface SettingsScreenComponent : SettingsScreenDiApi {

@@ -90,6 +90,9 @@ include(":android:feature:settings:impl")
 include(":android:feature:bluetoothDeviceManager:api")
 include(":android:feature:bluetoothDeviceManager:impl")
 
+include(":android:feature:trainingPreparing:api")
+include(":android:feature:trainingPreparing:impl")
+
 include(":android:feature:trainingsList:api")
 include(":android:feature:trainingsList:impl")
 

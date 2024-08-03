@@ -90,7 +90,10 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-        TitleText(textRes = R.string.trainings_header, isLarge = false)
+        TitleText(
+            textRes = R.string.trainings_header,
+            isLarge = false
+        )
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 

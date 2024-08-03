@@ -7,9 +7,9 @@ interface BluetoothDeviceManagerScreen {
 
     @Composable
     @SuppressLint("NotConstructor")
-    fun DeviceManagerScreen(
+    fun BluetoothDeviceManagerScreen(
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit,
-        navigateToTraining: () -> Unit,
+        navigateToTrainingPreparing: () -> Unit,
     )
 }

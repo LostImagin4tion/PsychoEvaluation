@@ -38,6 +38,7 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
     ) {
         viewModelScope.launch {
             bleDeviceInteractor.scanForDevices(bluetoothScanner)
+
             bleDeviceInteractor.devicesFlow.collect { device ->
                 val newDevice = device.toDeviceState()
 
@@ -69,13 +70,14 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
     ) {
         changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.InProgress)
         bleDeviceInteractor.connectToBluetoothDevice(
-            activity,
-            bluetoothAdapter,
-            deviceState.hardwareAddress,
-        ) {
-            changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Connected)
-            onDeviceConnected()
-        }
+            activity = activity,
+            bluetoothAdapter = bluetoothAdapter,
+            deviceHardwareAddress = deviceState.hardwareAddress,
+            onDeviceConnected = {
+                changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Connected)
+                onDeviceConnected()
+            }
+        )
     }
 
     fun disconnectBluetoothDevice() = bleDeviceInteractor.disconnect()

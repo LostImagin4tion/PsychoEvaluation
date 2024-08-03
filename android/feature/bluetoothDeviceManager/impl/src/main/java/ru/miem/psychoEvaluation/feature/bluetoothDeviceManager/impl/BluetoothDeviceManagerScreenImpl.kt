@@ -34,10 +34,10 @@ import javax.inject.Inject
 class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceManagerScreen {
 
     @Composable
-    override fun DeviceManagerScreen(
+    override fun BluetoothDeviceManagerScreen(
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit,
-        navigateToTraining: () -> Unit,
+        navigateToTrainingPreparing: () -> Unit,
     ) {
         val context = LocalContext.current
         val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
@@ -53,7 +53,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
         }
 
-        DeviceManagerScreenContent(
+        BluetoothDeviceManagerScreenContent(
             devices.value,
             isAnyDevicesConnected,
             onDeviceTapped = { device ->
@@ -64,12 +64,12 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                         }
                     }
             },
-            navigateToTraining = navigateToTraining,
+            navigateToTraining = navigateToTrainingPreparing,
         )
     }
 
     @Composable
-    private fun DeviceManagerScreenContent(
+    private fun BluetoothDeviceManagerScreenContent(
         devices: ImmutableList<BluetoothDeviceState>,
         isAnyDeviceConnected: Boolean,
         onDeviceTapped: (device: BluetoothDeviceState) -> Unit,
@@ -80,7 +80,10 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
     ) {
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-        TitleText(textRes = R.string.device_manager_header, isLarge = false)
+        TitleText(
+            textRes = R.string.device_manager_header,
+            isLarge = false
+        )
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 

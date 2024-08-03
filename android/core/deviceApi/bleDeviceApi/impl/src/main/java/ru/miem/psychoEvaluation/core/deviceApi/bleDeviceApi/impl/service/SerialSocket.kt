@@ -301,8 +301,8 @@ class SerialSocket(
         characteristic: BluetoothGattCharacteristic,
         value: ByteArray
     ) {
-        Timber.tag(TAG)
-            .d("onCharacteristicChanged(BluetoothGatt, BluetoothGattCharacteristic, Int)")
+//        Timber.tag(TAG)
+//            .d("onCharacteristicChanged(BluetoothGatt, BluetoothGattCharacteristic, Int)")
         super.onCharacteristicChanged(gatt, characteristic, value)
         if (canceled) {
             return
@@ -316,7 +316,7 @@ class SerialSocket(
         readCharacteristic?.let { read ->
             if (characteristic === read) { // NOPMD - test object identity
                 onSerialRead(value)
-                Timber.tag(TAG).d("read, len=${value.size}")
+//                Timber.tag(TAG).d("read, len=${value.size}")
             }
         }
     }

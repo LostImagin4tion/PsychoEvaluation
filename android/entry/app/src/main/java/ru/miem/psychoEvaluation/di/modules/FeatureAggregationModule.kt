@@ -5,6 +5,7 @@ import ru.miem.psychoEvaluation.feature.authorization.impl.di.AuthorizationScree
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.di.BluetoothDeviceManagerScreenApiProvider
 import ru.miem.psychoEvaluation.feature.registration.impl.di.RegistrationScreenApiProvider
 import ru.miem.psychoEvaluation.feature.settings.impl.di.SettingsScreenApiProvider
+import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.di.TrainingPreparingScreenApiProvider
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.di.AirplaneGameScreenApiProvider
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.impl.di.DebugTrainingScreenApiProvider
 import ru.miem.psychoEvaluation.feature.trainingsList.impl.di.TrainingsListScreenApiProvider
@@ -17,6 +18,7 @@ import ru.miem.psychoEvaluation.feature.userProfile.impl.di.UserProfileScreenApi
         UserProfileScreenApiProvider::class,
         SettingsScreenApiProvider::class,
         BluetoothDeviceManagerScreenApiProvider::class,
+        TrainingPreparingScreenApiProvider::class,
 
         TrainingsListScreenApiProvider::class,
         DebugTrainingScreenApiProvider::class,

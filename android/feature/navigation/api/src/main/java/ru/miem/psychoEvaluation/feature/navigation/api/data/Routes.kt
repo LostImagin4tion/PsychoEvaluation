@@ -8,14 +8,25 @@ object Routes {
     const val settings = "settings"
 
     val bluetoothDeviceManagerRouteTemplate = "bluetoothDeviceManager?" +
-        "${BluetoothDeviceManagerRouteArgs.trainingRoute}=%s"
-            .format(
-                BluetoothDeviceManagerRouteArgs.trainingRoute,
-            )
+            "${BluetoothDeviceManagerRouteArgs.trainingRoute}=%s"
+                .format(
+                    BluetoothDeviceManagerRouteArgs.trainingRoute,
+                )
+
+    val trainingPreparingRouteTemplate = "trainingPreparing?" +
+            "${TrainingPreparingRouteArgs.trainingRoute}=%s"
+                .format(
+                    TrainingPreparingRouteArgs.trainingRoute,
+                )
 
     val bluetoothDeviceManager = bluetoothDeviceManagerRouteTemplate
         .format(
             BluetoothDeviceManagerRouteArgs.trainingRoute,
+        )
+
+    val trainingPreparing = trainingPreparingRouteTemplate
+        .format(
+            TrainingPreparingRouteArgs.trainingRoute,
         )
 
     // === Navigation bar destinations ===
@@ -33,6 +44,16 @@ object Routes {
 }
 
 object BluetoothDeviceManagerRouteArgs {
+    const val trainingRoute = "trainingRoute"
+
+    val args = listOf(
+        navArgument(trainingRoute) {
+            defaultValue = Routes.airplaneGame
+        },
+    )
+}
+
+object TrainingPreparingRouteArgs {
     const val trainingRoute = "trainingRoute"
 
     val args = listOf(

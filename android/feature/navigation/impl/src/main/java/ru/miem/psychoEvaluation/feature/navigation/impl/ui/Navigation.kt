@@ -22,10 +22,13 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDevi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.di.BluetoothDeviceManagerScreenDiApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManagerRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingPreparingRouteArgs
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
 import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
+import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
@@ -54,6 +57,7 @@ fun Navigation(
     val userProfileScreen by diApi(UserProfileDiApi::userProfileScreen)
     val settingsScreen by diApi(SettingsScreenDiApi::settingsScreen)
     val deviceManagerScreen by diApi(BluetoothDeviceManagerScreenDiApi::bluetoothDeviceManagerScreen)
+    val trainingPreparingScreen by diApi(TrainingPreparingDiApi::trainingPreparingScreen)
     val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
@@ -67,6 +71,7 @@ fun Navigation(
         registrationScreen = registrationScreen,
         userProfileScreen = userProfileScreen,
         settingsScreen = settingsScreen,
+        trainingPreparingScreen = trainingPreparingScreen,
         bluetoothDeviceManagerScreen = deviceManagerScreen,
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
@@ -84,6 +89,7 @@ fun NavigationContent(
     registrationScreen: RegistrationScreen,
     userProfileScreen: UserProfileScreen,
     settingsScreen: SettingsScreen,
+    trainingPreparingScreen: TrainingPreparingScreen,
     bluetoothDeviceManagerScreen: BluetoothDeviceManagerScreen,
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
@@ -110,7 +116,7 @@ fun NavigationContent(
 
         NavHost(
             navController = navController,
-            startDestination = remember { Routes.authorization }
+            startDestination = remember { Routes.userProfile }
         ) {
             composable(Routes.authorization) {
                 setupSystemBarColors()
@@ -145,16 +151,33 @@ fun NavigationContent(
             }
 
             composable(
-                route = Routes.bluetoothDeviceManager,
-                arguments = BluetoothDeviceManagerRouteArgs.args,
+                route = Routes.trainingPreparingRouteTemplate,
+                arguments = TrainingPreparingRouteArgs.args
             ) { backStackEntry ->
                 setupSystemBarColors()
-                bluetoothDeviceManagerScreen.DeviceManagerScreen(
+                trainingPreparingScreen.TrainingPreparingScreen(
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                     navigateToTraining = {
                         backStackEntry.arguments
+                            ?.getString(TrainingPreparingRouteArgs.trainingRoute)
+                            ?.let(navController::navigate)
+                    }
+                )
+            }
+
+            composable(
+                route = Routes.bluetoothDeviceManager,
+                arguments = BluetoothDeviceManagerRouteArgs.args,
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                bluetoothDeviceManagerScreen.BluetoothDeviceManagerScreen(
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage,
+                    navigateToTrainingPreparing = {
+                        backStackEntry.arguments
                             ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
+                            ?.let { Routes.trainingPreparingRouteTemplate.format(it) }
                             ?.let(navController::navigate)
                     }
                 )
