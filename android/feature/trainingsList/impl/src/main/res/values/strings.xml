@@ -7,7 +7,7 @@
     <string name="snackbar_bluetooth_permission_permanently_denied">You should grant Bluetooth permission in app\'s settings because you denied permission requests multiple times</string>
 
     <!--  Debug Training  -->
-    <string name="debug_training_title">Debug Training</string>
+    <string name="debug_training_title">Debugging</string>
     <string name="debug_training_description">This training is used for debugging connection with sensor and retrieving data from it</string>
 
     <!--  Concentration Training  -->

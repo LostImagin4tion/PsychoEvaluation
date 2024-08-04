@@ -54,7 +54,7 @@ class SerialService : Service(), SerialListener {
 
     private var socket: SerialSocket? = null
     private var listener: SerialListener? = null
-    private var connected = false
+    private var isSocketConnected = false
 
     override fun onDestroy() {
         disconnect()
@@ -67,32 +67,32 @@ class SerialService : Service(), SerialListener {
      * SerialListener
      */
     override fun onSerialConnect() {
-        if (connected) {
+        if (isSocketConnected) {
             synchronized(this) {
-                listener?.let {
-                    mainLooper.post {
-                        listener?.onSerialConnect() ?: queue1.add(QueueItem(QueueType.Connect))
+                listener
+                    ?.let { listener ->
+                        mainLooper.post {
+                            listener.onSerialConnect()
+                        }
                     }
-                } ?: queue2.add(QueueItem(QueueType.Connect))
+                    ?: queue2.add(QueueItem(QueueType.Connect))
             }
         }
     }
 
     override fun onSerialConnectError(e: Exception?) {
-        if (connected) {
+        if (isSocketConnected) {
             synchronized(this) {
-                listener?.let {
-                    mainLooper.post {
-                        listener?.onSerialIoError(e)
-                            ?: run {
-                                queue1.add(QueueItem(QueueType.ConnectError, e))
-                                disconnect()
-                            }
+                listener
+                    ?.let { listener ->
+                        mainLooper.post {
+                            listener.onSerialIoError(e)
+                        }
                     }
-                } ?: run {
-                    queue2.add(QueueItem(QueueType.ConnectError, e))
-                    disconnect()
-                }
+                    ?: run {
+                        queue2.add(QueueItem(QueueType.ConnectError, e))
+                        disconnect()
+                    }
             }
         }
     }
@@ -106,7 +106,7 @@ class SerialService : Service(), SerialListener {
      * While not consumed (2), add more data (3).
      */
     override fun onSerialRead(data: ByteArray) {
-        if (connected) {
+        if (isSocketConnected) {
             synchronized(this) {
                 listener?.let {
                     var first: Boolean
@@ -139,7 +139,7 @@ class SerialService : Service(), SerialListener {
     }
 
     override fun onSerialIoError(e: Exception?) {
-        if (connected) {
+        if (isSocketConnected) {
             synchronized(this) {
                 listener?.let {
                     mainLooper.post {
@@ -159,7 +159,7 @@ class SerialService : Service(), SerialListener {
 
     @Throws(IOException::class)
     fun write(data: ByteArray?) {
-        if (!connected) {
+        if (!isSocketConnected) {
             throw IOException("Not connected")
         }
         data?.let {
@@ -174,11 +174,11 @@ class SerialService : Service(), SerialListener {
     fun connect(socket: SerialSocket) {
         socket.connect(listener)
         this.socket = socket
-        connected = true
+        isSocketConnected = true
     }
 
     fun disconnect() {
-        connected = false // ignore data, errors while disconnecting
+        isSocketConnected = false // ignore data, errors while disconnecting
         socket?.disconnect()
         socket = null
     }
@@ -221,5 +221,9 @@ class SerialService : Service(), SerialListener {
         // items occurring later, will be moved directly to queue2
         // detach() and mainLooper.post run in the main thread, so all items are caught
         listener = null
+    }
+
+    private companion object {
+        val TAG: String = SerialService::class.java.simpleName
     }
 }

@@ -25,10 +25,13 @@ class DebugTrainingScreenViewModel : ViewModel() {
     fun hasConnectedDevices(usbManager: UsbManager) = usbManager.deviceList.isNotEmpty()
 
     fun connectToUsbDevice(usbManager: UsbManager) {
+        val usbDeviceRawData = mutableListOf<Int>()
+
         viewModelScope.launch {
-            usbDeviceInteractor.getAllRawDeviceData(usbManager) {
+            usbDeviceInteractor.getRawDeviceData(usbManager) {
+                usbDeviceRawData.add(it)
                 chartModelProducer.runTransaction {
-                    lineSeries { series((it)) }
+                    lineSeries { series(usbDeviceRawData) }
                 }
             }
         }

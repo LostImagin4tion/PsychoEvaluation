@@ -32,8 +32,7 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackBu
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 
 @Composable
-fun ExhaleScreen(
-) = Box(
+fun ExhaleScreen() = Box(
     contentAlignment = Alignment.TopStart,
     modifier = Modifier
         .fillMaxSize()

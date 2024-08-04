@@ -15,6 +15,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
@@ -23,6 +24,10 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.di.BluetoothD
 import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManagerRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingPreparingRouteArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingRouteArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.AirplaneGameScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.BluetoothDeviceManagerScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingPreparingScreenArgs
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
@@ -95,6 +100,10 @@ fun NavigationContent(
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
 ) {
+    val bleDeviceInteractor by remember {
+        diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -150,44 +159,52 @@ fun NavigationContent(
                 )
             }
 
-            composable(
-                route = Routes.trainingPreparingRouteTemplate,
-                arguments = TrainingPreparingRouteArgs.args
-            ) { backStackEntry ->
+            composable(Routes.trainingsList) {
                 setupSystemBarColors()
-                trainingPreparingScreen.TrainingPreparingScreen(
+                trainingsListScreen.TrainingsListScreen(
+                    bleDeviceInteractor = bleDeviceInteractor,
                     navigateToRoute = navigateToRoute,
-                    showMessage = showMessage,
-                    navigateToTraining = {
-                        backStackEntry.arguments
-                            ?.getString(TrainingPreparingRouteArgs.trainingRoute)
-                            ?.let(navController::navigate)
-                    }
+                    showMessage = showMessage
                 )
             }
 
             composable(
-                route = Routes.bluetoothDeviceManager,
+                route = Routes.bluetoothDeviceManagerRouteDeclaration,
                 arguments = BluetoothDeviceManagerRouteArgs.args,
             ) { backStackEntry ->
                 setupSystemBarColors()
                 bluetoothDeviceManagerScreen.BluetoothDeviceManagerScreen(
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    bluetoothDeviceManagerScreenArgs = BluetoothDeviceManagerScreenArgs(
+                        trainingPreparingRoute = backStackEntry.arguments
+                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
+                            ?: throw IllegalArgumentException(
+                                "Did not find training preparing route in backstack arguments"
+                            ),
+                    ),
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
-                    navigateToTrainingPreparing = {
-                        backStackEntry.arguments
-                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
-                            ?.let { Routes.trainingPreparingRouteTemplate.format(it) }
-                            ?.let(navController::navigate)
-                    }
                 )
             }
 
-            composable(Routes.trainingsList) {
+            composable(
+                route = Routes.trainingPreparingRouteDeclaration,
+                arguments = TrainingPreparingRouteArgs.args
+            ) { backStackEntry ->
                 setupSystemBarColors()
-                trainingsListScreen.TrainingsListScreen(
+                trainingPreparingScreen.TrainingPreparingScreen(
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingPreparingScreenArgs = TrainingPreparingScreenArgs(
+                        trainingRoute = backStackEntry.arguments
+                            ?.getString(TrainingPreparingRouteArgs.trainingRoute)
+                            ?: throw IllegalArgumentException(
+                                "Did not find training route in backstack arguments"
+                            ),
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingPreparingRouteArgs.bleDeviceHardwareAddress)
+                    ),
                     navigateToRoute = navigateToRoute,
-                    showMessage = showMessage
+                    showMessage = showMessage,
                 )
             }
 
@@ -199,9 +216,17 @@ fun NavigationContent(
                 )
             }
 
-            composable(Routes.airplaneGame) {
+            composable(
+                route = Routes.airplaneGameRouteDeclaration,
+                arguments = TrainingRouteArgs.args,
+            ) { backStackEntry ->
                 setupSystemBarColors()
                 airplaneGameScreen.AirplaneGameScreen(
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    airplaneGameScreenArgs = AirplaneGameScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                 )

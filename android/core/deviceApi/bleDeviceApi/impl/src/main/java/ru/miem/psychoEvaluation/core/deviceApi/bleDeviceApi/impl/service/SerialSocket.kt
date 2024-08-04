@@ -41,8 +41,8 @@ class SerialSocket(
     private var writeCharacteristic: BluetoothGattCharacteristic? = null
 
     private var writePending = false
-    private var canceled = false
-    private var connected = false
+    private var cancelled = false
+    private var isConnectedToDevice = false
     private var payloadSize = DEFAULT_MTU - MTU_NUM
 
     fun disconnect() {
@@ -50,7 +50,7 @@ class SerialSocket(
 
         listener = null // ignore remaining data and errors
         device = null
-        canceled = true
+        cancelled = true
 
         synchronized(writeBuffer) {
             writePending = false
@@ -70,7 +70,7 @@ class SerialSocket(
             gatt?.close()
 
             gatt = null
-            connected = false
+            isConnectedToDevice = false
         }
     }
 
@@ -80,11 +80,11 @@ class SerialSocket(
     @Throws(IOException::class)
     fun connect(listener: SerialListener?) {
         Timber.tag(TAG).d("connect(SerialListener?)")
-        if (connected || gatt != null) {
+        if (isConnectedToDevice || gatt != null) {
             throw IOException("Already connected")
         }
 
-        canceled = false
+        cancelled = false
         this.listener = listener
 
         Timber.tag(TAG).d("Connected $device")
@@ -100,7 +100,7 @@ class SerialSocket(
         if (gatt == null) {
             throw IOException("ConnectGatt failed")
         }
-        // continues asynchronously in onPairingBroadcastReceive() and onConnectionStateChange()
+        // continues asynchronously in onConnectionStateChange()
     }
 
     override fun onConnectionStateChange(gatt: BluetoothGatt, status: Int, newState: Int) {
@@ -113,7 +113,7 @@ class SerialSocket(
                 onSerialConnectError(IOException("Discover services failed"))
             }
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-            if (connected) {
+            if (isConnectedToDevice) {
                 onSerialIoError(IOException("GATT status $status"))
             } else {
                 onSerialConnectError(IOException("GATT status $status"))
@@ -127,7 +127,7 @@ class SerialSocket(
     override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
         Timber.tag(TAG).d("onServicesDiscovered(BluetoothGatt, Int)")
         Timber.tag(TAG).d("Services discovered, status $status")
-        if (canceled) {
+        if (cancelled) {
             return
         }
         connectCharacteristics1(gatt)
@@ -164,7 +164,7 @@ class SerialSocket(
             }
         }
 
-        if (canceled) {
+        if (cancelled) {
             return
         }
 
@@ -271,7 +271,7 @@ class SerialSocket(
         Timber.tag(TAG).d("onDescriptorWrite(BluetoothGatt, BluetoothGattDescriptor, Int)")
         delegate?.onDescriptorWrite(gatt, descriptor, status)
 
-        if (canceled) {
+        if (cancelled) {
             return
         }
 
@@ -287,7 +287,7 @@ class SerialSocket(
                 // before confirmed by this method,
                 // so receive data can be shown before device is shown as 'Connected'.
                 onSerialConnect()
-                connected = true
+                isConnectedToDevice = true
                 Timber.tag(TAG).d("Connected")
             }
         }
@@ -304,12 +304,12 @@ class SerialSocket(
 //        Timber.tag(TAG)
 //            .d("onCharacteristicChanged(BluetoothGatt, BluetoothGattCharacteristic, Int)")
         super.onCharacteristicChanged(gatt, characteristic, value)
-        if (canceled) {
+        if (cancelled) {
             return
         }
         delegate?.onCharacteristicChanged(gatt, characteristic)
 
-        if (canceled) {
+        if (cancelled) {
             return
         }
 
@@ -330,7 +330,7 @@ class SerialSocket(
         val gatt = this.gatt
         val writeCharacteristic = this.writeCharacteristic
 
-        if (canceled || !connected || gatt == null || writeCharacteristic == null) {
+        if (cancelled || !isConnectedToDevice || gatt == null || writeCharacteristic == null) {
             throw IOException("Not connected")
         }
 
@@ -383,7 +383,7 @@ class SerialSocket(
     ) {
         Timber.tag(TAG)
             .d("onCharacteristicWrite(BluetoothGatt, BluetoothGattCharacteristic, Int)")
-        if (canceled || !connected || writeCharacteristic == null) {
+        if (cancelled || !isConnectedToDevice || writeCharacteristic == null) {
             return
         }
 
@@ -394,7 +394,7 @@ class SerialSocket(
 
         delegate?.onCharacteristicWrite(gatt, characteristic, status)
 
-        if (canceled) {
+        if (cancelled) {
             return
         }
         if (characteristic === writeCharacteristic) { // NOPMD - test object identity
@@ -437,7 +437,7 @@ class SerialSocket(
     }
 
     private fun onSerialConnectError(e: Exception) {
-        canceled = true
+        cancelled = true
         listener?.onSerialConnectError(e)
     }
 
@@ -447,7 +447,7 @@ class SerialSocket(
 
     private fun onSerialIoError(e: Exception) {
         writePending = false
-        canceled = true
+        cancelled = true
         listener?.onSerialIoError(e)
     }
 

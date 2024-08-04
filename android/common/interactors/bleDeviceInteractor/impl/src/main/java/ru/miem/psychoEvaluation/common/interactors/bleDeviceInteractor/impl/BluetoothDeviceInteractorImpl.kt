@@ -16,7 +16,6 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.flow.toList
@@ -63,35 +62,18 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
     override val devicesFlow: Flow<BluetoothDevice> = createScanCallbackFlow()
 
     override suspend fun findDataBorders(onCompleted: () -> Unit) {
-        Timber.tag(TAG).d("HELLO FIND DATA BORDERS")
         withIO {
-            bleDeviceRepository.deviceDataFlow.collect {
-                Timber.tag(TAG).d("HELLO NEW DATA $it")
-            }
-//            val preparationData = airplaneGameDataAnalysis.findPreparationData(
-//                bleDeviceRepository.deviceDataFlow
-//            )
-//
-//            dataBorders = preparationData.toList()
-//                .let {
-//                    airplaneGameDataAnalysis.findDataBorders(it)
-//                }
-//                .also {
-//                    onCompleted()
-//                }
-        }
-    }
+            val preparationData = airplaneGameDataAnalysis.findPreparationData(
+                bleDeviceRepository.deviceDataFlow
+            )
 
-    override suspend fun getAllRawDeviceData(
-        onNewValueEmitted: suspend (List<Int>) -> Unit
-    ) {
-        val bleDeviceData = mutableListOf<Int>()
-
-        withIO {
-            bleDeviceRepository.deviceDataFlow.collect { sensorData ->
-                bleDeviceData.add(sensorData)
-                onNewValueEmitted(bleDeviceData)
-            }
+            dataBorders = preparationData.toList()
+                .let {
+                    airplaneGameDataAnalysis.findDataBorders(it)
+                }
+                .also {
+                    onCompleted()
+                }
         }
     }
 
@@ -103,16 +85,23 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         }
     }
 
-    override suspend fun getNormalizedDeviceData(
-        normalizationFactor: Double,
+    override suspend fun getDeviceData(
         onNewValueEmitted: suspend (BluetoothDeviceData) -> Unit
     ) {
         withIO {
             bleDeviceRepository.deviceDataFlow.collect { rawData ->
+                val borders = dataBorders
+                check(borders != null) {
+                    "Data borders is null. You must detect it before collecting sensor data"
+                }
+
                 onNewValueEmitted(
                     BluetoothDeviceData(
                         rawData,
-                        rawData / normalizationFactor
+                        airplaneGameDataAnalysis.getNormalizedValue(
+                            value = rawData.toDouble(),
+                            borders = borders
+                        )
                     )
                 )
             }
@@ -133,10 +122,10 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         deviceHardwareAddress: String,
         onDeviceConnected: () -> Unit,
     ) = bleDeviceRepository.connectToBluetoothDevice(
-        activity,
-        bluetoothAdapter,
-        deviceHardwareAddress,
-        onDeviceConnected
+        activity = activity,
+        bluetoothAdapter = bluetoothAdapter,
+        deviceHardwareAddress = deviceHardwareAddress,
+        onDeviceConnected = onDeviceConnected
     )
 
     override fun disconnect() {

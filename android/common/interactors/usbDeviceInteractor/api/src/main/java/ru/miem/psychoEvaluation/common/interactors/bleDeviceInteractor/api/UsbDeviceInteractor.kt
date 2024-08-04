@@ -5,11 +5,6 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 
 interface UsbDeviceInteractor {
 
-    suspend fun getAllRawDeviceData(
-        usbManager: UsbManager,
-        onNewValueEmitted: suspend (List<Int>) -> Unit
-    )
-
     suspend fun getRawDeviceData(
         usbManager: UsbManager,
         onNewValueEmitted: suspend (Int) -> Unit

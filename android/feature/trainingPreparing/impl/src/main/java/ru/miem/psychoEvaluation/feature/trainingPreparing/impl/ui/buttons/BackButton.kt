@@ -68,8 +68,9 @@ fun DrawScope.drawRing(
             },
             operation = PathOperation.Difference
         )
-        if (offset != Offset.Zero)
+        if (offset != Offset.Zero) {
             translate(offset.copy(offset.x - size / 2, offset.y - size / 2))
+        }
     }
     drawPath(path, color)
 }

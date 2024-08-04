@@ -17,7 +17,6 @@ import ru.miem.psychoEvaluation.common.designSystem.dialogs.SystemDialog
 @Composable
 fun RequestBluetoothPermissionsIfNeeded(
     arePermissionsGranted: (Boolean) -> Unit = {},
-    onPermissionsPermanentlyDenied: () -> Unit = {},
 ) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
         return
@@ -36,9 +35,6 @@ fun RequestBluetoothPermissionsIfNeeded(
 
     if (permissionsToRequest.allPermissionsGranted) {
         arePermissionsGranted(true)
-    }
-    else if (permissionsToRequest.permissions.any { it.status is PermissionStatus.Denied && !it.status.shouldShowRationale }) {
-        onPermissionsPermanentlyDenied()
     }
     else if (permissionsToRequest.shouldShowRationale) {
         SystemDialog(

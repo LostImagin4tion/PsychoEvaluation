@@ -14,6 +14,8 @@ dependencies {
 
     implementation(project(":android:common:designSystem"))
 
+    implementation(project(":android:common:interactors:bleDeviceInteractor:api"))
+
     // ==== Feature layer ====
 
     api(project(":android:feature:navigation:api"))

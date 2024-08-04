@@ -30,6 +30,8 @@ import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionInte
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
@@ -39,10 +41,13 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
 
     @Composable
     override fun TrainingsListScreen(
+        bleDeviceInteractor: BluetoothDeviceInteractor,
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
-        val viewModel: TrainingsListScreenViewModel = viewModel()
+        val viewModel: TrainingsListScreenViewModel = viewModel(
+            factory = viewModelFactory { TrainingsListScreenViewModel(bleDeviceInteractor) }
+        )
 
         var showBluetoothRequestDialog by remember { mutableStateOf(false) }
         var tappedTraining: String? by remember { mutableStateOf(null) }
@@ -68,7 +73,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 },
                 hideBluetoothRequestDialog = { showBluetoothRequestDialog = false },
                 navigateToBluetoothDeviceManager = {
-                    val route = Routes.bluetoothDeviceManagerRouteTemplate
+                    val route = Routes.bluetoothDeviceManager
                         .format(training)
                     navigateToRoute(route)
                 },
@@ -213,8 +218,6 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         hideBluetoothRequestDialog: () -> Unit = {},
         navigateToBluetoothDeviceManager: () -> Unit,
     ) {
-        val permanentlyDeniedPermissionsSnackbarText =
-            stringResource(R.string.snackbar_bluetooth_permission_permanently_denied)
         var isBluetoothAccessGranted by remember { mutableStateOf(false) }
         var tryRequestingBluetoothPermission by remember { mutableStateOf(false) }
 
@@ -237,9 +240,6 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                     tryRequestingBluetoothPermission = false
                     isBluetoothAccessGranted = permissionsGranted
                 },
-                onPermissionsPermanentlyDenied = {
-                    showMessage(permanentlyDeniedPermissionsSnackbarText)
-                }
             )
         } else if (isBluetoothAccessGranted) {
             EnableBluetoothIfNeeded {

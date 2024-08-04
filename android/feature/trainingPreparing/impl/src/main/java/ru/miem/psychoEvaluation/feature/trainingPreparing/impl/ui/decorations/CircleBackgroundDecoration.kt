@@ -1,6 +1,5 @@
 package ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations
 
-import androidx.annotation.FloatRange
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -29,6 +28,7 @@ fun CircleBackgroundDecoration(
     }
 }
 
+@Suppress("MagicNumber")
 private fun DrawScope.drawCroppedCircle(
     color: Color,
     diameter: Dp = 100.dp,

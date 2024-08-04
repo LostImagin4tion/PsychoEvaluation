@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
@@ -24,10 +24,11 @@ import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-class TrainingPreparingScreenViewModel : ViewModel() {
+class TrainingPreparingScreenViewModel(
+    private val bleDeviceInteractor: BluetoothDeviceInteractor,
+) : ViewModel() {
 
     private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
-    private val bleDeviceInteractor by diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _currentScreen = MutableStateFlow(CurrentScreen.Welcome)
@@ -57,13 +58,12 @@ class TrainingPreparingScreenViewModel : ViewModel() {
             .scan(initial = 0) { numberOfTicks, _ ->
                 numberOfTicks + 1
             }
-            .onEach {  numberOfTicks ->
+            .onEach { numberOfTicks ->
                 check(numberOfTicks / NUMBER_OF_SCREENS < NUMBER_OF_ROUNDS)
             }
-            .catch { throwable ->
+            .catch {
                 _currentScreen.emit(CurrentScreen.Exhale)
                 onTimerEnded()
-                Timber.tag(TAG).e("HELLO THROWABLE $throwable")
             }
             .zip(_currentScreen) { _, screen ->
                 when (screen) {
@@ -80,15 +80,12 @@ class TrainingPreparingScreenViewModel : ViewModel() {
 
     private fun findDataBordersWithUsbDevice() {
         viewModelScope.launch {
-
         }
     }
 
     private fun findDataBordersWithBleDevice() {
         viewModelScope.launch {
-            bleDeviceInteractor.findDataBorders {
-                Timber.tag("HELLO found borders")
-            }
+            bleDeviceInteractor.findDataBorders()
         }
     }
 

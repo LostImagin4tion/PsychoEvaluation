@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "ru.miem.psychoEvaluation.feature.trainingsList.api"
 }
+
+dependencies {
+    implementation(project(":android:common:interactors:bleDeviceInteractor:api"))
+}

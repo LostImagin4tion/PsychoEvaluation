@@ -16,16 +16,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.BluetoothAdvertisementStatus
-import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceState
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.toDeviceState
 
-class BluetoothDeviceManagerViewModel : ViewModel() {
-
-    private val bleDeviceInteractor by diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
+class BluetoothDeviceManagerViewModel(
+    private val bleDeviceInteractor: BluetoothDeviceInteractor,
+) : ViewModel() {
 
     private val _devices =
         MutableStateFlow<ImmutableMap<String, BluetoothDeviceState>>(persistentHashMapOf())
@@ -66,18 +65,18 @@ class BluetoothDeviceManagerViewModel : ViewModel() {
         activity: Activity,
         bluetoothAdapter: BluetoothAdapter,
         deviceState: BluetoothDeviceState,
-        onDeviceConnected: () -> Unit = {}
     ) {
         changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.InProgress)
-        bleDeviceInteractor.connectToBluetoothDevice(
-            activity = activity,
-            bluetoothAdapter = bluetoothAdapter,
-            deviceHardwareAddress = deviceState.hardwareAddress,
-            onDeviceConnected = {
-                changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Connected)
-                onDeviceConnected()
-            }
-        )
+        viewModelScope.launch {
+            bleDeviceInteractor.connectToBluetoothDevice(
+                activity = activity,
+                bluetoothAdapter = bluetoothAdapter,
+                deviceHardwareAddress = deviceState.hardwareAddress,
+                onDeviceConnected = {
+                    changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Connected)
+                }
+            )
+        }
     }
 
     fun disconnectBluetoothDevice() = bleDeviceInteractor.disconnect()

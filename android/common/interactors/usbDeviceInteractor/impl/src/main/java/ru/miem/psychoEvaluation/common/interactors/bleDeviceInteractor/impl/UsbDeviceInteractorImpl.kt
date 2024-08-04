@@ -14,23 +14,6 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
     private val usbDeviceRepository by diApi(UsbDeviceRepositoryDiApi::usbDeviceRepository)
     private val airplaneGameDataAnalysis by diApi(DataAnalysisDiApi::dataAnalysis)
 
-    override suspend fun getAllRawDeviceData(
-        usbManager: UsbManager,
-        onNewValueEmitted: suspend (List<Int>) -> Unit
-    ) {
-        if (usbDeviceRepository.isNotConnected) {
-            usbDeviceRepository.connectToUsbDevice(usbManager)
-        }
-        val usbDeviceRawData = mutableListOf<Int>()
-
-        withIO {
-            usbDeviceRepository.deviceDataFlow.collect { sensorData ->
-                usbDeviceRawData.add(sensorData)
-                onNewValueEmitted(usbDeviceRawData)
-            }
-        }
-    }
-
     override suspend fun getRawDeviceData(
         usbManager: UsbManager,
         onNewValueEmitted: suspend (Int) -> Unit

@@ -16,7 +16,7 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
 
     override fun findDataBorders(y: List<Int>): Borders {
         require(y.size == PREPARATION_DATA_COUNT) {
-            "Size of passed sensor data massed be $PREPARATION_DATA_COUNT"
+            "Size of passed sensor data list must be $PREPARATION_DATA_COUNT"
         }
 
         val slope = calculateSlope(y)
