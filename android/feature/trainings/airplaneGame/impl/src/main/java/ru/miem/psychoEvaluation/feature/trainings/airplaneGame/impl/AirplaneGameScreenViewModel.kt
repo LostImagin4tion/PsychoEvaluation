@@ -14,13 +14,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
-import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
-import timber.log.Timber
 
 class AirplaneGameScreenViewModel(
     private val usbDeviceInteractor: UsbDeviceInteractor,

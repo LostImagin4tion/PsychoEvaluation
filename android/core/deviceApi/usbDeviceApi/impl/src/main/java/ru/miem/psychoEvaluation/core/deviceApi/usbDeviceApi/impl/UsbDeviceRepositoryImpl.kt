@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.UsbDeviceRepository
 import timber.log.Timber
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {

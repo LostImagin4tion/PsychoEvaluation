@@ -9,7 +9,6 @@ import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalys
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.di.UsbDeviceRepositoryDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.core.utils.coroutines.withIO
-import timber.log.Timber
 import javax.inject.Inject
 
 class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {

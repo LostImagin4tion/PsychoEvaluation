@@ -12,8 +12,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,9 +21,6 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
-import ru.miem.psychoEvaluation.common.designSystem.system.SystemBroadcastReceiver
-import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionIntentAction
-import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor

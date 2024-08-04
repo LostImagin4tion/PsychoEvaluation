@@ -237,8 +237,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                     isBluetoothAccessGranted = permissionsGranted
                 },
             )
-        }
-        else if (isBluetoothAccessGranted) {
+        } else if (isBluetoothAccessGranted) {
             EnableBluetoothIfNeeded {
                 navigateToBluetoothDeviceManager()
             }

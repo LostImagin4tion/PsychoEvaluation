@@ -26,9 +26,9 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManag
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingPreparingRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingRouteArgs
-import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.BluetoothDeviceManagerScreenArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingPreparingScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
