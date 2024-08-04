@@ -13,18 +13,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
+import timber.log.Timber
 
 class AirplaneGameScreenViewModel(
+    private val usbDeviceInteractor: UsbDeviceInteractor,
     private val bleDeviceInteractor: BluetoothDeviceInteractor,
 ) : ViewModel() {
 
-    private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _stressData = MutableStateFlow(SensorData(0, 0.0))
@@ -42,9 +44,9 @@ class AirplaneGameScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun connectToUsbDevice(usbManager: UsbManager, screenHeight: Double) {
+    fun connectToUsbDevice(usbManager: UsbManager) {
         viewModelScope.launch {
-            usbDeviceInteractor.getNormalizedDeviceData(usbManager, screenHeight) {
+            usbDeviceInteractor.getDeviceData(usbManager) {
                 emitNewData(it.toSensorData())
             }
         }

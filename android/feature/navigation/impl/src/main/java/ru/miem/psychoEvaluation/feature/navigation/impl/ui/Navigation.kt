@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
@@ -100,6 +101,9 @@ fun NavigationContent(
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
 ) {
+    val usbDeviceInteractor by remember {
+        diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
+    }
     val bleDeviceInteractor by remember {
         diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
     }
@@ -162,6 +166,7 @@ fun NavigationContent(
             composable(Routes.trainingsList) {
                 setupSystemBarColors()
                 trainingsListScreen.TrainingsListScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage
@@ -193,6 +198,7 @@ fun NavigationContent(
             ) { backStackEntry ->
                 setupSystemBarColors()
                 trainingPreparingScreen.TrainingPreparingScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
                     trainingPreparingScreenArgs = TrainingPreparingScreenArgs(
                         trainingRoute = backStackEntry.arguments
@@ -222,6 +228,7 @@ fun NavigationContent(
             ) { backStackEntry ->
                 setupSystemBarColors()
                 airplaneGameScreen.AirplaneGameScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
                     airplaneGameScreenArgs = AirplaneGameScreenArgs(
                         bleDeviceHardwareAddress = backStackEntry.arguments

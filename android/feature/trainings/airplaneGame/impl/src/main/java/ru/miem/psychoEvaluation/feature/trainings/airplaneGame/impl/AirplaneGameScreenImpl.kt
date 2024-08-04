@@ -30,6 +30,7 @@ import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientatio
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.AirplaneGameScreenArgs
@@ -43,6 +44,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
     @Composable
     override fun AirplaneGameScreen(
+        usbDeviceInteractor: UsbDeviceInteractor,
         bleDeviceInteractor: BluetoothDeviceInteractor,
         airplaneGameScreenArgs: AirplaneGameScreenArgs,
         navigateToRoute: (route: String) -> Unit,
@@ -53,7 +55,12 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
         val viewModel: AirplaneGameScreenViewModel = viewModel(
-            factory = viewModelFactory { AirplaneGameScreenViewModel(bleDeviceInteractor) }
+            factory = viewModelFactory {
+                AirplaneGameScreenViewModel(
+                    usbDeviceInteractor,
+                    bleDeviceInteractor,
+                )
+            }
         )
 
         val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
@@ -70,10 +77,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
         when (sensorDeviceType.value) {
             SensorDeviceType.Usb -> {
-                viewModel.connectToUsbDevice(
-                    usbManager = usbManager,
-                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
-                )
+                viewModel.connectToUsbDevice(usbManager = usbManager)
             }
             SensorDeviceType.Bluetooth -> {
                 val activity = context.findActivity()

@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainingPreparing.impl
 
+import android.hardware.usb.UsbManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
@@ -25,10 +27,10 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class TrainingPreparingScreenViewModel(
+    private val usbDeviceInteractor: UsbDeviceInteractor,
     private val bleDeviceInteractor: BluetoothDeviceInteractor,
 ) : ViewModel() {
 
-    private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _currentScreen = MutableStateFlow(CurrentScreen.Welcome)
@@ -36,6 +38,7 @@ class TrainingPreparingScreenViewModel(
     val currentScreen: StateFlow<CurrentScreen> = _currentScreen
 
     fun startCollectingAndNormalizingSensorData(
+        usbManager: UsbManager,
         onTimerEnded: () -> Unit,
     ) {
         viewModelScope.launch {
@@ -43,9 +46,7 @@ class TrainingPreparingScreenViewModel(
                 .first()
 
             when (deviceType) {
-                SensorDeviceType.Usb -> {
-                    Timber.tag(TAG).e("Got unexpected device type $deviceType")
-                }
+                SensorDeviceType.Usb -> findDataBordersWithUsbDevice(usbManager)
                 SensorDeviceType.Bluetooth -> findDataBordersWithBleDevice()
                 SensorDeviceType.Unknown -> {
                     Timber.tag(TAG).e("Got unexpected device type $deviceType")
@@ -78,8 +79,9 @@ class TrainingPreparingScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun findDataBordersWithUsbDevice() {
+    private fun findDataBordersWithUsbDevice(usbManager: UsbManager) {
         viewModelScope.launch {
+            usbDeviceInteractor.findDataBorders(usbManager)
         }
     }
 

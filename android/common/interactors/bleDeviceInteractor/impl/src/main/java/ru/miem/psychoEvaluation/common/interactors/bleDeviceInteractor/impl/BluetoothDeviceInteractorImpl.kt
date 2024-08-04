@@ -149,11 +149,10 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
                             Timber.tag(TAG)
                                 .e(
                                     message = "Failed to send new scan result %s " +
-                                        "with callback type %s with error %s, %s",
+                                        "with callback type %s with error %s",
                                     device,
                                     callbackType.toString(),
                                     throwable.toString(),
-                                    throwable?.message
                                 )
                         }
                     }

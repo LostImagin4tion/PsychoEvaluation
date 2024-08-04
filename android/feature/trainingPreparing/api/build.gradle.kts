@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":android:common:interactors:usbDeviceInteractor:api"))
     implementation(project(":android:common:interactors:bleDeviceInteractor:api"))
 
     implementation(project(":android:feature:navigation:api"))
