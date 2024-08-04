@@ -72,7 +72,7 @@ class GameWorld(
         }
     }
 
-    fun onNewData(rawData: Int, speed: Double) = airplane.onNewData(rawData, speed)
+    fun onNewData(rawData: Double, speed: Double) = airplane.onNewData(rawData, speed)
 
     fun onDestroy() {
         airplane.onDestroy()

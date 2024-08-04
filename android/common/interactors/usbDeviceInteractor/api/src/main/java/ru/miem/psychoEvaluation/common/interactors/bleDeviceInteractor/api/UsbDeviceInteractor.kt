@@ -5,20 +5,19 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 
 interface UsbDeviceInteractor {
 
-    suspend fun getAllRawDeviceData(
+    suspend fun findDataBorders(
         usbManager: UsbManager,
-        onNewValueEmitted: suspend (List<Int>) -> Unit
+        onCompleted: () -> Unit = {},
     )
 
     suspend fun getRawDeviceData(
         usbManager: UsbManager,
-        onNewValueEmitted: suspend (Int) -> Unit
+        onNewValueEmitted: suspend (Int) -> Unit,
     )
 
-    suspend fun getNormalizedDeviceData(
+    suspend fun getDeviceData(
         usbManager: UsbManager,
-        normalizationFactor: Double,
-        onNewValueEmitted: suspend (UsbDeviceData) -> Unit
+        onNewValueEmitted: suspend (UsbDeviceData) -> Unit,
     )
 
     fun connectToUsbDevice(usbManager: UsbManager)

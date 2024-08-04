@@ -16,15 +16,17 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.timeout
+import kotlinx.coroutines.flow.toList
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.BluetoothDevice
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.BluetoothDeviceData
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.callbackTypeToStatus
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.toBluetoothDevice
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.impl.utils.toScanErrorMessage
+import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.Borders
+import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.di.DataAnalysisDiApi
 import ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.api.di.BluetoothDeviceRepositoryDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.core.utils.coroutines.withIO
@@ -35,6 +37,7 @@ import kotlin.time.Duration.Companion.seconds
 class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInteractor {
 
     private val bleDeviceRepository by diApi(BluetoothDeviceRepositoryDiApi::bluetoothDeviceRepository)
+    private val airplaneGameDataAnalysis by diApi(DataAnalysisDiApi::dataAnalysis)
 
     private val devicesScanCallback = object : ScanCallback() {
         var onScanResultCallback: (Int, ScanResult?) -> Unit = { _, _ -> }
@@ -54,20 +57,23 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         }
     }
 
+    private var dataBorders: Borders? = null
+
     override val devicesFlow: Flow<BluetoothDevice> = createScanCallbackFlow()
 
-//    override val devicesDataFlow: Flow<Int> = bleDeviceRepository.deviceDataFlow
-
-    override suspend fun getAllRawDeviceData(
-        onNewValueEmitted: suspend (List<Int>) -> Unit
-    ) {
-        val bleDeviceData = mutableListOf<Int>()
-
+    override suspend fun findDataBorders(onCompleted: () -> Unit) {
         withIO {
-            bleDeviceRepository.deviceDataFlow.collect { sensorData ->
-                bleDeviceData.add(sensorData)
-                onNewValueEmitted(bleDeviceData)
-            }
+            val preparationData = airplaneGameDataAnalysis.findPreparationData(
+                bleDeviceRepository.deviceDataFlow
+            )
+
+            dataBorders = preparationData.toList()
+                .let {
+                    airplaneGameDataAnalysis.findDataBorders(it)
+                }
+                .also {
+                    onCompleted()
+                }
         }
     }
 
@@ -79,16 +85,23 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         }
     }
 
-    override suspend fun getNormalizedDeviceData(
-        normalizationFactor: Double,
+    override suspend fun getDeviceData(
         onNewValueEmitted: suspend (BluetoothDeviceData) -> Unit
     ) {
         withIO {
             bleDeviceRepository.deviceDataFlow.collect { rawData ->
+                val borders = dataBorders
+                check(borders != null) {
+                    "Data borders is null. You must detect it before collecting sensor data"
+                }
+
                 onNewValueEmitted(
                     BluetoothDeviceData(
                         rawData,
-                        rawData / normalizationFactor
+                        airplaneGameDataAnalysis.getNormalizedValue(
+                            value = rawData.toDouble(),
+                            borders = borders
+                        )
                     )
                 )
             }
@@ -109,10 +122,10 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         deviceHardwareAddress: String,
         onDeviceConnected: () -> Unit,
     ) = bleDeviceRepository.connectToBluetoothDevice(
-        activity,
-        bluetoothAdapter,
-        deviceHardwareAddress,
-        onDeviceConnected
+        activity = activity,
+        bluetoothAdapter = bluetoothAdapter,
+        deviceHardwareAddress = deviceHardwareAddress,
+        onDeviceConnected = onDeviceConnected
     )
 
     override fun disconnect() {
@@ -136,11 +149,10 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
                             Timber.tag(TAG)
                                 .e(
                                     message = "Failed to send new scan result %s " +
-                                        "with callback type %s with error %s, %s",
+                                        "with callback type %s with error %s",
                                     device,
                                     callbackType.toString(),
                                     throwable.toString(),
-                                    throwable?.message
                                 )
                         }
                     }

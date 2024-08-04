@@ -9,21 +9,18 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 
 interface BluetoothDeviceInteractor {
     val devicesFlow: Flow<BluetoothDevice>
-//    val devicesDataFlow: Flow<Int>
 
-    suspend fun getAllRawDeviceData(onNewValueEmitted: suspend (List<Int>) -> Unit)
+    suspend fun findDataBorders(onCompleted: () -> Unit = {})
+
     suspend fun getRawDeviceData(onNewValueEmitted: suspend (Int) -> Unit)
-    suspend fun getNormalizedDeviceData(
-        normalizationFactor: Double,
-        onNewValueEmitted: suspend (BluetoothDeviceData) -> Unit
-    )
+    suspend fun getDeviceData(onNewValueEmitted: suspend (BluetoothDeviceData) -> Unit)
 
     fun scanForDevices(bluetoothScanner: BluetoothLeScanner)
     fun connectToBluetoothDevice(
         activity: Activity,
         bluetoothAdapter: BluetoothAdapter,
         deviceHardwareAddress: String,
-        onDeviceConnected: () -> Unit,
+        onDeviceConnected: () -> Unit = {},
     )
     fun disconnect()
 }

@@ -15,6 +15,8 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import kotlinx.coroutines.launch
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.authorization.api.AuthorizationScreen
 import ru.miem.psychoEvaluation.feature.authorization.api.di.AuthorizationDiApi
@@ -22,10 +24,17 @@ import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDevi
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.di.BluetoothDeviceManagerScreenDiApi
 import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManagerRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingPreparingRouteArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingRouteArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.BluetoothDeviceManagerScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingPreparingScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
 import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
+import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
@@ -54,6 +63,7 @@ fun Navigation(
     val userProfileScreen by diApi(UserProfileDiApi::userProfileScreen)
     val settingsScreen by diApi(SettingsScreenDiApi::settingsScreen)
     val deviceManagerScreen by diApi(BluetoothDeviceManagerScreenDiApi::bluetoothDeviceManagerScreen)
+    val trainingPreparingScreen by diApi(TrainingPreparingDiApi::trainingPreparingScreen)
     val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
@@ -67,6 +77,7 @@ fun Navigation(
         registrationScreen = registrationScreen,
         userProfileScreen = userProfileScreen,
         settingsScreen = settingsScreen,
+        trainingPreparingScreen = trainingPreparingScreen,
         bluetoothDeviceManagerScreen = deviceManagerScreen,
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
@@ -84,11 +95,19 @@ fun NavigationContent(
     registrationScreen: RegistrationScreen,
     userProfileScreen: UserProfileScreen,
     settingsScreen: SettingsScreen,
+    trainingPreparingScreen: TrainingPreparingScreen,
     bluetoothDeviceManagerScreen: BluetoothDeviceManagerScreen,
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
 ) {
+    val usbDeviceInteractor by remember {
+        diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
+    }
+    val bleDeviceInteractor by remember {
+        diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -110,7 +129,7 @@ fun NavigationContent(
 
         NavHost(
             navController = navController,
-            startDestination = remember { Routes.authorization }
+            startDestination = remember { Routes.userProfile }
         ) {
             composable(Routes.authorization) {
                 setupSystemBarColors()
@@ -144,41 +163,86 @@ fun NavigationContent(
                 )
             }
 
-            composable(
-                route = Routes.bluetoothDeviceManager,
-                arguments = BluetoothDeviceManagerRouteArgs.args,
-            ) { backStackEntry ->
-                setupSystemBarColors()
-                bluetoothDeviceManagerScreen.DeviceManagerScreen(
-                    navigateToRoute = navigateToRoute,
-                    showMessage = showMessage,
-                    navigateToTraining = {
-                        backStackEntry.arguments
-                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
-                            ?.let(navController::navigate)
-                    }
-                )
-            }
-
             composable(Routes.trainingsList) {
                 setupSystemBarColors()
                 trainingsListScreen.TrainingsListScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
 
-            composable(Routes.debugTraining) {
+            composable(
+                route = Routes.bluetoothDeviceManagerRouteDeclaration,
+                arguments = BluetoothDeviceManagerRouteArgs.args,
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                bluetoothDeviceManagerScreen.BluetoothDeviceManagerScreen(
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    bluetoothDeviceManagerScreenArgs = BluetoothDeviceManagerScreenArgs(
+                        trainingPreparingRoute = backStackEntry.arguments
+                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
+                            ?: throw IllegalArgumentException(
+                                "Did not find training preparing route in backstack arguments"
+                            ),
+                    ),
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage,
+                )
+            }
+
+            composable(
+                route = Routes.trainingPreparingRouteDeclaration,
+                arguments = TrainingPreparingRouteArgs.args
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                trainingPreparingScreen.TrainingPreparingScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingPreparingScreenArgs = TrainingPreparingScreenArgs(
+                        trainingRoute = backStackEntry.arguments
+                            ?.getString(TrainingPreparingRouteArgs.trainingRoute)
+                            ?: throw IllegalArgumentException(
+                                "Did not find training route in backstack arguments"
+                            ),
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingPreparingRouteArgs.bleDeviceHardwareAddress)
+                    ),
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage,
+                )
+            }
+
+            composable(
+                Routes.debugTrainingRouteDeclaration,
+                arguments = TrainingRouteArgs.args,
+            ) { backStackEntry ->
                 setupSystemBarColors()
                 debugTrainingScreen.DebugTrainingScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingScreenArgs = TrainingScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
             }
 
-            composable(Routes.airplaneGame) {
+            composable(
+                route = Routes.airplaneGameRouteDeclaration,
+                arguments = TrainingRouteArgs.args,
+            ) { backStackEntry ->
                 setupSystemBarColors()
                 airplaneGameScreen.AirplaneGameScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingScreenArgs = TrainingScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage,
                 )

@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import ru.miem.psychoEvaluation.core.deviceApi.usbDeviceApi.api.UsbDeviceRepository
 import timber.log.Timber
-import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 
 class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
@@ -22,17 +21,16 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
     private var usbIOManager: SerialInputOutputManager? = null
     private var usbSerialPort: UsbSerialPort? = null
 
-    private val usbDeviceDataFlow = createCallbackFlow()
-
     private val usbDeviceListener = object : SerialInputOutputManager.Listener {
-        var onNewDataCallback: (ByteArray?) -> Unit = {}
-        var onRunErrorCallback: (Exception?) -> Unit = {}
+        var onNewDataCallback: (ByteArray) -> Unit = {}
+        var onRunErrorCallback: (Exception) -> Unit = {}
 
-        override fun onNewData(data: ByteArray?) = onNewDataCallback(data)
-        override fun onRunError(e: Exception?) = onRunErrorCallback(e)
+        override fun onNewData(data: ByteArray) = onNewDataCallback(data)
+        override fun onRunError(e: Exception) = onRunErrorCallback(e)
     }
 
-    override val deviceDataFlow: Flow<Int> = usbDeviceDataFlow
+    override val deviceDataFlow: Flow<Int>
+        get() = createUsbDeviceListenerCallbackFlow()
 
     override var isConnected: Boolean = false
         private set
@@ -109,12 +107,12 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
         usbSerialPort = null
     }
 
-    private fun createCallbackFlow(): Flow<Int> = callbackFlow {
+    private fun createUsbDeviceListenerCallbackFlow(): Flow<Int> = callbackFlow {
         usbDeviceListener.apply {
             onNewDataCallback = { data ->
                 data.toUsbDeviceInt()?.let {
                     trySendBlocking(it).onFailure { throwable ->
-                        Timber.tag(TAG).d("Failed to send new stress data $throwable ${throwable?.message}")
+                        Timber.tag(TAG).d("Failed to send new stress data $throwable")
                     }
                 }
             }
@@ -131,14 +129,20 @@ class UsbDeviceRepositoryImpl @Inject constructor() : UsbDeviceRepository {
         }
         .flowOn(Dispatchers.IO)
 
-    private fun ByteArray?.toUsbDeviceInt(): Int? {
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun ByteArray.toUsbDeviceInt(): Int? {
         return this
-            .takeIf { it?.isNotEmpty() == true }
+            .takeIf { it.isNotEmpty() }
             ?.let { data ->
-                val string = String(data, StandardCharsets.UTF_8)
-                string.substring(2, string.lastIndex).toInt(INT_RADIX)
+                val stringBuilder = StringBuilder().apply {
+                    append(String(data))
+                }
+
+                stringBuilder.removePrefix("M")
+                    .toString()
+                    .trim()
+                    .hexToInt(HexFormat.UpperCase)
             }
-            ?.takeIf { it != 0 }
     }
 
     private companion object {

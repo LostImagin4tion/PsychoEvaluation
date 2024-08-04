@@ -7,8 +7,8 @@
     <string name="snackbar_bluetooth_permission_permanently_denied">Вам нужно выдать разрешение на использование Bluetooth в настройках приложения, так как вы отклонили запросы несколько раз</string>
 
     <!--  Debug Training  -->
-    <string name="debug_training_title">Дебаг тренировка</string>
-    <string name="debug_training_description">Эта тренировка нужна для того, чтобы дебажить соединение с датчиком и получение данных от него</string>
+    <string name="debug_training_title">Отладка</string>
+    <string name="debug_training_description">Эта тренировка нужна для отладки соединения с датчиком и получения данных от него</string>
 
     <!--  Concentration Training  -->
     <string name="concentration_training_title">Концентрация</string>

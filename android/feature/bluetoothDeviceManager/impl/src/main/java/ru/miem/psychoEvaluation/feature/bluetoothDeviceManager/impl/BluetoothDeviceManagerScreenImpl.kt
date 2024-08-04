@@ -25,62 +25,78 @@ import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
+import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.api.BluetoothDeviceManagerScreen
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceState
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.ui.BluetoothDeviceItem
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.BluetoothDeviceManagerScreenArgs
 import javax.inject.Inject
 
 class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceManagerScreen {
 
     @Composable
-    override fun DeviceManagerScreen(
+    override fun BluetoothDeviceManagerScreen(
+        bleDeviceInteractor: BluetoothDeviceInteractor,
+        bluetoothDeviceManagerScreenArgs: BluetoothDeviceManagerScreenArgs,
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit,
-        navigateToTraining: () -> Unit,
     ) {
         val context = LocalContext.current
         val bluetoothAdapter = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager)
             .adapter
 
-        val viewModel: BluetoothDeviceManagerViewModel = viewModel()
+        val viewModel: BluetoothDeviceManagerViewModel = viewModel(
+            factory = viewModelFactory { BluetoothDeviceManagerViewModel(bleDeviceInteractor) }
+        )
 
         val devices = viewModel.devices.collectAsState(persistentListOf())
-        var isAnyDevicesConnected = devices.value
-            .any { it.connectionStatus == BluetoothDeviceConnectionStatus.Connected }
+        val connectedDevice = devices.value.firstOrNull {
+            it.connectionStatus == BluetoothDeviceConnectionStatus.Connected
+        }
 
         LaunchedEffect(Unit) {
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
         }
 
-        DeviceManagerScreenContent(
-            devices.value,
-            isAnyDevicesConnected,
+        BluetoothDeviceManagerScreenContent(
+            devices = devices.value,
+            isAnyDeviceConnected = connectedDevice != null,
             onDeviceTapped = { device ->
                 context.findActivity()
                     ?.let {
-                        viewModel.connectToBluetoothDevice(it, bluetoothAdapter, device) {
-                            isAnyDevicesConnected = true
-                        }
+                        viewModel.connectToBluetoothDevice(it, bluetoothAdapter, device)
                     }
             },
-            navigateToTraining = navigateToTraining,
+            navigateToTrainingPreparing = {
+                val route = Routes.trainingPreparing
+                    .format(
+                        bluetoothDeviceManagerScreenArgs.trainingPreparingRoute,
+                        connectedDevice?.hardwareAddress,
+                    )
+                navigateToRoute(route)
+            },
         )
     }
 
     @Composable
-    private fun DeviceManagerScreenContent(
+    private fun BluetoothDeviceManagerScreenContent(
         devices: ImmutableList<BluetoothDeviceState>,
         isAnyDeviceConnected: Boolean,
         onDeviceTapped: (device: BluetoothDeviceState) -> Unit,
-        navigateToTraining: () -> Unit,
+        navigateToTrainingPreparing: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier.screenPaddings()
     ) {
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-        TitleText(textRes = R.string.device_manager_header, isLarge = false)
+        TitleText(
+            textRes = R.string.device_manager_header,
+            isLarge = false
+        )
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 
@@ -112,7 +128,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                     .padding(horizontal = Dimensions.primaryHorizontalPadding)
                     .padding(bottom = Dimensions.primaryVerticalPadding * 2)
                     .align(Alignment.BottomCenter),
-                onClick = navigateToTraining,
+                onClick = navigateToTrainingPreparing,
             )
         }
     }

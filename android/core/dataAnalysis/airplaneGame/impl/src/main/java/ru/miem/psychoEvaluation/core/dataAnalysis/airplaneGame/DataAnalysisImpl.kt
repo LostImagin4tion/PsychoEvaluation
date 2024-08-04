@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.take
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.Borders
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.DataAnalysis
+import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("MagicNumber")
@@ -13,14 +14,22 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
         return dataFlow.take(PREPARATION_DATA_COUNT)
     }
 
-    override fun getNormalizedValue(value: Double, borders: Borders): Double {
-        return (value - borders.lowerLimit) / (borders.upperLimit - borders.lowerLimit) * 100
-    }
-
     override fun findDataBorders(y: List<Int>): Borders {
+        require(y.size == PREPARATION_DATA_COUNT) {
+            "Size of passed sensor data list must be $PREPARATION_DATA_COUNT"
+        }
+
         val slope = calculateSlope(y)
         val mean = y.sum().toDouble() / y.size
-        return findBorders(slope, mean)
+
+        Timber.tag(TAG).d("HELLO ys $y slope $slope mean $mean")
+        val borders = findBorders(slope, mean)
+        Timber.tag(TAG).d("HELLO BORDERS $borders")
+        return borders
+    }
+
+    override fun getNormalizedValue(value: Double, borders: Borders): Double {
+        return (value - borders.lowerLimit) / (borders.upperLimit - borders.lowerLimit) * 100
     }
 
     private fun calculateSlope(y: List<Int>): Double {
@@ -29,7 +38,7 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
         val sumX = indices.sum()
         val sumY = y.sum()
 
-        val sumXY = indices.zip(y) { x, y -> x * y }.sum()
+        val sumXY = indices.zip(y) { x, value -> x * value }.sum()
         val sumXSquared = indices.sumOf { it * it }
 
         return (indices.size * sumXY - sumX * sumY).toDouble() /
@@ -57,6 +66,8 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
     }
 
     private companion object {
+        val TAG: String = DataAnalysisImpl::class.java.simpleName
+
         const val PREPARATION_DATA_COUNT = 30
     }
 }

@@ -1,5 +1,7 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.hardware.usb.UsbManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,18 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.BluetoothDeviceInteractorDiApi
-import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.di.UsbDeviceInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
 
-class AirplaneGameScreenViewModel : ViewModel() {
+class AirplaneGameScreenViewModel(
+    private val usbDeviceInteractor: UsbDeviceInteractor,
+    private val bleDeviceInteractor: BluetoothDeviceInteractor,
+) : ViewModel() {
 
-    private val usbDeviceInteractor by diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
-    private val bleDeviceInteractor by diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _stressData = MutableStateFlow(SensorData(0, 0.0))
@@ -39,17 +42,27 @@ class AirplaneGameScreenViewModel : ViewModel() {
             .launchIn(viewModelScope)
     }
 
-    fun connectToUsbDevice(usbManager: UsbManager, screenHeight: Double) {
+    fun connectToUsbDevice(usbManager: UsbManager) {
         viewModelScope.launch {
-            usbDeviceInteractor.getNormalizedDeviceData(usbManager, screenHeight) {
+            usbDeviceInteractor.getDeviceData(usbManager) {
                 emitNewData(it.toSensorData())
             }
         }
     }
 
-    fun retrieveDataFromBluetoothDevice(screenHeight: Double) {
+    fun retrieveDataFromBluetoothDevice(
+        activity: Activity,
+        bluetoothAdapter: BluetoothAdapter,
+        bleDeviceHardwareAddress: String,
+    ) {
+        bleDeviceInteractor.connectToBluetoothDevice(
+            activity = activity,
+            bluetoothAdapter = bluetoothAdapter,
+            deviceHardwareAddress = bleDeviceHardwareAddress,
+        )
+
         viewModelScope.launch {
-            bleDeviceInteractor.getNormalizedDeviceData(screenHeight) {
+            bleDeviceInteractor.getDeviceData {
                 emitNewData(it.toSensorData())
             }
         }

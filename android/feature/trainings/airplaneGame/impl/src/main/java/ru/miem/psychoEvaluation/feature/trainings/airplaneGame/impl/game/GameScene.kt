@@ -32,7 +32,7 @@ class GameScene(
         val input = views.input
 
         addUpdater { delta ->
-            if (input.mouseButtons != 0) { // TODO this algorithm thinks that a long click is multiple clicks
+            if (input.mouseButtons != 0) {
                 if (gameWorld?.isReady == true) {
                     gameWorld?.start()
                 }
@@ -54,7 +54,7 @@ class GameScene(
                 if (speed != null && speed != 0.0) {
                     Timber.tag("HELLO").i("speed $speed previous $previousData current $currentData")
                     previousData = currentData.normalizedData
-                    gameWorld?.onNewData(currentData.rawData, speed)
+                    gameWorld?.onNewData(currentData.normalizedData, speed)
                 }
             }
 

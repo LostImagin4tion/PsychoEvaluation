@@ -86,7 +86,7 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Medium,
-        fontSize = 32.sp,
+        fontSize = 28.sp,
         letterSpacing = 0.15.sp,
     ),
     displayLarge = TextStyle(
@@ -98,7 +98,7 @@ val Typography = Typography(
     headlineLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
+        fontSize = 36.sp,
         letterSpacing = 0.5.sp
     )
 )

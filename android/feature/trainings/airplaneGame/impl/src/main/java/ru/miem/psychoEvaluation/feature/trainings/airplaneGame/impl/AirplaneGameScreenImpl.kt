@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
@@ -26,8 +27,13 @@ import com.soywiz.korge.android.KorgeAndroidView
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
+import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
+import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
@@ -38,13 +44,24 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
     @Composable
     override fun AirplaneGameScreen(
+        usbDeviceInteractor: UsbDeviceInteractor,
+        bleDeviceInteractor: BluetoothDeviceInteractor,
+        trainingScreenArgs: TrainingScreenArgs,
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
-        val viewModel: AirplaneGameScreenViewModel = viewModel()
+        val viewModel: AirplaneGameScreenViewModel = viewModel(
+            factory = viewModelFactory {
+                AirplaneGameScreenViewModel(
+                    usbDeviceInteractor,
+                    bleDeviceInteractor,
+                )
+            }
+        )
 
         val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
@@ -60,14 +77,20 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
         when (sensorDeviceType.value) {
             SensorDeviceType.Usb -> {
-                viewModel.connectToUsbDevice(
-                    usbManager = usbManager,
-                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
-                )
+                viewModel.connectToUsbDevice(usbManager = usbManager)
             }
             SensorDeviceType.Bluetooth -> {
+                val activity = context.findActivity()
+                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
+
+                require(activity != null && deviceHardwareAddress != null) {
+                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+                }
+
                 viewModel.retrieveDataFromBluetoothDevice(
-                    screenHeight = context.resources.displayMetrics.heightPixels.toDouble(),
+                    activity = activity,
+                    bluetoothAdapter = bluetoothManager.adapter,
+                    bleDeviceHardwareAddress = deviceHardwareAddress,
                 )
             }
             SensorDeviceType.Unknown -> {}

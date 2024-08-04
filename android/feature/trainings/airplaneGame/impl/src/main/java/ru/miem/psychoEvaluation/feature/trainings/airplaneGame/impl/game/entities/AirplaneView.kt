@@ -89,7 +89,7 @@ class AirplaneView(
         image.rotation(Angle.fromDegrees(airplaneRotationDegrees))
     }
 
-    fun onNewData(rawData: Int, speed: Double) {
+    fun onNewData(rawData: Double, speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
             velocity.y += speed * AIRPLANE_VELOCITY_MULTIPLIER

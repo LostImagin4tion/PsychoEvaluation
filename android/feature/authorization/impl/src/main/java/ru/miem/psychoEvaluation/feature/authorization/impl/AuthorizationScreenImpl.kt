@@ -127,7 +127,10 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        TitleText(textRes = R.string.authorization_welcome_text, isLarge = false)
+        TitleText(
+            textRes = R.string.authorization_welcome_text,
+            isLarge = false
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 

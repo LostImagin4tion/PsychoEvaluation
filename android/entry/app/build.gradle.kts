@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":android:feature:userProfile:impl"))
     implementation(project(":android:feature:settings:impl"))
     implementation(project(":android:feature:bluetoothDeviceManager:impl"))
+    implementation(project(":android:feature:trainingPreparing:impl"))
     implementation(project(":android:feature:trainingsList:impl"))
     implementation(project(":android:feature:trainings:debugTraining:impl"))
     implementation(project(":android:feature:trainings:airplaneGame:impl"))

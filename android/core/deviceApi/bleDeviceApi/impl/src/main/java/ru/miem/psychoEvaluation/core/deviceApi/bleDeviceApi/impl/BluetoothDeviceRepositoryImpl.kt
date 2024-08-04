@@ -46,14 +46,14 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
         }
     }
 
-    private var isFirstStart = true
-    private var service: SerialService? = null
+    private var serialService: SerialService? = null
     private var context: Context? = null
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var deviceAddress: String? = null
     private var onDeviceConnected: () -> Unit = {}
 
-    override val deviceDataFlow: Flow<Int> = createSerialListenerCallbackFlow()
+    override val deviceDataFlow: Flow<Int>
+        get() = createSerialListenerCallbackFlow()
 
     override var isConnected: Boolean = false
         private set
@@ -69,7 +69,11 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
         this.deviceAddress = deviceHardwareAddress
         this.onDeviceConnected = onDeviceConnected
 
-        service?.attach(serialListener)
+        serialService
+            ?.apply {
+                attach(serialListener)
+                connectToSerialSocket()
+            }
             ?: run {
                 activity.bindService(
                     Intent(activity, SerialService::class.java),
@@ -80,23 +84,23 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
     }
 
     override fun disconnect() {
-        service?.disconnect()
+        serialService?.disconnect()
+        isConnected = false
     }
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         Timber.tag(TAG).d("onServiceConnected(ComponentName?, IBinder?)")
-        this.service = (service as? SerialService.SerialBinder)
-            ?.service
-            ?.apply { attach(serialListener) }
+        serialService = (service as SerialService.SerialBinder)
+            .service
+            .apply {
+                attach(serialListener)
+            }
 
-        if (isFirstStart) {
-            isFirstStart = false
-            connectToSerialSocket()
-        }
+        connectToSerialSocket()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-        service = null
+        serialService = null
     }
 
     private fun connectToSerialSocket() {
@@ -108,7 +112,7 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
             val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
             val socket = SerialSocket(context, device)
 
-            service?.connect(socket)
+            serialService?.connect(socket)
         }
     }
 
@@ -116,15 +120,14 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
         serialListener.apply {
             onSerialReadCallback = { bytes ->
                 val stressData = convertData(bytes)
+
                 trySendBlocking(stressData).onFailure { throwable ->
-                    Timber.tag(TAG)
-                        .e(
-                            message = "Failed to send new bytes from bluetooth device %s " +
-                                "with error %s, %s",
-                            bytes.joinToString(","),
-                            throwable.toString(),
-                            throwable?.message
-                        )
+                    Timber.tag(TAG).e(
+                        message = "Failed to send new bytes from bluetooth device %s with error %s, %s",
+                        bytes.joinToString(","),
+                        throwable.toString(),
+                        throwable?.message
+                    )
                 }
             }
         }
