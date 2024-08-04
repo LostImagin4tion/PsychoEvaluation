@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api"
+    namespace = "ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl"
 }
 
 dependencies {
