@@ -1,18 +1,18 @@
-package ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.impl.di
+package ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.di.AuthorizationInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.di.RegistrationInteractorDiApi
 import ru.miem.psychoEvaluation.core.di.impl.ApiKey
 import ru.miem.psychoEvaluation.core.di.impl.ApiProvider
 
 @Module
-class AuthorizationInteractorApiProvider {
+class RegistrationInteractorApiProvider {
 
     @Provides
     @IntoMap
-    @ApiKey(AuthorizationInteractorDiApi::class)
-    fun provideAuthorizationInteractorApiProvider() =
-        ApiProvider(AuthorizationInteractorComponent::create)
+    @ApiKey(RegistrationInteractorDiApi::class)
+    fun provideRegistrationInteractorApiProvider() =
+        ApiProvider(RegistrationInteractorComponent::create)
 }

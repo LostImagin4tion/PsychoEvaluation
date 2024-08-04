@@ -1,13 +1,13 @@
-package ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.impl.di
+package ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl.di
 
 import dagger.Binds
 import dagger.Module
-import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.AuthorizationInteractor
-import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.impl.AuthorizationInteractorImpl
+import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.RegistrationInteractor
+import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl.RegistrationInteractorImpl
 
 @Module
-interface AuthorizationInteractorModule {
+interface RegistrationInteractorModule {
 
     @Binds
-    fun bindAuthorizationInteractor(impl: AuthorizationInteractorImpl): AuthorizationInteractor
+    fun bindRegistrationInteractor(impl: RegistrationInteractorImpl): RegistrationInteractor
 }

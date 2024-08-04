@@ -74,3 +74,8 @@ android {
         Dependencies.Dagger.kaptDeps.forEach { add("kapt", it) }
     }
 }
+dependencies {
+    implementation(project(":multiplatform:core:networkApi:authorization"))
+    implementation(project(":multiplatform:core:networkApi:authorization"))
+    implementation(project(":multiplatform:core:networkApi:authorization"))
+}

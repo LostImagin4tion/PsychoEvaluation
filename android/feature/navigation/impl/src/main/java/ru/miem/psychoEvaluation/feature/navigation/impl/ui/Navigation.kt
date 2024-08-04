@@ -142,7 +142,7 @@ fun NavigationContent(
             composable(Routes.registration) {
                 setupSystemBarColors()
                 registrationScreen.RegistrationScreen(
-                    navigateToRoute = navigateToRoute,
+                    navigateToRoute = navigateToRouteWithOptions,
                     showMessage = showMessage
                 )
             }

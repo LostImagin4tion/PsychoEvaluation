@@ -19,7 +19,6 @@ import ru.miem.psychoEvaluation.feature.userProfile.impl.di.UserProfileScreenApi
         SettingsScreenApiProvider::class,
         BluetoothDeviceManagerScreenApiProvider::class,
         TrainingPreparingScreenApiProvider::class,
-
         TrainingsListScreenApiProvider::class,
         DebugTrainingScreenApiProvider::class,
         AirplaneGameScreenApiProvider::class,

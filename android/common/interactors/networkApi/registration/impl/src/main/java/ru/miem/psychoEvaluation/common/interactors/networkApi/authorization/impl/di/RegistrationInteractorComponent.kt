@@ -1,16 +1,16 @@
-package ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.impl.di
+package ru.miem.psychoEvaluation.common.interactors.networkApi.registration.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.common.interactors.networkApi.authorization.api.di.AuthorizationInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.registration.api.di.RegistrationInteractorDiApi
 
 @Component(
     modules = [
-        AuthorizationInteractorModule::class,
+        RegistrationInteractorModule::class,
     ]
 )
-interface AuthorizationInteractorComponent : AuthorizationInteractorDiApi {
+interface RegistrationInteractorComponent : RegistrationInteractorDiApi {
     companion object {
-        fun create(): AuthorizationInteractorDiApi = DaggerAuthorizationInteractorComponent
+        fun create(): RegistrationInteractorDiApi = DaggerRegistrationInteractorComponent
             .builder()
             .build()
     }

@@ -2,12 +2,12 @@ package ru.miem.psychoEvaluation.multiplatform.core.di
 
 import dagger.Binds
 import dagger.Module
-import ru.miem.psychoEvaluation.multiplatform.core.AuthorizationRepository
-import ru.miem.psychoEvaluation.multiplatform.core.AuthorizationRepositoryImpl
+import ru.miem.psychoEvaluation.multiplatform.core.RegistrationRepository
+import ru.miem.psychoEvaluation.multiplatform.core.RegistrationRepositoryImpl
 
 @Module
-interface AuthorizationRepositoryModule {
+interface RegistrationRepositoryModule {
 
     @Binds
-    fun bindAuthorizationRepository(impl: AuthorizationRepositoryImpl): AuthorizationRepository
+    fun bindRegistrationRepository(impl: RegistrationRepositoryImpl): RegistrationRepository
 }

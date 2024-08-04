@@ -10,7 +10,7 @@ data class RegistrationResponse(
 )
 
 @Serializable
-data class RefreshTokenResponse(
+data class RefreshTokenResponse1(
     @SerialName("access_token") val accessToken: String,
     @SerialName("refresh_token") val refreshToken: String,
 )

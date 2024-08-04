@@ -9,5 +9,5 @@ import ru.miem.psychoEvaluation.feature.registration.impl.RegistrationScreenImpl
 interface RegistrationScreenModule {
 
     @Binds
-    fun bindAuthorizationScreen(impl: RegistrationScreenImpl): RegistrationScreen
+    fun bindRegistrationScreen(impl: RegistrationScreenImpl): RegistrationScreen
 }

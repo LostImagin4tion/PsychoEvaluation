@@ -10,6 +10,6 @@ data class RegistrationRequest(
 )
 
 @Serializable
-data class RefreshAccessTokenRequest(
+data class RefreshAccessTokenRequest1(
     val refreshToken: String,
 )

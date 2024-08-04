@@ -4,12 +4,12 @@ import dagger.Component
 
 @Component(
     modules = [
-        AuthorizationRepositoryModule::class,
+        RegistrationRepositoryModule::class,
     ]
 )
-interface AuthorizationRepositoryComponent : AuthorizationRepositoryDiApi {
+interface RegistrationRepositoryComponent : RegistrationRepositoryDiApi {
     companion object {
-        fun create(): AuthorizationRepositoryDiApi = DaggerAuthorizationRepositoryComponent
+        fun create(): RegistrationRepositoryDiApi = DaggerRegistrationRepositoryComponent
             .builder()
             .build()
     }

@@ -11,27 +11,28 @@ import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.SafeHttpClientFactory
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.di.HttpClientFactoryDiApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.models.successOrNull
-import ru.miem.psychoEvaluation.multiplatform.core.models.AuthorizationRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.AuthorizationResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshAccessTokenRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshTokenResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshAccessTokenRequest1
+import ru.miem.psychoEvaluation.multiplatform.core.models.RegistrationRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.RegistrationResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.RefreshTokenResponse1
 import javax.inject.Inject
 
-class AuthorizationRepositoryImpl @Inject constructor() : AuthorizationRepository {
+class RegistrationRepositoryImpl @Inject constructor() : RegistrationRepository {
 
     private val baseHttpClient by diApi(HttpClientFactoryDiApi::httpClientFactory)
 
     private val safeHttpClientFactory = SafeHttpClientFactory { baseHttpClient.create() }
 
-    override suspend fun authorization(
-        request: AuthorizationRequest
-    ): AuthorizationResponse? {
-        val url = URLBuilder(AUTHORIZATION_BASE_URL)
-            .appendPathSegments(AUTHORIZATION_ENDPOINT)
+    override suspend fun registration(
+        request: RegistrationRequest
+    ): RegistrationResponse? {
+        val url = URLBuilder(REGISTRATION_BASE_URL)
+            .appendPathSegments(REGISTRATION_ENDPOINT)
             .buildString()
 
         return safeHttpClientFactory.get()
-            .requestOnBackground<AuthorizationResponse, Unit>(url) {
+            .requestOnBackground<RegistrationResponse, Unit>(url) {
                 method = HttpMethod.Post
                 contentType(ContentType.Application.Json)
                 setBody(request)
@@ -39,15 +40,13 @@ class AuthorizationRepositoryImpl @Inject constructor() : AuthorizationRepositor
             .successOrNull()
     }
 
-    override suspend fun refreshAccessToken(
-        request: RefreshAccessTokenRequest
-    ): RefreshTokenResponse? {
-        val url = URLBuilder(AUTHORIZATION_BASE_URL)
+    override suspend fun refreshAccessToken(request: RefreshAccessTokenRequest1): RefreshTokenResponse1? {
+        val url = URLBuilder(REGISTRATION_BASE_URL)
             .appendPathSegments(REFRESH_TOKEN_ENDPOINT)
             .buildString()
 
         return safeHttpClientFactory.get()
-            .requestOnBackground<RefreshTokenResponse, Unit>(url) {
+            .requestOnBackground<RefreshTokenResponse1, Unit>(url) {
                 method = HttpMethod.Get
                 contentType(ContentType.Application.Json)
 
@@ -59,8 +58,8 @@ class AuthorizationRepositoryImpl @Inject constructor() : AuthorizationRepositor
     }
 
     private companion object {
-        const val AUTHORIZATION_BASE_URL = "http://gsr.miem2.vmnet.top/"
-        const val AUTHORIZATION_ENDPOINT = "users/login"
+        const val REGISTRATION_BASE_URL = "http://gsr.miem2.vmnet.top/"
+        const val REGISTRATION_ENDPOINT = "users"
         const val REFRESH_TOKEN_ENDPOINT = "users/refresh"
 
         const val AUTHORIZATION_TOKEN_HEADER = "Authorization-token"

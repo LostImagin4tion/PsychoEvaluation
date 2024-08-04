@@ -17,4 +17,5 @@ dependencies {
     api(project(":android:feature:registration:api"))
 
     implementation(project(":android:feature:navigation:api"))
+    implementation(project(":android:common:interactors:networkApi:registration:api"))
 }
