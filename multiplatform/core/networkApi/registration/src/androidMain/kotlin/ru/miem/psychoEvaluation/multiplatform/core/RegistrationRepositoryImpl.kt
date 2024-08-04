@@ -35,6 +35,7 @@ class RegistrationRepositoryImpl @Inject constructor() : RegistrationRepository 
             }
             .successOrNull()
     }
+
     private companion object {
         const val REGISTRATION_BASE_URL = "http://gsr.miem2.vmnet.top/"
         const val REGISTRATION_ENDPOINT = "users"
