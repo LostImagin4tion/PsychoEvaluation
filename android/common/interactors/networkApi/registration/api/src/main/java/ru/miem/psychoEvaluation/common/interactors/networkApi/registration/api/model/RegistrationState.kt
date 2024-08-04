@@ -6,6 +6,5 @@ data class RegistrationState(
 
 enum class RegistrationResponseType {
     Registered,
-    WrongCredentials,
     AlreadyRegistered
 }

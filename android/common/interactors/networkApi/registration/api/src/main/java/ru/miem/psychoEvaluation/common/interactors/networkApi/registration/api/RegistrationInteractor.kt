@@ -6,7 +6,7 @@ interface RegistrationInteractor {
     val apiAccessToken: String?
 
     suspend fun registration(
-        email: String?,
-        password: String?
+        email: String,
+        password: String
     ): RegistrationState
 }

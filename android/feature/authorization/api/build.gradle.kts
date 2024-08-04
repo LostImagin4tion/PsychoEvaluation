@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = "ru.miem.psychoEvaluation.feature.registration.api"
+    namespace = "ru.miem.psychoEvaluation.feature.authorization.api"
 }

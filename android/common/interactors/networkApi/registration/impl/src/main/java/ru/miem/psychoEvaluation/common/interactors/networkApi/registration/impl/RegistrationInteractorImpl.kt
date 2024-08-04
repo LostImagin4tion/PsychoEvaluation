@@ -20,26 +20,21 @@ class RegistrationInteractorImpl @Inject constructor() : RegistrationInteractor 
         private set
 
     override suspend fun registration(
-        email: String?,
-        password: String?,
+        email: String,
+        password: String,
     ): RegistrationState {
-        return when {
-            email == null || password == null -> RegistrationState(RegistrationResponseType.WrongCredentials)
-            else -> {
-                val requestEntity = RegistrationRequest(email, password)
+        val requestEntity = RegistrationRequest(email, password)
 
-                registrationRepository.registration(requestEntity)
-                    .also {
-                        Timber.tag(TAG).d("Got registration response $it")
-                    }
-                    ?.run {
-                        dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                        apiAccessToken = accessToken
-                        RegistrationState(RegistrationResponseType.Registered)
-                    }
-                    ?: RegistrationState(RegistrationResponseType.AlreadyRegistered)
+        return registrationRepository.registration(requestEntity)
+            .also {
+                Timber.tag(TAG).d("Got registration response $it")
             }
-        }
+            ?.run {
+                dataStore.set(DataStorageKeys.refreshToken, refreshToken)
+                apiAccessToken = accessToken
+                RegistrationState(RegistrationResponseType.Registered)
+            }
+            ?: RegistrationState(RegistrationResponseType.AlreadyRegistered)
     }
 
     private companion object {
