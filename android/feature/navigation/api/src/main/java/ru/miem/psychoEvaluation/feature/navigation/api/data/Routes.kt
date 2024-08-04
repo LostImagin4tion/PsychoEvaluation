@@ -29,35 +29,40 @@ object Routes {
 
     val bluetoothDeviceManagerRouteDeclaration = createRoute(
         routeTemplate = bluetoothDeviceManagerRouteTemplate,
-        args = BluetoothDeviceManagerRouteArgs.args
+        args = BluetoothDeviceManagerRouteArgs.args,
     )
 
     val trainingPreparingRouteDeclaration = createRoute(
         routeTemplate = trainingPreparingRouteTemplate,
-        args = TrainingPreparingRouteArgs.args
+        args = TrainingPreparingRouteArgs.args,
+    )
+
+    val debugTrainingRouteDeclaration = createRoute(
+        routeTemplate = generalTrainingRouteTemplate.format(debugTraining),
+        args = TrainingRouteArgs.args,
     )
 
     val airplaneGameRouteDeclaration = createRoute(
         routeTemplate = generalTrainingRouteTemplate.format(airplaneGame),
-        args = TrainingRouteArgs.args
+        args = TrainingRouteArgs.args,
     )
 
     val bluetoothDeviceManager = createRoute(
         routeTemplate = bluetoothDeviceManagerRouteTemplate,
         args = BluetoothDeviceManagerRouteArgs.args,
-        isUsedForRouteDeclaration = false
+        isUsedForRouteDeclaration = false,
     )
 
     val trainingPreparing = createRoute(
         routeTemplate = trainingPreparingRouteTemplate,
         args = TrainingPreparingRouteArgs.args,
-        isUsedForRouteDeclaration = false
+        isUsedForRouteDeclaration = false,
     )
 
     val generalTrainingRoute = createRoute(
         routeTemplate = generalTrainingRouteTemplate,
         args = TrainingRouteArgs.args,
-        isUsedForRouteDeclaration = false
+        isUsedForRouteDeclaration = false,
     )
 
     private fun createRoute(

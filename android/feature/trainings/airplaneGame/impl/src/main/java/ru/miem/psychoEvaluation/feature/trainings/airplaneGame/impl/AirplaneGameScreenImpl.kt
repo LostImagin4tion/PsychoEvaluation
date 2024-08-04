@@ -33,7 +33,7 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.Bluet
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
-import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.AirplaneGameScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
@@ -46,7 +46,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
     override fun AirplaneGameScreen(
         usbDeviceInteractor: UsbDeviceInteractor,
         bleDeviceInteractor: BluetoothDeviceInteractor,
-        airplaneGameScreenArgs: AirplaneGameScreenArgs,
+        trainingScreenArgs: TrainingScreenArgs,
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
@@ -81,7 +81,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             }
             SensorDeviceType.Bluetooth -> {
                 val activity = context.findActivity()
-                val deviceHardwareAddress = airplaneGameScreenArgs.bleDeviceHardwareAddress
+                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
 
                 require(activity != null && deviceHardwareAddress != null) {
                     "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"

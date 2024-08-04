@@ -26,7 +26,7 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.BluetoothDeviceManag
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingPreparingRouteArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.TrainingRouteArgs
-import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.AirplaneGameScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.BluetoothDeviceManagerScreenArgs
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingPreparingScreenArgs
 import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
@@ -214,9 +214,18 @@ fun NavigationContent(
                 )
             }
 
-            composable(Routes.debugTraining) {
+            composable(
+                Routes.debugTrainingRouteDeclaration,
+                arguments = TrainingRouteArgs.args,
+            ) { backStackEntry ->
                 setupSystemBarColors()
                 debugTrainingScreen.DebugTrainingScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingScreenArgs = TrainingScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
                     navigateToRoute = navigateToRoute,
                     showMessage = showMessage
                 )
@@ -230,7 +239,7 @@ fun NavigationContent(
                 airplaneGameScreen.AirplaneGameScreen(
                     usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
-                    airplaneGameScreenArgs = AirplaneGameScreenArgs(
+                    trainingScreenArgs = TrainingScreenArgs(
                         bleDeviceHardwareAddress = backStackEntry.arguments
                             ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
                     ),

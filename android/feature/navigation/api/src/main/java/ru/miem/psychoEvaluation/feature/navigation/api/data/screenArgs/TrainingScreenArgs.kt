@@ -1,5 +1,5 @@
 package ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs
 
-data class AirplaneGameScreenArgs(
+data class TrainingScreenArgs(
     val bleDeviceHardwareAddress: String?
 )

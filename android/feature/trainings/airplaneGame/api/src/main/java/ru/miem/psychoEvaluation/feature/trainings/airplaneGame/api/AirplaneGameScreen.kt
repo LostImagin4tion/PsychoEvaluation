@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
-import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.AirplaneGameScreenArgs
+import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 
 interface AirplaneGameScreen {
 
@@ -13,7 +13,7 @@ interface AirplaneGameScreen {
     fun AirplaneGameScreen(
         usbDeviceInteractor: UsbDeviceInteractor,
         bleDeviceInteractor: BluetoothDeviceInteractor,
-        airplaneGameScreenArgs: AirplaneGameScreenArgs,
+        trainingScreenArgs: TrainingScreenArgs,
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit,
     )
