@@ -23,4 +23,7 @@ interface BluetoothDeviceInteractor {
         onDeviceConnected: () -> Unit = {},
     )
     fun disconnect()
+
+    fun increaseGameDifficulty()
+    fun decreaseGameDifficulty()
 }

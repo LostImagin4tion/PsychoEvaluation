@@ -10,12 +10,15 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entitie
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
+import kotlin.time.Duration.Companion.seconds
 
 class GameScene(
     private val screenWidth: Double,
     private val screenHeight: Double,
     private val context: Context,
-    private val dataFlow: StateFlow<SensorData>
+    private val dataFlow: StateFlow<SensorData>,
+    private val increaseGameDifficulty: () -> Unit,
+    private val decreaseGameDifficulty: () -> Unit,
 ) : Scene() {
 
     private var gameWorld: GameWorld? = null
@@ -27,11 +30,26 @@ class GameScene(
     }
 
     override suspend fun SContainer.sceneMain() {
-        gameWorld = gameWorld(screenWidth, screenHeight, context)
+        var gameTime = 0.seconds
+
+        gameWorld = gameWorld(
+            screenWidth,
+            screenHeight,
+            context,
+            onGameOver = {
+                when {
+                    gameTime < 15.seconds -> decreaseGameDifficulty()
+                    gameTime > 60.seconds -> increaseGameDifficulty
+                }
+                gameTime = 0.seconds
+            }
+        )
 
         val input = views.input
 
         addUpdater { delta ->
+            gameTime += delta.seconds.seconds
+
             if (input.mouseButtons != 0) {
                 if (gameWorld?.isReady == true) {
                     gameWorld?.start()
@@ -43,6 +61,10 @@ class GameScene(
             } else if (gameWorld?.isRunning == true) {
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
+
+//                val bordersHeight = with(currentData) { upperLimit - lowerLimit }
+//                val data = normalizedData * screenHeight / bordersHeight
+
                 if (previousData == null) {
                     previousData = normalizedData
                 }
@@ -51,10 +73,11 @@ class GameScene(
                     (normalizedData - it) / delta.seconds
                 }
 
+                Timber.tag("HELLO").i("$currentData speed $speed previous $previousData current $normalizedData")
+
                 if (speed != null && speed != 0.0) {
-                    Timber.tag("HELLO").i("speed $speed previous $previousData current $currentData")
-                    previousData = currentData.normalizedData
-                    gameWorld?.onNewData(currentData.normalizedData, speed)
+                    previousData = normalizedData
+                    gameWorld?.onNewData(normalizedData, speed)
                 }
             }
 

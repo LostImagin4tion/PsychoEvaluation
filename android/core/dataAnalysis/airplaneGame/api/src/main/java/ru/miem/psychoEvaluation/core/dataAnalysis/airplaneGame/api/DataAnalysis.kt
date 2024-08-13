@@ -12,4 +12,6 @@ interface DataAnalysis {
     fun findPreparationData(dataFlow: Flow<Int>): Flow<Int>
     fun findDataBorders(y: List<Int>): Borders
     fun getNormalizedValue(value: Double, borders: Borders): Double
+    fun increaseDifficulty(borders: Borders): Borders
+    fun decreaseDifficulty(borders: Borders): Borders
 }

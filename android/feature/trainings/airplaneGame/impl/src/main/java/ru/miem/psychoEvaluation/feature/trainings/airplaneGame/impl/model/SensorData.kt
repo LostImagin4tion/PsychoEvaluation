@@ -5,9 +5,21 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 
 data class SensorData(
     val rawData: Int,
-    val normalizedData: Double
+    val normalizedData: Double,
+    val upperLimit: Double,
+    val lowerLimit: Double,
 )
 
-fun UsbDeviceData.toSensorData() = SensorData(rawData, normalizedData)
+fun UsbDeviceData.toSensorData() = SensorData(
+    rawData,
+    normalizedData,
+    upperLimit,
+    lowerLimit,
+)
 
-fun BluetoothDeviceData.toSensorData() = SensorData(rawData, normalizedData)
+fun BluetoothDeviceData.toSensorData() = SensorData(
+    rawData,
+    normalizedData,
+    upperLimit,
+    lowerLimit,
+)

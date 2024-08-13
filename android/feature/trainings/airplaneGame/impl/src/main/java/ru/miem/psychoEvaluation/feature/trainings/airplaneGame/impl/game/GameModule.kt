@@ -14,7 +14,9 @@ class GameModule(
     private val screenWidth: Int,
     private val screenHeight: Int,
     private val context: Context,
-    private val dataFlow: StateFlow<SensorData>
+    private val dataFlow: StateFlow<SensorData>,
+    private val increaseGameDifficulty: () -> Unit,
+    private val decreaseGameDifficulty: () -> Unit,
 ) : Module() {
 
     override val scaleMode: ScaleMode = ScaleMode.FILL
@@ -30,6 +32,8 @@ class GameModule(
                 screenHeight = screenHeight.toDouble(),
                 context = context,
                 dataFlow = dataFlow,
+                increaseGameDifficulty = increaseGameDifficulty,
+                decreaseGameDifficulty = decreaseGameDifficulty,
             )
         }
     }
