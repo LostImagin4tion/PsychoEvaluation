@@ -29,7 +29,7 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
     }
 
     override fun getNormalizedValue(value: Double, borders: Borders): Double {
-        return (value - borders.lowerLimit) / (borders.upperLimit - borders.lowerLimit) * 100
+        return (value - borders.lowerLimit) / (borders.upperLimit - borders.lowerLimit)
     }
 
     private fun calculateSlope(y: List<Int>): Double {
@@ -61,6 +61,24 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
                 method = "Границы в рамках +7% и -13%, возрастающий тренд",
                 upperLimit = meanValue * 1.07,
                 lowerLimit = meanValue * 0.87,
+            )
+        }
+    }
+
+    override fun increaseDifficulty(borders: Borders): Borders {
+        return borders.run {
+            copy(
+                upperLimit = upperLimit * 0.95,
+                lowerLimit = lowerLimit * 1.05,
+            )
+        }
+    }
+
+    override fun decreaseDifficulty(borders: Borders): Borders {
+        return borders.run {
+            copy(
+                upperLimit = upperLimit * 1.05,
+                lowerLimit = lowerLimit * 0.95,
             )
         }
     }

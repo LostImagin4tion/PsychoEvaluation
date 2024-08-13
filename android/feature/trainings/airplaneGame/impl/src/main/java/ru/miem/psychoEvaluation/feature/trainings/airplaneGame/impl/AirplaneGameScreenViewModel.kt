@@ -27,13 +27,13 @@ class AirplaneGameScreenViewModel(
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
-    private val _stressData = MutableStateFlow(SensorData(0, 0.0))
+    private val _stressData = MutableStateFlow(defaultSensorData)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
     val stressData: StateFlow<SensorData> = _stressData
 
-    val allStress = mutableListOf<Int>()
+    private val allStress = mutableListOf<Int>()
     val chartModelProducer = CartesianChartModelProducer.build()
 
     fun subscribeForSettingsChanges() {
@@ -76,6 +76,22 @@ class AirplaneGameScreenViewModel(
         }
     }
 
+    fun increaseGameDifficulty() {
+        when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.increaseGameDifficulty()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.increaseGameDifficulty()
+            SensorDeviceType.Unknown -> {}
+        }
+    }
+
+    fun decreaseGameDifficulty() {
+        when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.decreaseGameDifficulty()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.decreaseGameDifficulty()
+            SensorDeviceType.Unknown -> {}
+        }
+    }
+
     private suspend fun emitNewData(data: SensorData) {
         _stressData.emit(data)
         allStress.add(data.rawData)
@@ -86,5 +102,7 @@ class AirplaneGameScreenViewModel(
 
     private companion object {
         val TAG: String = AirplaneGameScreenViewModel::class.java.simpleName
+
+        val defaultSensorData = SensorData(0, 0.0, 0.0, 0.0)
     }
 }

@@ -106,6 +106,8 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             showMessage = showMessage,
             dataFlow = viewModel.stressData,
             modelProducer = viewModel.chartModelProducer,
+            increaseGameDifficulty = viewModel::increaseGameDifficulty,
+            decreaseGameDifficulty = viewModel::decreaseGameDifficulty
         )
     }
 
@@ -114,6 +116,8 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         showMessage: (String) -> Unit,
         dataFlow: StateFlow<SensorData>,
         modelProducer: CartesianChartModelProducer,
+        increaseGameDifficulty: () -> Unit,
+        decreaseGameDifficulty: () -> Unit,
     ) = Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -131,6 +135,8 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                             screenHeight = height,
                             context = context,
                             dataFlow = dataFlow,
+                            increaseGameDifficulty = increaseGameDifficulty,
+                            decreaseGameDifficulty = decreaseGameDifficulty,
                         )
                     )
                 }

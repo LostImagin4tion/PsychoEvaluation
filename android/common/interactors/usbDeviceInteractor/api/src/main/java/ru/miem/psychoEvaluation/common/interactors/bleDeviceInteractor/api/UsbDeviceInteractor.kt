@@ -22,4 +22,7 @@ interface UsbDeviceInteractor {
 
     fun connectToUsbDevice(usbManager: UsbManager)
     fun disconnect()
+
+    fun increaseGameDifficulty()
+    fun decreaseGameDifficulty()
 }

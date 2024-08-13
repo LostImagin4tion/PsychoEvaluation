@@ -10,8 +10,14 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text
 fun Container.gameWorld(
     screenWidth: Double,
     screenHeight: Double,
-    context: Context
-) = GameWorld(screenWidth, screenHeight, context).addTo(this)
+    context: Context,
+    onGameOver: () -> Unit,
+) = GameWorld(
+    screenWidth,
+    screenHeight,
+    context,
+    onGameOver,
+).addTo(this)
 
 private enum class GameState {
     Ready,
@@ -22,7 +28,8 @@ private enum class GameState {
 class GameWorld(
     override var width: Double,
     override var height: Double,
-    private val context: Context
+    private val context: Context,
+    private val onGameOver: () -> Unit,
 ) : Container() {
 
     private val midPointX = width / 2.0
@@ -91,6 +98,7 @@ class GameWorld(
             airplane.die()
 
             currentState = GameState.GameOver
+            onGameOver()
         }
     }
 }

@@ -97,11 +97,13 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
                 onNewValueEmitted(
                     BluetoothDeviceData(
-                        rawData,
-                        airplaneGameDataAnalysis.getNormalizedValue(
+                        rawData = rawData,
+                        normalizedData = airplaneGameDataAnalysis.getNormalizedValue(
                             value = rawData.toDouble(),
-                            borders = borders
-                        )
+                            borders = borders,
+                        ),
+                        upperLimit = borders.upperLimit,
+                        lowerLimit = borders.lowerLimit,
                     )
                 )
             }
@@ -130,6 +132,14 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
     override fun disconnect() {
         bleDeviceRepository.disconnect()
+    }
+
+    override fun increaseGameDifficulty() {
+        dataBorders = dataBorders?.let { airplaneGameDataAnalysis.increaseDifficulty(it) }
+    }
+
+    override fun decreaseGameDifficulty() {
+        dataBorders = dataBorders?.let { airplaneGameDataAnalysis.decreaseDifficulty(it) }
     }
 
     @OptIn(FlowPreview::class)

@@ -65,11 +65,13 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
 
                 onNewValueEmitted(
                     UsbDeviceData(
-                        rawData,
-                        airplaneGameDataAnalysis.getNormalizedValue(
+                        rawData = rawData,
+                        normalizedData = airplaneGameDataAnalysis.getNormalizedValue(
                             value = rawData.toDouble(),
                             borders = borders
-                        )
+                        ),
+                        upperLimit = borders.upperLimit,
+                        lowerLimit = borders.lowerLimit,
                     )
                 )
             }
@@ -83,4 +85,12 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
     }
 
     override fun disconnect() = usbDeviceRepository.disconnect()
+
+    override fun increaseGameDifficulty() {
+        dataBorders = dataBorders?.let { airplaneGameDataAnalysis.increaseDifficulty(it) }
+    }
+
+    override fun decreaseGameDifficulty() {
+        dataBorders = dataBorders?.let { airplaneGameDataAnalysis.decreaseDifficulty(it) }
+    }
 }

@@ -85,15 +85,15 @@ class AirplaneView(
     }
 
     private fun updateView() {
-        this.xy(position.x, position.y)
         image.rotation(Angle.fromDegrees(airplaneRotationDegrees))
+        this.xy(position.x, position.y)
     }
 
     fun onNewData(rawData: Double, speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
             velocity.y += speed * AIRPLANE_VELOCITY_MULTIPLIER
-            Timber.tag("HELLO").i("velocity ${velocity.y} acceleration ${acceleration.y}")
+//            Timber.tag("HELLO").i("velocity ${velocity.y} acceleration ${acceleration.y}")
             fileOutputWriter?.write("$rawData\n")
         }
     }
