@@ -56,16 +56,6 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
 
         val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
-        LaunchedEffect(Unit) {
-            viewModel.subscribeForSettingsChanges()
-        }
-
-        BackHandler {
-            navigateToRoute(Routes.trainingsList)
-        }
-
-        ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-
         when (sensorDeviceType.value) {
             SensorDeviceType.Usb -> {
                 viewModel.connectToUsbDevice(usbManager = usbManager)
@@ -86,6 +76,16 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
             }
             SensorDeviceType.Unknown -> {}
         }
+
+        LaunchedEffect(Unit) {
+            viewModel.subscribeForSettingsChanges()
+        }
+
+        BackHandler {
+            navigateToRoute(Routes.trainingsList)
+        }
+
+        ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
         DisposableEffect(viewModel) {
             onDispose {

@@ -26,6 +26,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoOnGray
 fun FilledTextButton(
     isEnabled: Boolean = true,
     @StringRes textRes: Int,
+    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.labelMedium,
     colors: ButtonColors = ButtonDefaults.buttonColors(
@@ -39,7 +40,7 @@ fun FilledTextButton(
     Button(
         onClick = onClick,
         enabled = isEnabled,
-        contentPadding = PaddingValues(vertical = 15.dp),
+        contentPadding = contentPadding,
         colors = colors,
         modifier = modifier
     ) {

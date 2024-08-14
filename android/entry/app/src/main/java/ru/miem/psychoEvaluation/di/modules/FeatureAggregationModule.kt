@@ -10,6 +10,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.features.SettingsScreenA
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.TrainingPreparingScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.TrainingsListScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.UserProfileScreenApiProvider
+import ru.miem.psychoEvaluation.di.apiProviders.android.features.StopwatchGameScreenApiProvider
 
 @Module(
     includes = [
@@ -22,6 +23,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.features.UserProfileScre
         TrainingsListScreenApiProvider::class,
         DebugTrainingScreenApiProvider::class,
         AirplaneGameScreenApiProvider::class,
+        StopwatchGameScreenApiProvider::class,
     ]
 )
 interface FeatureAggregationModule

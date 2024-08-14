@@ -13,4 +13,8 @@
     <!--  Concentration Training  -->
     <string name="concentration_training_title">Концентрация</string>
     <string name="concentration_training_description">Контролируй свое эмоциональное состояние, чтобы предотвратить крушение самолета</string>
+
+    <!--  Reaction Training  -->
+    <string name="reaction_training_title">Реакция (Уровень 1)</string>
+    <string name="reaction_training_description">Пупупу</string>
 </resources>

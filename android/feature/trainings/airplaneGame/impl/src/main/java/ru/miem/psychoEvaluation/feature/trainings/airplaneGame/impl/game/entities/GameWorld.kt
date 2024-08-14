@@ -37,10 +37,6 @@ class GameWorld(
 
     private var score = 0
 
-    val isReady get() = currentState == GameState.Ready
-    val isRunning get() = currentState == GameState.Running
-    val isGameOver get() = currentState == GameState.GameOver
-
     private var currentState = GameState.Ready
 
     private val backgroundView = backgroundView(width, height)
@@ -49,6 +45,10 @@ class GameWorld(
 
     private val welcomeText = welcomeText(x = midPointX, y = 300.0)
     private val gameOverText = gameOverText(x = midPointX, y = 300.0)
+
+    val isReady get() = currentState == GameState.Ready
+    val isRunning get() = currentState == GameState.Running
+    val isGameOver get() = currentState == GameState.GameOver
 
     fun start() {
         currentState = GameState.Running

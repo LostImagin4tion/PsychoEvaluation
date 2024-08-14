@@ -13,4 +13,8 @@
     <!--  Concentration Training  -->
     <string name="concentration_training_title">Concentration</string>
     <string name="concentration_training_description">Control your emotional state to prevent a plane crash</string>
+
+    <!--  Reaction Training  -->
+    <string name="reaction_training_title">Reaction (Level 1)</string>
+    <string name="reaction_training_description">Pupupu</string>
 </resources>

@@ -36,7 +36,9 @@ import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.di.AirplaneGameScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.di.StopwatchGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
@@ -67,6 +69,7 @@ fun Navigation(
     val trainingsScreen by diApi(TrainingsScreenDiApi::trainingsListScreen)
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
+    val stopwatchGameScreen by diApi(StopwatchGameScreenDiApi::stopwatchGameScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
@@ -82,6 +85,7 @@ fun Navigation(
         trainingsListScreen = trainingsScreen,
         debugTrainingScreen = debugTrainingScreen,
         airplaneGameScreen = airplaneGameScreen,
+        stopwatchGameScreen = stopwatchGameScreen,
     )
 }
 
@@ -100,6 +104,7 @@ fun NavigationContent(
     trainingsListScreen: TrainingsListScreen,
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
+    stopwatchGameScreen: StopwatchGameScreen,
 ) {
     val usbDeviceInteractor by remember {
         diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
@@ -129,7 +134,13 @@ fun NavigationContent(
 
         NavHost(
             navController = navController,
-            startDestination = remember { Routes.userProfile }
+            startDestination = remember {
+                Routes.stopwatchGameRouteDeclaration
+                    .format(
+                        Routes.stopwatchGame,
+                        null,
+                    )
+            }
         ) {
             composable(Routes.authorization) {
                 setupSystemBarColors()
@@ -237,6 +248,23 @@ fun NavigationContent(
             ) { backStackEntry ->
                 setupSystemBarColors()
                 airplaneGameScreen.AirplaneGameScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingScreenArgs = TrainingScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage,
+                )
+            }
+
+            composable(
+                route = Routes.stopwatchGameRouteDeclaration,
+                arguments = TrainingRouteArgs.args
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                stopwatchGameScreen.StopwatchGameScreen(
                     usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
                     trainingScreenArgs = TrainingScreenArgs(
