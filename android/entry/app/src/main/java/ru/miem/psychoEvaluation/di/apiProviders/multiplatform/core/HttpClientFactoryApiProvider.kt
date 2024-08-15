@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.di.apiProviders.multiplatform
+package ru.miem.psychoEvaluation.di.apiProviders.multiplatform.core
 
 import android.app.Application
 import dagger.Module
