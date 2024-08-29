@@ -36,3 +36,23 @@ fun DisplayText(
     textAlign = textAlign,
     color = color
 )
+
+@Composable
+fun DisplayText(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    textAlign: TextAlign = TextAlign.Start,
+    isLarge: Boolean = true
+) = Text(
+    text = text,
+    style = if (isLarge) {
+        MaterialTheme.typography.displayLarge
+    } else {
+        MaterialTheme.typography.displayMedium
+    },
+    modifier = modifier,
+    textAlign = textAlign,
+    color = color
+)
+

@@ -107,10 +107,15 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
             }
         }
 
-        StopwatchGameStatisticsScreen(
-            navigateToGameStart = {},
-            navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
+        StopwatchGameLoaderScreen(
+            time = "3",
+            progress = 0.87f
         )
+
+//        StopwatchGameStatisticsScreen(
+//            navigateToGameStart = {},
+//            navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
+//        )
 
 //        StopwatchGameScreenContent(
 //            stopwatchGameState = stopwatchGameState.value,
