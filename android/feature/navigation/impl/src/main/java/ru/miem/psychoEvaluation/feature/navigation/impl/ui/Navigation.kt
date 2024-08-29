@@ -37,10 +37,10 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingS
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.di.AirplaneGameScreenDiApi
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.di.StopwatchGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.di.StopwatchGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
 import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen

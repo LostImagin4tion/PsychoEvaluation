@@ -24,9 +24,9 @@ import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ActionButtonClickFailed
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ActionButtonClickSuccessful
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ArrowJumped
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.HideIndicatorAndBrokenHeart
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.IndicatorType
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.UiAction
 import timber.log.Timber
 import kotlin.random.Random
@@ -35,10 +35,11 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
+@Suppress("MagicNumber")
 class StopwatchGameScreenViewModel(
     private val usbDeviceInteractor: UsbDeviceInteractor,
     private val bleDeviceInteractor: BluetoothDeviceInteractor,
-): ViewModel() {
+) : ViewModel() {
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
@@ -84,7 +85,8 @@ class StopwatchGameScreenViewModel(
 
                     emit(
                         value.copy(
-                            stopwatchTime = value.stopwatchTime + stopWatchTimeDelta.toDouble(DurationUnit.SECONDS).toFloat(),
+                            stopwatchTime = value.stopwatchTime +
+                                stopWatchTimeDelta.toDouble(DurationUnit.SECONDS).toFloat(),
                             timeString = createTimeString(gameTime)
                         )
                     )
@@ -115,7 +117,7 @@ class StopwatchGameScreenViewModel(
                         val currentValue = value
                         emit(
                             currentValue.copy(
-                                heartsNumber = currentValue.heartsNumber -1,
+                                heartsNumber = currentValue.heartsNumber - 1,
                                 currentIndicatorType = IndicatorType.Failure,
                             )
                         )
@@ -148,7 +150,6 @@ class StopwatchGameScreenViewModel(
                         this@coroutineScope.cancel()
                     }
                     .onEach {
-
                     }
                     .launchIn(this@coroutineScope)
             }

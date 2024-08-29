@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.clocks
+package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.stopwatch
 
 import androidx.annotation.Px
 import androidx.compose.foundation.Canvas
@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.IndicatorType
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -42,14 +42,14 @@ fun Stopwatch(
         modifier = Modifier
             .matchParentSize()
     ) {
-        val center = with (LocalDensity.current) {
+        val center = with(LocalDensity.current) {
             Offset(
                 x = maxWidth.toPx() / 2,
                 y = (maxHeight.toPx()) / 2 + 20.dp.toPx()
             )
         }
 
-        val indicatorResource = when(stopwatchGameState.currentIndicatorType) {
+        val indicatorResource = when (stopwatchGameState.currentIndicatorType) {
             IndicatorType.Success -> R.drawable.success_indicator
             IndicatorType.Failure -> R.drawable.failure_indicator
             IndicatorType.Undefined -> null
@@ -82,6 +82,7 @@ fun Stopwatch(
     }
 }
 
+@Suppress("MagicNumber")
 fun DrawScope.drawHand(
     center: Offset,
     step: Int,

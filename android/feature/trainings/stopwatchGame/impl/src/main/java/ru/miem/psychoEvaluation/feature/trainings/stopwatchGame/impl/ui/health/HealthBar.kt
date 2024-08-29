@@ -14,10 +14,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.IndicatorType
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 
 @Composable
+@Suppress("MagicNumber")
 fun HealthBar(
     stopwatchGameState: StopwatchGameState,
     modifier: Modifier = Modifier,
@@ -45,7 +46,7 @@ fun HealthBar(
             )
             .size(width = rowWidth, height = heartSize)
     ) {
-        (0 until heartsNumber).forEach { index ->
+        for (index in 0 until heartsNumber) {
             val padding = if (index == 0) 0.dp else Dimensions.commonSpacing
             val painterRes = if (index == 0 && shouldShowBrokenHeart) {
                 R.drawable.broken_heart

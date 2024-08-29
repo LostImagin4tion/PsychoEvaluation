@@ -39,8 +39,8 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGam
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.ActionButton
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.BackButton
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.clocks.Stopwatch
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.health.HealthBar
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.stopwatch.Stopwatch
 import javax.inject.Inject
 
 class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
@@ -107,11 +107,16 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
             }
         }
 
-        StopwatchGameScreenContent(
-            stopwatchGameState = stopwatchGameState.value,
-            navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
-            onActionButtonClick = viewModel::clickActionButton
+        StopwatchGameStatisticsScreen(
+            navigateToGameStart = {},
+            navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
         )
+
+//        StopwatchGameScreenContent(
+//            stopwatchGameState = stopwatchGameState.value,
+//            navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
+//            onActionButtonClick = viewModel::clickActionButton
+//        )
     }
 
     @Composable
