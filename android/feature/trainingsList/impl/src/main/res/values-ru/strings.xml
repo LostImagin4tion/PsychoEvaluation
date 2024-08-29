@@ -12,9 +12,9 @@
 
     <!--  Concentration Training  -->
     <string name="concentration_training_title">Концентрация</string>
-    <string name="concentration_training_description">Контролируй свое эмоциональное состояние, чтобы предотвратить крушение самолета</string>
+    <string name="concentration_training_description">Контролируй свое эмоциональное состояние, не допусти крушение самолета</string>
 
     <!--  Reaction Training  -->
-    <string name="reaction_training_title">Реакция (Уровень 1)</string>
-    <string name="reaction_training_description">Пупупу</string>
+    <string name="reaction_training_title">Бдительность (Уровень 1)</string>
+    <string name="reaction_training_description">Следи за стрелкой, чтобы не пропустить временной скачок</string>
 </resources>
