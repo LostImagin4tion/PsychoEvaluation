@@ -135,11 +135,7 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.stopwatchGameRouteDeclaration
-                    .format(
-                        Routes.stopwatchGame,
-                        null,
-                    )
+                Routes.userProfile
             }
         ) {
             composable(Routes.authorization) {
@@ -192,8 +188,8 @@ fun NavigationContent(
                 bluetoothDeviceManagerScreen.BluetoothDeviceManagerScreen(
                     bleDeviceInteractor = bleDeviceInteractor,
                     bluetoothDeviceManagerScreenArgs = BluetoothDeviceManagerScreenArgs(
-                        trainingPreparingRoute = backStackEntry.arguments
-                            ?.getString(BluetoothDeviceManagerRouteArgs.trainingRoute)
+                        nextScreenRoute = backStackEntry.arguments
+                            ?.getString(BluetoothDeviceManagerRouteArgs.nextScreen)
                             ?: throw IllegalArgumentException(
                                 "Did not find training preparing route in backstack arguments"
                             ),

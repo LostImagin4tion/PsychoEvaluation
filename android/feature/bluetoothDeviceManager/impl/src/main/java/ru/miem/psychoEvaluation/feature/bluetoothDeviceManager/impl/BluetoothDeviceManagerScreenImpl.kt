@@ -72,12 +72,19 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                         viewModel.connectToBluetoothDevice(it, bluetoothAdapter, device)
                     }
             },
-            navigateToTrainingPreparing = {
-                val route = Routes.trainingPreparing
-                    .format(
-                        bluetoothDeviceManagerScreenArgs.trainingPreparingRoute,
+            navigateToNextScreen = {
+                val nextScreenRoute = bluetoothDeviceManagerScreenArgs.nextScreenRoute
+
+                val route = when (nextScreenRoute) {
+                    Routes.stopwatchGame -> Routes.generalTrainingRoute.format(
+                        nextScreenRoute,
                         connectedDevice?.hardwareAddress,
                     )
+                    else -> Routes.trainingPreparing.format(
+                        nextScreenRoute,
+                        connectedDevice?.hardwareAddress
+                    )
+                }
                 navigateToRoute(route)
             },
         )
@@ -88,7 +95,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
         devices: ImmutableList<BluetoothDeviceState>,
         isAnyDeviceConnected: Boolean,
         onDeviceTapped: (device: BluetoothDeviceState) -> Unit,
-        navigateToTrainingPreparing: () -> Unit,
+        navigateToNextScreen: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier.screenPaddings()
@@ -127,14 +134,14 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             }
 
             FilledTextButton(
-                isEnabled = isAnyDeviceConnected,
+                isEnabled = true /* isAnyDeviceConnected */,
                 textRes = R.string.continue_button_text,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = Dimensions.primaryHorizontalPadding)
                     .padding(bottom = Dimensions.primaryVerticalPadding * 2)
                     .align(Alignment.BottomCenter),
-                onClick = navigateToTrainingPreparing,
+                onClick = navigateToNextScreen,
             )
         }
     }

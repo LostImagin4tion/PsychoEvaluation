@@ -1,7 +1,11 @@
 package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
 
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.hardware.usb.UsbManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -15,6 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
@@ -34,7 +39,6 @@ import kotlin.random.nextInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 @Suppress("MagicNumber")
 class StopwatchGameScreenViewModel(
@@ -45,11 +49,13 @@ class StopwatchGameScreenViewModel(
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _stopwatchGameState = MutableStateFlow<StopwatchGameState>(defaultLoadingState)
+    private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     private var isActionButtonClicked = false
 
     val stopwatchGameState: StateFlow<StopwatchGameState> = _stopwatchGameState
+    val stressData: StateFlow<Int> = _stressData
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
 
     fun subscribeForSettingsChanges() {
@@ -58,11 +64,45 @@ class StopwatchGameScreenViewModel(
             .launchIn(viewModelScope)
     }
 
+    fun connectToUsbDevice(usbManager: UsbManager) {
+        viewModelScope.launch {
+            usbDeviceInteractor.getRawDeviceData(usbManager) {
+                emitNewData(it)
+            }
+        }
+    }
+
+    fun retrieveDataFromBluetoothDevice(
+        activity: Activity,
+        bluetoothAdapter: BluetoothAdapter,
+        bleDeviceHardwareAddress: String,
+    ) {
+        bleDeviceInteractor.connectToBluetoothDevice(
+            activity = activity,
+            bluetoothAdapter = bluetoothAdapter,
+            deviceHardwareAddress = bleDeviceHardwareAddress,
+        )
+
+        viewModelScope.launch {
+            bleDeviceInteractor.getRawDeviceData {
+                emitNewData(it)
+            }
+        }
+    }
+
+    fun disconnect() {
+        when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
+            SensorDeviceType.Unknown -> {}
+        }
+    }
+
     fun startTimerBeforeStart() {
         viewModelScope.launch {
             coroutineScope {
                 tickerFlow(defaultLoadingPeriod)
-                    .onEach {  delta ->
+                    .onEach { delta ->
                         val state = _stopwatchGameState.value as? StopwatchGameLoading
 
                         state?.let {
@@ -207,8 +247,7 @@ class StopwatchGameScreenViewModel(
                             val action = ActionButtonClickSuccessful(time.inWholeMilliseconds)
                             dispatchAction(action)
                             this@coroutineScope.cancel()
-                        }
-                        else if (time >= defaultTimeToClickActionButton) {
+                        } else if (time >= defaultTimeToClickActionButton) {
                             val action = ActionButtonClickFailed(time.inWholeMilliseconds)
                             dispatchAction(action)
                             this@coroutineScope.cancel()
@@ -253,20 +292,24 @@ class StopwatchGameScreenViewModel(
         }
     }.cancellable()
 
-    private fun StopwatchGameInProgress.toGameEndedState(): StopwatchGameEnded {
-        return StopwatchGameEnded(
-            gameTime = gameTime,
-            successPercent = successfulReactionCount.toFloat() / jumpCount,
-            averageReactionTimeString = createTimeString(reactionTimings.average().milliseconds),
-            vigilanceDelta = reactionTimings
-                .takeIf { it.isNotEmpty() }
+    private suspend fun StopwatchGameInProgress.toGameEndedState(): StopwatchGameEnded {
+        return withContext(Dispatchers.Default) {
+            val averageReactionTime = createTimeString(reactionTimings.average().milliseconds)
+            val vigilanceDelta = reactionTimings.takeIf { it.isNotEmpty() }
                 ?.reduce { accumulated, value -> accumulated - value }
-                ?: 0L,
-            concentrationDelta = stressData
-                .takeIf { it.isNotEmpty() }
+                ?: 0L
+            val concentrationDelta = stressData.takeIf { it.isNotEmpty() }
                 ?.reduce { accumulated, value -> accumulated - value }
-                ?: 0,
-        )
+                ?: 0
+
+            StopwatchGameEnded(
+                gameTime = gameTime,
+                successPercent = successfulReactionCount.toFloat() / jumpCount,
+                averageReactionTimeString = averageReactionTime,
+                vigilanceDelta = vigilanceDelta,
+                concentrationDelta = concentrationDelta
+            )
+        }
     }
 
     private fun createTimeString(duration: Duration): String {
@@ -278,6 +321,19 @@ class StopwatchGameScreenViewModel(
             minutes < 10 && seconds >= 10 -> "0$minutes:$seconds"
             minutes >= 10 && seconds < 10 -> "$minutes:0$seconds"
             else -> "0$minutes:0$seconds"
+        }
+    }
+
+    private suspend fun emitNewData(data: Int) {
+        _stopwatchGameState.run {
+            val state = value as? StopwatchGameInProgress
+
+            state?.let {
+                val newState = it.copy(
+                    stressData = it.stressData + data
+                )
+                _stopwatchGameState.emit(newState)
+            }
         }
     }
 

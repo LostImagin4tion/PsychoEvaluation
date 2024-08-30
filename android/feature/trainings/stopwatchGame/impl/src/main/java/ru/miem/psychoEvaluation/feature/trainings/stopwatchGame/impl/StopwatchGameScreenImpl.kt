@@ -12,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
-import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
@@ -53,11 +52,11 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         when (sensorDeviceType.value) {
             SensorDeviceType.Usb -> {
-//                viewModel.connectToUsbDevice(usbManager = usbManager)
+                viewModel.connectToUsbDevice(usbManager = usbManager)
             }
             SensorDeviceType.Bluetooth -> {
-                val activity = context.findActivity()
-                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
+//                val activity = context.findActivity()
+//                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
 
 //                require(activity != null && deviceHardwareAddress != null) {
 //                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
@@ -85,7 +84,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         DisposableEffect(viewModel) {
             onDispose {
-//                viewModel.disconnect()
+                viewModel.disconnect()
             }
         }
 

@@ -104,10 +104,10 @@ object Routes {
 
 @Suppress("ConstPropertyName")
 object BluetoothDeviceManagerRouteArgs {
-    const val trainingRoute = "trainingRoute"
+    const val nextScreen = "nextScreen"
 
     val args = listOf(
-        navArgument(trainingRoute) {
+        navArgument(nextScreen) {
             nullable = true
         },
     )

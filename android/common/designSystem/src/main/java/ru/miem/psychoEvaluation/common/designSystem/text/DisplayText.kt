@@ -55,4 +55,3 @@ fun DisplayText(
     textAlign = textAlign,
     color = color
 )
-
