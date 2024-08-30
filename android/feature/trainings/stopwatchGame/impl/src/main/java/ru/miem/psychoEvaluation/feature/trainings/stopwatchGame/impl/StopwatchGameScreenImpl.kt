@@ -5,29 +5,13 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
-import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
-import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
-import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
@@ -36,11 +20,9 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.ActionButton
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.BackButton
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.health.HealthBar
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.stopwatch.Stopwatch
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
 import javax.inject.Inject
 
 class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
@@ -92,7 +74,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
-            viewModel.startGame()
+            viewModel.startTimerBeforeStart()
         }
 
         BackHandler {
@@ -107,79 +89,23 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
             }
         }
 
-        StopwatchGameLoaderScreen(
-            time = "3",
-            progress = 0.87f
-        )
-
-//        StopwatchGameStatisticsScreen(
-//            navigateToGameStart = {},
-//            navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
-//        )
-
-//        StopwatchGameScreenContent(
-//            stopwatchGameState = stopwatchGameState.value,
-//            navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
-//            onActionButtonClick = viewModel::clickActionButton
-//        )
-    }
-
-    @Composable
-    private fun StopwatchGameScreenContent(
-        stopwatchGameState: StopwatchGameState,
-        navigateToTrainingList: () -> Unit = {},
-        onActionButtonClick: () -> Unit = {},
-    ) = Column(
-        horizontalAlignment = Alignment.Start,
-        modifier = Modifier
-            .screenPaddings(),
-    ) {
-        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth()
-        ) {
-            BackButton(
-                modifier = Modifier.size(30.dp),
-                onClick = navigateToTrainingList,
-            )
-
-            HealthBar(
-                stopwatchGameState = stopwatchGameState,
-            )
+        stopwatchGameState.value.let { state ->
+            when (state) {
+                is StopwatchGameLoading -> StopwatchGameLoaderScreen(
+                    state = state,
+                )
+                is StopwatchGameInProgress -> StopwatchGameScreenContent(
+                    state = state,
+                    navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
+                    onActionButtonClick = viewModel::clickActionButton
+                )
+                is StopwatchGameEnded -> StopwatchGameStatisticsScreen(
+                    state = state,
+                    restartGame = { viewModel.restartGame() },
+                    navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(36.dp))
-
-        TitleText(
-            text = stopwatchGameState.timeString,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        Stopwatch(
-            stopwatchGameState = stopwatchGameState,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(60.dp))
-
-        ActionButton(
-            textRes = R.string.action_button_text,
-            onClick = onActionButtonClick
-        )
-
-        Spacer(modifier = Modifier.height(36.dp))
-
-        LabelText(
-            textRes = R.string.bottom_description_text,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 10.dp)
-        )
     }
 
     private companion object {

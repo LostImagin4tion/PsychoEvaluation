@@ -10,8 +10,8 @@
     <string name="statistics_good_vigilance"># Уверенный контролль бдительности</string>
     <string name="statistics_bad_vigilance"># Склонность к потере бдительности</string>
 
-    <string name="statistics_good_reaction">Уверенный контроль реакции</string>
-    <string name="statistics_bad_reaction">Снижение концентрации</string>
+    <string name="statistics_good_reaction"># Уверенный контроль реакции</string>
+    <string name="statistics_bad_reaction"># Снижение концентрации</string>
 
     <string name="statistics_play_again">Играть снова</string>
     <string name="statistics_exit">Выйти в меню</string>

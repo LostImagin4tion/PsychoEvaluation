@@ -4,7 +4,12 @@ sealed interface UiAction
 
 data object ArrowJumped : UiAction
 
-data object ActionButtonClickSuccessful : UiAction
-data object ActionButtonClickFailed : UiAction
+data class ActionButtonClickSuccessful(
+    val reactionTiming: Long,
+) : UiAction
+
+data class ActionButtonClickFailed(
+    val reactionTiming: Long,
+) : UiAction
 
 data object HideIndicatorAndBrokenHeart : UiAction

@@ -18,14 +18,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.IndicatorType
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
 fun Stopwatch(
-    stopwatchGameState: StopwatchGameState,
+    state: StopwatchGameInProgress,
     modifier: Modifier = Modifier,
 ) = Box(
     contentAlignment = Alignment.Center,
@@ -49,10 +48,10 @@ fun Stopwatch(
             )
         }
 
-        val indicatorResource = when (stopwatchGameState.currentIndicatorType) {
-            IndicatorType.Success -> R.drawable.success_indicator
-            IndicatorType.Failure -> R.drawable.failure_indicator
-            IndicatorType.Undefined -> null
+        val indicatorResource = when (state.currentIndicatorType) {
+            StopwatchGameInProgress.IndicatorType.Success -> R.drawable.success_indicator
+            StopwatchGameInProgress.IndicatorType.Failure -> R.drawable.failure_indicator
+            StopwatchGameInProgress.IndicatorType.Undefined -> null
         }
 
         indicatorResource?.let { indicatorRes ->
@@ -76,7 +75,7 @@ fun Stopwatch(
                 length = 110.dp.toPx(),
                 strokeWidth = 3.dp.toPx(),
                 color = Color.Black,
-                currentValue = stopwatchGameState.stopwatchTime,
+                currentValue = state.stopwatchTime.inWholeSeconds.toFloat(),
             )
         }
     }

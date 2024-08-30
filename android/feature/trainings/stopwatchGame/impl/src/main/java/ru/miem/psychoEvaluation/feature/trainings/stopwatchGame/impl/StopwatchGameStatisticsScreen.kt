@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -25,16 +24,30 @@ import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
 
 @Composable
 @Suppress("MagicNumber")
 fun StopwatchGameStatisticsScreen(
-    navigateToGameStart: () -> Unit,
+    state: StopwatchGameEnded,
+    restartGame: () -> Unit,
     navigateToTrainingListScreen: () -> Unit,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.screenPaddings()
 ) {
+    val vigilanceStringRes = if (state.vigilanceDelta < 0) {
+        R.string.statistics_bad_vigilance
+    } else {
+        R.string.statistics_good_vigilance
+    }
+
+    val concentrationStringRes = if (state.concentrationDelta < 0) {
+        R.string.statistics_bad_reaction
+    } else {
+        R.string.statistics_good_reaction
+    }
+
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxWidth()
@@ -60,7 +73,8 @@ fun StopwatchGameStatisticsScreen(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        for (i in 0 until 5) {
+        val starCount = (state.successPercent * 5).toInt()
+        for (i in 0 until starCount) {
             Icon(
                 painter = painterResource(R.drawable.star_icon),
                 contentDescription = null,
@@ -76,7 +90,7 @@ fun StopwatchGameStatisticsScreen(
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
-    TitleText(text = "03:57")
+    TitleText(text = state.gameTime)
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
@@ -86,7 +100,7 @@ fun StopwatchGameStatisticsScreen(
     ) {
         LabelText(
             text = stringResource(R.string.statistics_result_title)
-                .format("7/10")
+                .format("${(state.successPercent * 10).toInt()}/10")
         )
     }
 
@@ -98,19 +112,19 @@ fun StopwatchGameStatisticsScreen(
     ) {
         LabelText(
             text = stringResource(R.string.statistics_reaction_title)
-                .format("00:01"),
+                .format(state.averageReactionTimeString),
         )
     }
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
     LabelText(
-        textRes = R.string.statistics_good_vigilance,
+        textRes = vigilanceStringRes,
         modifier = Modifier.align(Alignment.Start),
     )
 
     LabelText(
-        textRes = R.string.statistics_good_reaction,
+        textRes = concentrationStringRes,
         modifier = Modifier.align(Alignment.Start),
     )
 
@@ -119,7 +133,7 @@ fun StopwatchGameStatisticsScreen(
     FilledTextButton(
         textRes = R.string.statistics_play_again,
         modifier = Modifier.fillMaxWidth(),
-        onClick = navigateToGameStart,
+        onClick = restartGame,
     )
 
     Spacer(modifier = Modifier.height(Dimensions.commonPadding))

@@ -1,7 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -12,17 +11,17 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.DisplayText
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
 
 @Composable
 fun StopwatchGameLoaderScreen(
-    time: String,
-    progress: Float,
+    state: StopwatchGameLoading,
 ) = Box(
     contentAlignment = Alignment.Center,
     modifier = Modifier.screenPaddings(),
 ) {
     CircularProgressIndicator(
-        progress = { progress },
+        progress = { state.progress.toFloat() },
         modifier = Modifier.size(300.dp),
         color = MaterialTheme.colorScheme.primary,
         strokeWidth = 3.dp,
@@ -30,6 +29,6 @@ fun StopwatchGameLoaderScreen(
     )
 
     DisplayText(
-        text = time,
+        text = state.timeBeforeStart.inWholeSeconds.toString(),
     )
 }

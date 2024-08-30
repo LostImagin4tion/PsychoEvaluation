@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.flow.scan
@@ -25,13 +24,15 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.Actio
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ActionButtonClickSuccessful
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ArrowJumped
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.HideIndicatorAndBrokenHeart
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.IndicatorType
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.UiAction
-import timber.log.Timber
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
@@ -43,7 +44,7 @@ class StopwatchGameScreenViewModel(
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
-    private val _stopwatchGameState = MutableStateFlow(defaultState)
+    private val _stopwatchGameState = MutableStateFlow<StopwatchGameState>(defaultLoadingState)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     private var isActionButtonClicked = false
@@ -57,19 +58,45 @@ class StopwatchGameScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun startGame() {
-        Timber.tag(TAG).d("HELLO START GAME")
+    fun startTimerBeforeStart() {
+        viewModelScope.launch {
+            coroutineScope {
+                tickerFlow(defaultLoadingPeriod)
+                    .onEach {  delta ->
+                        val state = _stopwatchGameState.value as? StopwatchGameLoading
+
+                        state?.let {
+                            val newTime = it.timeBeforeStart - delta
+
+                            check(newTime.inWholeSeconds >= 0)
+
+                            val newState = it.copy(
+                                timeBeforeStart = newTime,
+                                progress = 1f - newTime / defaultLoadingTimer
+                            )
+                            _stopwatchGameState.emit(newState)
+                        }
+                    }
+                    .catch {
+                        _stopwatchGameState.emit(defaultInProgressState)
+                        startGame()
+                        this@coroutineScope.cancel()
+                    }
+                    .launchIn(this@coroutineScope)
+            }
+        }
+    }
+
+    private fun startGame() {
         var timeForArrowJump = Random.Default
             .nextInt(8..16)
             .seconds
 
         tickerFlow(defaultPeriod)
-            .map { defaultPeriod }
             .runningReduce { accumulator, value ->
                 accumulator + value
             }
             .onEach { gameTime ->
-                Timber.tag(TAG).d("HELLO TIME $gameTime")
                 _stopwatchGameState.run {
                     val stopWatchTimeDelta = if (gameTime >= timeForArrowJump) {
                         dispatchAction(ArrowJumped)
@@ -78,18 +105,20 @@ class StopwatchGameScreenViewModel(
                             .nextInt(8..16)
                             .seconds
 
-                        defaultPeriod * 3
+                        arrowJumpDelta
                     } else {
                         defaultPeriod
                     }
 
-                    emit(
-                        value.copy(
-                            stopwatchTime = value.stopwatchTime +
-                                stopWatchTimeDelta.toDouble(DurationUnit.SECONDS).toFloat(),
-                            timeString = createTimeString(gameTime)
+                    val state = _stopwatchGameState.value as? StopwatchGameInProgress
+                    state?.let {
+                        val newState = it.copy(
+                            stopwatchTime = it.stopwatchTime + stopWatchTimeDelta,
+                            gameTime = createTimeString(gameTime),
                         )
-                    )
+
+                        emit(newState)
+                    }
                 }
             }
             .launchIn(viewModelScope)
@@ -99,57 +128,91 @@ class StopwatchGameScreenViewModel(
         isActionButtonClicked = true
     }
 
+    fun restartGame() {
+        viewModelScope.launch {
+            _stopwatchGameState.emit(defaultInProgressState)
+        }
+    }
+
     private fun dispatchAction(action: UiAction) {
-        Timber.tag(TAG).d("HELLO DISPATCH ACTION $action")
         viewModelScope.launch {
             when (action) {
-                ArrowJumped -> startActionButtonTimer()
-                ActionButtonClickSuccessful -> {
-                    isActionButtonClicked = false
+                ArrowJumped -> {
                     _stopwatchGameState.run {
-                        emit(value.copy(currentIndicatorType = IndicatorType.Success))
-                    }
-                    startTimerForShowingBrokenHeartAndIndicatorButton()
-                }
-                ActionButtonClickFailed -> {
-                    isActionButtonClicked = false
-                    _stopwatchGameState.run {
-                        val currentValue = value
-                        emit(
-                            currentValue.copy(
-                                heartsNumber = currentValue.heartsNumber - 1,
-                                currentIndicatorType = IndicatorType.Failure,
+                        val state = value as? StopwatchGameInProgress
+
+                        state?.let {
+                            val newState = it.copy(
+                                jumpCount = it.jumpCount + 1,
                             )
-                        )
+                            emit(newState)
+                        }
+                    }
+                    startActionButtonTimer()
+                }
+
+                is ActionButtonClickSuccessful -> {
+                    isActionButtonClicked = false
+                    _stopwatchGameState.run {
+                        val state = value as? StopwatchGameInProgress
+
+                        state?.let {
+                            val newState = it.copy(
+                                successfulReactionCount = it.successfulReactionCount + 1,
+                                reactionTimings = it.reactionTimings + action.reactionTiming,
+                                currentIndicatorType = StopwatchGameInProgress.IndicatorType.Success,
+                            )
+                            emit(newState)
+                        }
                     }
                     startTimerForShowingBrokenHeartAndIndicatorButton()
                 }
-                HideIndicatorAndBrokenHeart -> changeIndicatorType(IndicatorType.Undefined)
+
+                is ActionButtonClickFailed -> {
+                    isActionButtonClicked = false
+                    _stopwatchGameState.run {
+                        val state = value as? StopwatchGameInProgress
+
+                        state?.let {
+                            val newHeartsNumber = it.heartsNumber - 1
+                            val newState = if (newHeartsNumber == 0) {
+                                it.toGameEndedState()
+                            } else {
+                                it.copy(
+                                    heartsNumber = newHeartsNumber,
+                                    reactionTimings = it.reactionTimings + action.reactionTiming,
+                                    currentIndicatorType = StopwatchGameInProgress.IndicatorType.Failure,
+                                )
+                            }
+                            emit(newState)
+                        }
+                    }
+                    startTimerForShowingBrokenHeartAndIndicatorButton()
+                }
+
+                HideIndicatorAndBrokenHeart -> changeIndicatorType(StopwatchGameInProgress.IndicatorType.Undefined)
             }
         }
     }
 
     private fun startActionButtonTimer() {
-        Timber.tag(TAG).d("START ACTION BUTTON TIMER")
         viewModelScope.launch {
             coroutineScope {
-                tickerFlow(defaultPeriodForTimer)
-                    .scan(0.seconds) { time, _ ->
-                        time + defaultPeriodForTimer
+                tickerFlow(defaultPeriod)
+                    .scan(0.seconds) { time, value ->
+                        time + value
                     }
-                    .onEach { timer ->
-                        check(timer < defaultTimeToClickActionButton)
-
-                        if (isActionButtonClicked) {
-                            dispatchAction(ActionButtonClickSuccessful)
+                    .onEach { time ->
+                        if (time < defaultTimeToClickActionButton && isActionButtonClicked) {
+                            val action = ActionButtonClickSuccessful(time.inWholeMilliseconds)
+                            dispatchAction(action)
                             this@coroutineScope.cancel()
                         }
-                    }
-                    .catch {
-                        dispatchAction(ActionButtonClickFailed)
-                        this@coroutineScope.cancel()
-                    }
-                    .onEach {
+                        else if (time >= defaultTimeToClickActionButton) {
+                            val action = ActionButtonClickFailed(time.inWholeMilliseconds)
+                            dispatchAction(action)
+                            this@coroutineScope.cancel()
+                        }
                     }
                     .launchIn(this@coroutineScope)
             }
@@ -157,7 +220,6 @@ class StopwatchGameScreenViewModel(
     }
 
     private fun startTimerForShowingBrokenHeartAndIndicatorButton() {
-        Timber.tag(TAG).d("HELLO START TIMER FOR SHOWING BROKEN HEART")
         viewModelScope.launch {
             coroutineScope {
                 tickerFlow(defaultPeriod)
@@ -165,54 +227,83 @@ class StopwatchGameScreenViewModel(
                         time + defaultPeriod
                     }
                     .onEach { timer ->
-                        check(timer < defaultPeriodForHidingIndicatorAndBrokenHeart)
-                    }
-                    .catch {
-                        dispatchAction(HideIndicatorAndBrokenHeart)
-                        this@coroutineScope.cancel()
+                        if (timer >= defaultPeriodForHidingIndicatorAndBrokenHeart) {
+                            dispatchAction(HideIndicatorAndBrokenHeart)
+                            this@coroutineScope.cancel()
+                        }
                     }
                     .launchIn(this@coroutineScope)
             }
         }
     }
 
-    private suspend fun changeIndicatorType(type: IndicatorType) {
+    private suspend fun changeIndicatorType(type: StopwatchGameInProgress.IndicatorType) {
         _stopwatchGameState.run {
-            emit(value.copy(currentIndicatorType = type))
+            val state = value as? StopwatchGameInProgress
+            state?.let {
+                emit(it.copy(currentIndicatorType = type))
+            }
         }
     }
 
     private fun tickerFlow(period: Duration) = flow {
         while (true) {
-            emit(Unit)
+            emit(period)
             delay(period)
         }
     }.cancellable()
 
-    private fun createTimeString(gameTime: Duration): String {
-        val gameTimeMinutes = gameTime.inWholeMinutes.toInt()
-        val gameTimeSeconds = gameTime.inWholeSeconds.toInt() - gameTimeMinutes * 60
+    private fun StopwatchGameInProgress.toGameEndedState(): StopwatchGameEnded {
+        return StopwatchGameEnded(
+            gameTime = gameTime,
+            successPercent = successfulReactionCount.toFloat() / jumpCount,
+            averageReactionTimeString = createTimeString(reactionTimings.average().milliseconds),
+            vigilanceDelta = reactionTimings
+                .takeIf { it.isNotEmpty() }
+                ?.reduce { accumulated, value -> accumulated - value }
+                ?: 0L,
+            concentrationDelta = stressData
+                .takeIf { it.isNotEmpty() }
+                ?.reduce { accumulated, value -> accumulated - value }
+                ?: 0,
+        )
+    }
+
+    private fun createTimeString(duration: Duration): String {
+        val minutes = duration.inWholeMinutes.toInt()
+        val seconds = duration.inWholeSeconds.toInt() - minutes * 60
 
         return when {
-            gameTimeMinutes >= 10 && gameTimeSeconds >= 10 -> "$gameTimeMinutes:$gameTimeSeconds"
-            gameTimeMinutes < 10 && gameTimeSeconds >= 10 -> "0$gameTimeMinutes:$gameTimeSeconds"
-            gameTimeMinutes >= 10 && gameTimeSeconds < 10 -> "$gameTimeMinutes:0$gameTimeSeconds"
-            else -> "0$gameTimeMinutes:0$gameTimeSeconds"
+            minutes >= 10 && seconds >= 10 -> "$minutes:$seconds"
+            minutes < 10 && seconds >= 10 -> "0$minutes:$seconds"
+            minutes >= 10 && seconds < 10 -> "$minutes:0$seconds"
+            else -> "0$minutes:0$seconds"
         }
     }
 
     private companion object {
         val TAG: String = StopwatchGameScreenViewModel::class.java.simpleName
 
-        val defaultState = StopwatchGameState(
-            stopwatchTime = 0f,
-            timeString = "00:00",
-            heartsNumber = 3,
-            currentIndicatorType = IndicatorType.Undefined,
-        )
-        val defaultPeriod = 1.seconds
-        val defaultPeriodForTimer = 0.1.seconds
+        val defaultLoadingTimer = 3.seconds
+        val defaultLoadingPeriod = 10.milliseconds
+        val defaultPeriod = 100.milliseconds
+        val arrowJumpDelta = 3.seconds
         val defaultTimeToClickActionButton = 3.seconds
         val defaultPeriodForHidingIndicatorAndBrokenHeart = 2.seconds
+
+        val defaultLoadingState = StopwatchGameLoading(
+            timeBeforeStart = defaultLoadingTimer,
+            progress = 1.0
+        )
+        val defaultInProgressState = StopwatchGameInProgress(
+            stopwatchTime = 0.seconds,
+            gameTime = "00:00",
+            heartsNumber = 3,
+            jumpCount = 0,
+            successfulReactionCount = 0,
+            reactionTimings = emptyList(),
+            stressData = emptyList(),
+            currentIndicatorType = StopwatchGameInProgress.IndicatorType.Undefined,
+        )
     }
 }

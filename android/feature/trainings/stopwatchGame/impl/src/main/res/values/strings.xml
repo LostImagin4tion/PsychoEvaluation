@@ -10,8 +10,8 @@
     <string name="statistics_good_vigilance"># Confident vigilance control</string>
     <string name="statistics_bad_vigilance"># Tendency to lose vigilance</string>
 
-    <string name="statistics_good_reaction">Strong reaction control</string>
-    <string name="statistics_bad_reaction">Reduced concentration</string>
+    <string name="statistics_good_reaction"># Strong reaction control</string>
+    <string name="statistics_bad_reaction"># Reduced concentration</string>
 
     <string name="statistics_play_again">Play again</string>
     <string name="statistics_exit">Exit</string>
