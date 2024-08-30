@@ -64,7 +64,12 @@ fun TrainingCard(
             .padding(Dimensions.commonPadding)
             .fillMaxWidth()
     ) {
-        Column(modifier = Modifier.weight(1f)) {
+        Column(
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .align(Alignment.Top)
+                .weight(1f)
+        ) {
             LabelText(textRes = titleRes, isLarge = true)
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))

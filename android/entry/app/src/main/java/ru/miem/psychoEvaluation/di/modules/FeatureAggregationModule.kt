@@ -7,6 +7,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.features.BluetoothDevice
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.DebugTrainingScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.RegistrationScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.SettingsScreenApiProvider
+import ru.miem.psychoEvaluation.di.apiProviders.android.features.StopwatchGameScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.TrainingPreparingScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.TrainingsListScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.UserProfileScreenApiProvider
@@ -22,6 +23,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.features.UserProfileScre
         TrainingsListScreenApiProvider::class,
         DebugTrainingScreenApiProvider::class,
         AirplaneGameScreenApiProvider::class,
+        StopwatchGameScreenApiProvider::class,
     ]
 )
 interface FeatureAggregationModule

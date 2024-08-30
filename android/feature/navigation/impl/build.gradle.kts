@@ -31,4 +31,5 @@ dependencies {
     implementation(project(":android:feature:trainingsList:api"))
     implementation(project(":android:feature:trainings:debugTraining:api"))
     implementation(project(":android:feature:trainings:airplaneGame:api"))
+    implementation(project(":android:feature:trainings:stopwatchGame:api"))
 }

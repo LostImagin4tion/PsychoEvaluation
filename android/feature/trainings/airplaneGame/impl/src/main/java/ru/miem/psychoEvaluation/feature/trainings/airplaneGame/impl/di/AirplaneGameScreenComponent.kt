@@ -1,7 +1,7 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.di
 
 import dagger.Component
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.di.AirplaneGameScreenDiApi
 
 @Component(
     modules = [

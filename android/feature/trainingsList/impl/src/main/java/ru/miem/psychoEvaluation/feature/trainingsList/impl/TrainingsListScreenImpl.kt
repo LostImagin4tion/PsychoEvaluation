@@ -76,9 +76,11 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 viewModel = viewModel,
                 shouldShowBluetoothRequestDialog = canShowBluetoothRequestDialog,
                 hideBluetoothRequestDialog = { canShowBluetoothRequestDialog = false },
-                navigateToTrainingPreparing = {
-                    val route = Routes.trainingPreparing
-                        .format(training, null)
+                navigateToNextScreenWithUsbDevice = {
+                    val route = when (training) {
+                        Routes.stopwatchGame -> Routes.generalTrainingRoute.format(training, null)
+                        else -> Routes.trainingPreparing.format(training, null)
+                    }
                     navigateToRoute(route)
                 },
                 navigateToBluetoothDeviceManager = {
@@ -128,9 +130,20 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                     titleRes = R.string.concentration_training_title,
                     descriptionRes = R.string.concentration_training_description,
                     imageRes = R.drawable.concentration_training_icon,
+                    modifier = Modifier.padding(bottom = Dimensions.primaryVerticalPadding),
                     onClick = {
-                        val route = Routes.airplaneGame
-                        onTrainingTapped(route)
+                        onTrainingTapped(Routes.airplaneGame)
+                    }
+                )
+            }
+
+            item { // === Clocks Training ===
+                TrainingCard(
+                    titleRes = R.string.reaction_training_title,
+                    descriptionRes = R.string.reaction_training_description,
+                    imageRes = R.drawable.reaction_training_icon,
+                    onClick = {
+                        onTrainingTapped(Routes.stopwatchGame)
                     }
                 )
             }
@@ -143,7 +156,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         viewModel: TrainingsListScreenViewModel,
         shouldShowBluetoothRequestDialog: Boolean,
         hideBluetoothRequestDialog: () -> Unit = {},
-        navigateToTrainingPreparing: () -> Unit = {},
+        navigateToNextScreenWithUsbDevice: () -> Unit = {},
         navigateToBluetoothDeviceManager: () -> Unit = {},
     ) {
         val unknownDeviceAlertText =
@@ -154,7 +167,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         when (sensorDeviceType.value) {
             SensorDeviceType.Usb -> RequestUsbDeviceAccess(
                 viewModel = viewModel,
-                onDeviceAccessGranted = navigateToTrainingPreparing
+                onDeviceAccessGranted = navigateToNextScreenWithUsbDevice
             )
             SensorDeviceType.Bluetooth -> RequestBluetoothPermission(
                 showMessage = showMessage,

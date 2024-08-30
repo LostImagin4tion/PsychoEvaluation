@@ -105,3 +105,6 @@ include(":android:feature:trainings:debugTraining:impl")
 
 include(":android:feature:trainings:airplaneGame:api")
 include(":android:feature:trainings:airplaneGame:impl")
+
+include(":android:feature:trainings:stopwatchGame:api")
+include(":android:feature:trainings:stopwatchGame:impl")

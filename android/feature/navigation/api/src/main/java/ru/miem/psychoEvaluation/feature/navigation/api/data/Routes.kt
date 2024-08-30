@@ -20,6 +20,7 @@ object Routes {
 
     const val debugTraining = "debugTraining"
     const val airplaneGame = "airplaneGame"
+    const val stopwatchGame = "stopwatchGame"
 
     private const val bluetoothDeviceManagerRouteTemplate = "bluetoothDeviceManager?"
     private const val trainingPreparingRouteTemplate = "trainingPreparing?"
@@ -44,6 +45,11 @@ object Routes {
 
     val airplaneGameRouteDeclaration = createRoute(
         routeTemplate = generalTrainingRouteTemplate.format(airplaneGame),
+        args = TrainingRouteArgs.args,
+    )
+
+    val stopwatchGameRouteDeclaration = createRoute(
+        routeTemplate = generalTrainingRouteTemplate.format(stopwatchGame),
         args = TrainingRouteArgs.args,
     )
 
@@ -98,10 +104,10 @@ object Routes {
 
 @Suppress("ConstPropertyName")
 object BluetoothDeviceManagerRouteArgs {
-    const val trainingRoute = "trainingRoute"
+    const val nextScreen = "nextScreen"
 
     val args = listOf(
-        navArgument(trainingRoute) {
+        navArgument(nextScreen) {
             nullable = true
         },
     )
