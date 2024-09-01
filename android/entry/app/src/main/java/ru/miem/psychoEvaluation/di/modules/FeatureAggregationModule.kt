@@ -4,6 +4,7 @@ import dagger.Module
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.AirplaneGameScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.AuthorizationScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.BluetoothDeviceManagerScreenApiProvider
+import ru.miem.psychoEvaluation.di.apiProviders.android.features.ClocksGameScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.DebugTrainingScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.RegistrationScreenApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.features.SettingsScreenApiProvider
@@ -24,6 +25,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.features.UserProfileScre
         DebugTrainingScreenApiProvider::class,
         AirplaneGameScreenApiProvider::class,
         StopwatchGameScreenApiProvider::class,
+        ClocksGameScreenApiProvider::class,
     ]
 )
 interface FeatureAggregationModule

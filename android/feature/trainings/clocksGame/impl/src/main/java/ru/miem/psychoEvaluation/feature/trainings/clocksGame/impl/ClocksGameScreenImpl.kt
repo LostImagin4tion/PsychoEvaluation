@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
+package ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -18,19 +18,19 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDe
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameLoaderScreen
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameScreenContent
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameStatisticsScreen
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.api.ClocksGameScreen
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameEnded
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameLoaderScreen
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameScreenContent
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameStatisticsScreen
 import javax.inject.Inject
 
-class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
+class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
 
     @Composable
-    override fun StopwatchGameScreen(
+    override fun ClocksGameScreen(
         usbDeviceInteractor: UsbDeviceInteractor,
         bleDeviceInteractor: BluetoothDeviceInteractor,
         trainingScreenArgs: TrainingScreenArgs,
@@ -41,16 +41,16 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
 
-        val viewModel: StopwatchGameScreenViewModel = viewModel(
+        val viewModel: ClocksGameScreenViewModel = viewModel(
             factory = viewModelFactory {
-                StopwatchGameScreenViewModel(
+                ClocksGameScreenViewModel(
                     usbDeviceInteractor,
                     bleDeviceInteractor,
                 )
             }
         )
 
-        val stopwatchGameState = viewModel.stopwatchGameState.collectAsState()
+        val clocksGameState = viewModel.clocksGameState.collectAsState()
         val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
 
         when (sensorDeviceType.value) {
@@ -91,17 +91,17 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
             }
         }
 
-        stopwatchGameState.value.let { state ->
+        clocksGameState.value.let { state ->
             when (state) {
-                is StopwatchGameLoading -> StopwatchGameLoaderScreen(
+                is ClocksGameLoading -> ClocksGameLoaderScreen(
                     state = state,
                 )
-                is StopwatchGameInProgress -> StopwatchGameScreenContent(
+                is ClocksGameInProgress -> ClocksGameScreenContent(
                     state = state,
                     navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
                     onActionButtonClick = viewModel::clickActionButton
                 )
-                is StopwatchGameEnded -> StopwatchGameStatisticsScreen(
+                is ClocksGameEnded -> ClocksGameStatisticsScreen(
                     state = state,
                     restartGame = { viewModel.restartGame() },
                     navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
@@ -111,6 +111,6 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
     }
 
     private companion object {
-        val TAG: String = StopwatchGameScreenImpl::class.java.simpleName
+        val TAG: String = ClocksGameScreenImpl::class.java.simpleName
     }
 }

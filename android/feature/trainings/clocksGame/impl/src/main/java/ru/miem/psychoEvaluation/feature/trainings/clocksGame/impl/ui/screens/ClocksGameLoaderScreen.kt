@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
+package ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -11,11 +11,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.DisplayText
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameLoading
 
 @Composable
-fun StopwatchGameLoaderScreen(
-    state: StopwatchGameLoading,
+fun ClocksGameLoaderScreen(
+    state: ClocksGameLoading,
 ) = Box(
     contentAlignment = Alignment.Center,
     modifier = Modifier.screenPaddings(),

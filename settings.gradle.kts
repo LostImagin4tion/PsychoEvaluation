@@ -108,3 +108,6 @@ include(":android:feature:trainings:airplaneGame:impl")
 
 include(":android:feature:trainings:stopwatchGame:api")
 include(":android:feature:trainings:stopwatchGame:impl")
+
+include(":android:feature:trainings:clocksGame:api")
+include(":android:feature:trainings:clocksGame:impl")

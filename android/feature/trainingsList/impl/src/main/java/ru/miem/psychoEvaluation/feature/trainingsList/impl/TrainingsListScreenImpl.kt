@@ -78,7 +78,9 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 hideBluetoothRequestDialog = { canShowBluetoothRequestDialog = false },
                 navigateToNextScreenWithUsbDevice = {
                     val route = when (training) {
-                        Routes.stopwatchGame -> Routes.generalTrainingRoute.format(training, null)
+                        Routes.stopwatchGame,
+                        Routes.clocksGame,
+                        -> Routes.generalTrainingRoute.format(training, null)
                         else -> Routes.trainingPreparing.format(training, null)
                     }
                     navigateToRoute(route)
@@ -137,13 +139,25 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 )
             }
 
-            item { // === Clocks Training ===
+            item { // === Stopwatch Training ===
                 TrainingCard(
-                    titleRes = R.string.reaction_training_title,
-                    descriptionRes = R.string.reaction_training_description,
+                    titleRes = R.string.reaction_training_level_1_title,
+                    descriptionRes = R.string.reaction_training_level_1_description,
                     imageRes = R.drawable.reaction_training_icon,
+                    modifier = Modifier.padding(bottom = Dimensions.primaryVerticalPadding),
                     onClick = {
                         onTrainingTapped(Routes.stopwatchGame)
+                    }
+                )
+            }
+
+            item { // === Clocks Training ===
+                TrainingCard(
+                    titleRes = R.string.reaction_training_level_2_title,
+                    descriptionRes = R.string.reaction_training_level_2_description,
+                    imageRes = R.drawable.reaction_training_icon,
+                    onClick = {
+                        onTrainingTapped(Routes.clocksGame)
                     }
                 )
             }

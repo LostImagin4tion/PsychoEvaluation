@@ -76,7 +76,9 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                 val nextScreenRoute = bluetoothDeviceManagerScreenArgs.nextScreenRoute
 
                 val route = when (nextScreenRoute) {
-                    Routes.stopwatchGame -> Routes.generalTrainingRoute.format(
+                    Routes.stopwatchGame,
+                    Routes.clocksGame,
+                    -> Routes.generalTrainingRoute.format(
                         nextScreenRoute,
                         connectedDevice?.hardwareAddress,
                     )

@@ -37,6 +37,8 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingS
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.di.AirplaneGameScreenDiApi
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.api.ClocksGameScreen
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.api.di.ClocksGameScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.DebugTrainingScreen
 import ru.miem.psychoEvaluation.feature.trainings.debugTraining.api.di.DebugTrainingScreenDiApi
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
@@ -70,6 +72,7 @@ fun Navigation(
     val debugTrainingScreen by diApi(DebugTrainingScreenDiApi::debugTrainingScreen)
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
     val stopwatchGameScreen by diApi(StopwatchGameScreenDiApi::stopwatchGameScreen)
+    val clocksGameScreen by diApi(ClocksGameScreenDiApi::clocksGameScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
@@ -86,6 +89,7 @@ fun Navigation(
         debugTrainingScreen = debugTrainingScreen,
         airplaneGameScreen = airplaneGameScreen,
         stopwatchGameScreen = stopwatchGameScreen,
+        clocksGameScreen = clocksGameScreen,
     )
 }
 
@@ -105,6 +109,7 @@ fun NavigationContent(
     debugTrainingScreen: DebugTrainingScreen,
     airplaneGameScreen: AirplaneGameScreen,
     stopwatchGameScreen: StopwatchGameScreen,
+    clocksGameScreen: ClocksGameScreen,
 ) {
     val usbDeviceInteractor by remember {
         diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
@@ -257,10 +262,27 @@ fun NavigationContent(
 
             composable(
                 route = Routes.stopwatchGameRouteDeclaration,
-                arguments = TrainingRouteArgs.args
+                arguments = TrainingRouteArgs.args,
             ) { backStackEntry ->
                 setupSystemBarColors()
                 stopwatchGameScreen.StopwatchGameScreen(
+                    usbDeviceInteractor = usbDeviceInteractor,
+                    bleDeviceInteractor = bleDeviceInteractor,
+                    trainingScreenArgs = TrainingScreenArgs(
+                        bleDeviceHardwareAddress = backStackEntry.arguments
+                            ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
+                    ),
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage,
+                )
+            }
+
+            composable(
+                route = Routes.clocksGameRouteDeclaration,
+                arguments = TrainingRouteArgs.args,
+            ) { backStackEntry ->
+                setupSystemBarColors()
+                clocksGameScreen.ClocksGameScreen(
                     usbDeviceInteractor = usbDeviceInteractor,
                     bleDeviceInteractor = bleDeviceInteractor,
                     trainingScreenArgs = TrainingScreenArgs(
