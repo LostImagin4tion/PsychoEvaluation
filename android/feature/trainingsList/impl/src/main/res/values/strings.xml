@@ -15,6 +15,9 @@
     <string name="concentration_training_description">Control your emotional state, don\'t let the plane crash</string>
 
     <!--  Reaction Training  -->
-    <string name="reaction_training_title">Vigilance (Level 1)</string>
-    <string name="reaction_training_description">Follow the arrow to avoid missing the time jump</string>
+    <string name="reaction_training_level_1_title">Vigilance (Level 1)</string>
+    <string name="reaction_training_level_1_description">Keep an eye on the second hand so you don\'t miss the time jump.</string>
+
+    <string name="reaction_training_level_2_title">Vigilance (Level 2)</string>
+    <string name="reaction_training_level_2_description">Keep an eye on the minute hand so you don\'t miss the time jump. The second and hour hands will interfere with you</string>
 </resources>

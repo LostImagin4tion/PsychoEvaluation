@@ -15,6 +15,9 @@
     <string name="concentration_training_description">Контролируй свое эмоциональное состояние, не допусти крушение самолета</string>
 
     <!--  Reaction Training  -->
-    <string name="reaction_training_title">Бдительность (Уровень 1)</string>
-    <string name="reaction_training_description">Следи за стрелкой, чтобы не пропустить временной скачок</string>
+    <string name="reaction_training_level_1_title">Бдительность (Уровень 1)</string>
+    <string name="reaction_training_level_1_description">Следи за секундной стрелкой, чтобы не пропустить временной скачок</string>
+
+    <string name="reaction_training_level_2_title">Бдительность (Уровень 2)</string>
+    <string name="reaction_training_level_2_description">Следи за минутной стрелкой, чтобы не пропустить временной скачок. Вам будут мешать секундная и часовая стрелки</string>
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_button_text">The arrow jumped</string>
+    <string name="bottom_description_text">Press the button if the arrow jumps over several divisions</string>
+
+    <string name="statistics_screen_title">You are doing great!</string>
+    <string name="statistics_result_title">Result: %s</string>
+    <string name="statistics_reaction_title">Average reaction time: %s</string>
+
+    <string name="statistics_good_vigilance"># Confident vigilance control</string>
+    <string name="statistics_bad_vigilance"># Tendency to lose vigilance</string>
+
+    <string name="statistics_good_reaction"># Strong reaction control</string>
+    <string name="statistics_bad_reaction"># Reduced concentration</string>
+
+    <string name="statistics_play_again">Play again</string>
+    <string name="statistics_exit">Exit</string>
+</resources>

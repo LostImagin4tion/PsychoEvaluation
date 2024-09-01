@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.stopwatch
+package ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.clocks
 
 import androidx.annotation.Px
 import androidx.compose.foundation.Canvas
@@ -17,21 +17,26 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.R
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
 import kotlin.math.cos
 import kotlin.math.sin
 
+@Suppress("MagicNumber")
 @Composable
 fun Stopwatch(
-    state: StopwatchGameInProgress,
+    state: ClocksGameInProgress,
     modifier: Modifier = Modifier,
 ) = Box(
     contentAlignment = Alignment.Center,
     modifier = modifier,
 ) {
+    val hours = state.clocksTime.inWholeHours
+    val minutes = state.clocksTime.inWholeMinutes - hours * 60
+    val seconds = state.clocksTime.inWholeSeconds - minutes * 60
+
     Image(
-        painter = painterResource(R.drawable.stopwatch),
+        painter = painterResource(R.drawable.clocks),
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -49,9 +54,9 @@ fun Stopwatch(
         }
 
         val indicatorResource = when (state.currentIndicatorType) {
-            StopwatchGameInProgress.IndicatorType.Success -> R.drawable.success_indicator
-            StopwatchGameInProgress.IndicatorType.Failure -> R.drawable.failure_indicator
-            StopwatchGameInProgress.IndicatorType.Undefined -> null
+            ClocksGameInProgress.IndicatorType.Success -> R.drawable.success_indicator
+            ClocksGameInProgress.IndicatorType.Failure -> R.drawable.failure_indicator
+            ClocksGameInProgress.IndicatorType.Undefined -> null
         }
 
         indicatorResource?.let { indicatorRes ->
@@ -72,11 +77,31 @@ fun Stopwatch(
             // seconds hand
             drawHand(
                 center = center,
-                step = 6,
+                degreesStep = 6,
                 length = 110.dp.toPx(),
                 strokeWidth = 3.dp.toPx(),
                 color = Color.Black,
-                currentValue = state.stopwatchTime.inWholeSeconds.toFloat(),
+                currentValue = seconds.toFloat(),
+            )
+
+            // minutes hand
+            drawHand(
+                center = center,
+                degreesStep = 6,
+                length = 100.dp.toPx(),
+                strokeWidth = 6.dp.toPx(),
+                color = Color.Black,
+                currentValue = minutes.toFloat(),
+            )
+
+            // hour hand
+            drawHand(
+                center = center,
+                degreesStep = 30,
+                length = 60.dp.toPx(),
+                strokeWidth = 6.dp.toPx(),
+                color = Color.Black,
+                currentValue = hours.toFloat(),
             )
         }
     }
@@ -85,14 +110,14 @@ fun Stopwatch(
 @Suppress("MagicNumber")
 fun DrawScope.drawHand(
     center: Offset,
-    step: Int,
+    degreesStep: Int,
     @Px length: Float,
     @Px strokeWidth: Float,
     color: Color,
     currentValue: Float,
 ) {
     val angle = Math.toRadians(
-        ((currentValue * step) - 90f).toDouble()
+        ((currentValue * degreesStep) - 90f).toDouble()
     )
     val cosine = cos(angle).toFloat()
     val sinus = sin(angle).toFloat()

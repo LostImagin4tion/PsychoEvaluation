@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
+package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.ActionButton
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.BackButton

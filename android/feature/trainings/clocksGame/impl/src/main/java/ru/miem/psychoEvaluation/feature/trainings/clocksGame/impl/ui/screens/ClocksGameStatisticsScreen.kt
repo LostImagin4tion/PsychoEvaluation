@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
+package ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -24,12 +24,13 @@ import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.R
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameEnded
 
 @Composable
 @Suppress("MagicNumber")
-fun StopwatchGameStatisticsScreen(
-    state: StopwatchGameEnded,
+fun ClocksGameStatisticsScreen(
+    state: ClocksGameEnded,
     restartGame: () -> Unit,
     navigateToTrainingListScreen: () -> Unit,
 ) = Column(

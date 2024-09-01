@@ -21,6 +21,7 @@ object Routes {
     const val debugTraining = "debugTraining"
     const val airplaneGame = "airplaneGame"
     const val stopwatchGame = "stopwatchGame"
+    const val clocksGame = "clocksGame"
 
     private const val bluetoothDeviceManagerRouteTemplate = "bluetoothDeviceManager?"
     private const val trainingPreparingRouteTemplate = "trainingPreparing?"
@@ -50,6 +51,11 @@ object Routes {
 
     val stopwatchGameRouteDeclaration = createRoute(
         routeTemplate = generalTrainingRouteTemplate.format(stopwatchGame),
+        args = TrainingRouteArgs.args,
+    )
+
+    val clocksGameRouteDeclaration = createRoute(
+        routeTemplate = generalTrainingRouteTemplate.format(clocksGame),
         args = TrainingRouteArgs.args,
     )
 
