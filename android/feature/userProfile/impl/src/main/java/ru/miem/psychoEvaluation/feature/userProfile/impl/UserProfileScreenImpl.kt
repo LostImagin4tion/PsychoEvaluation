@@ -60,15 +60,15 @@ class UserProfileScreenImpl @Inject constructor() : UserProfileScreen {
             onClick = navigateToSettings
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
-
-        FilledTextButton(
-            textRes = R.string.logout_button_text,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Dimensions.primaryHorizontalPadding),
-            onClick = {}
-        )
+//        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+//
+//        FilledTextButton(
+//            textRes = R.string.logout_button_text,
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = Dimensions.primaryHorizontalPadding),
+//            onClick = {}
+//        )
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
     }

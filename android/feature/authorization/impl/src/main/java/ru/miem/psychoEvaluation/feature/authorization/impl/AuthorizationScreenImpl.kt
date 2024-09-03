@@ -9,7 +9,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavOptionsBuilder
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
@@ -53,13 +53,13 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
         val context = LocalContext.current
         val viewModel: AuthorizationViewModel = viewModel()
 
-        val authorizationState = viewModel.authorizationState.collectAsState()
+        val authorizationState by viewModel.authorizationState.collectAsStateWithLifecycle()
 
-        when (authorizationState.value) {
+        when (authorizationState) {
             is SuccessResult -> navigateToRoute(Routes.userProfile) {
                 popUpTo(Routes.authorization) { inclusive = true }
             }
-            is ErrorResult -> (authorizationState.value as? ErrorResult<Unit>)
+            is ErrorResult -> (authorizationState as? ErrorResult<Unit>)
                 ?.message
                 ?.let { showMessage(context.getString(it)) }
             else -> {}
@@ -69,12 +69,12 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
             viewModel.tryAuthorizationWithRefreshToken()
         }
 
-        StateHolder(state = authorizationState.value)
+        StateHolder(state = authorizationState)
 
-        if (authorizationState.value !is FullScreenLoadingResult) {
+        if (authorizationState !is FullScreenLoadingResult) {
             AuthorizationScreenContent(
                 showMessage = showMessage,
-                isAuthorizationInProgress = authorizationState.value is LoadingResult,
+                isAuthorizationInProgress = authorizationState is LoadingResult,
                 tryAuthorization = { email, password -> viewModel.authorization(email, password) },
                 navigateToRegistration = { navigateToRoute(Routes.registration) {} },
             )

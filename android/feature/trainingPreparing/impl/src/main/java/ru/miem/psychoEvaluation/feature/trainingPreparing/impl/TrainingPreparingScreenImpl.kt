@@ -4,8 +4,9 @@ import android.content.Context
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
@@ -41,13 +42,13 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             }
         )
 
-        val currentScreen = viewModel.currentScreen.collectAsState()
+        val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle()
 
         BackHandler {
             navigateToRoute(Routes.trainingsList)
         }
 
-        when (currentScreen.value) {
+        when (currentScreen) {
             CurrentScreen.Welcome -> WelcomeScreen {
                 viewModel.startCollectingAndNormalizingSensorData(
                     usbManager = usbManager,

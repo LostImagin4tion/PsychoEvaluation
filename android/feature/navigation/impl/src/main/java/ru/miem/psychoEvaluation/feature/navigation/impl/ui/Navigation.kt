@@ -140,7 +140,7 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.userProfile
+                Routes.authorization
             }
         ) {
             composable(Routes.authorization) {

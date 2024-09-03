@@ -12,11 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
@@ -37,14 +38,14 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
     ) {
         val viewModel: SettingsScreenViewModel = viewModel()
 
-        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
+        val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
         }
 
         SettingsScreenContent(
-            sensorDeviceType = sensorDeviceType.value,
+            sensorDeviceType = sensorDeviceType,
             changeSensorDeviceType = viewModel::changeSensorDeviceType
         )
     }

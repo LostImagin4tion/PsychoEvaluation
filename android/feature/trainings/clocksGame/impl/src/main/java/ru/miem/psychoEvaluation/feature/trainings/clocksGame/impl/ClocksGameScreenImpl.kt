@@ -8,8 +8,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
@@ -50,10 +51,10 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
             }
         )
 
-        val clocksGameState = viewModel.clocksGameState.collectAsState()
-        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
+        val clocksGameState by viewModel.clocksGameState.collectAsStateWithLifecycle()
+        val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
-        when (sensorDeviceType.value) {
+        when (sensorDeviceType) {
             SensorDeviceType.Usb -> {
                 viewModel.connectToUsbDevice(usbManager = usbManager)
             }
@@ -91,7 +92,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
             }
         }
 
-        clocksGameState.value.let { state ->
+        clocksGameState.let { state ->
             when (state) {
                 is ClocksGameLoading -> ClocksGameLoaderScreen(
                     state = state,
