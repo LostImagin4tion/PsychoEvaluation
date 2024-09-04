@@ -55,14 +55,16 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
         val authorizationState by viewModel.authorizationState.collectAsStateWithLifecycle()
 
-        when (authorizationState) {
-            is SuccessResult -> navigateToRoute(Routes.userProfile) {
-                popUpTo(Routes.authorization) { inclusive = true }
+        authorizationState.run {
+            when (this) {
+                is SuccessResult -> navigateToRoute(Routes.userProfile) {
+                    popUpTo(Routes.authorization) { inclusive = true }
+                }
+                is ErrorResult -> this.message?.let {
+                    showMessage(context.getString(it))
+                }
+                else -> {}
             }
-            is ErrorResult -> (authorizationState as? ErrorResult<Unit>)
-                ?.message
-                ?.let { showMessage(context.getString(it)) }
-            else -> {}
         }
 
         LaunchedEffect(Unit) {
@@ -71,7 +73,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
         StateHolder(state = authorizationState)
 
-        if (authorizationState !is FullScreenLoadingResult) {
+        if (authorizationState !is FullScreenLoadingResult && authorizationState !is SuccessResult) {
             AuthorizationScreenContent(
                 showMessage = showMessage,
                 isAuthorizationInProgress = authorizationState is LoadingResult,

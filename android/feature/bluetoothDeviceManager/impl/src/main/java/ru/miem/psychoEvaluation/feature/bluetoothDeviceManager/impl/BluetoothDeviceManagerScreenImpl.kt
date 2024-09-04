@@ -69,10 +69,13 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             devices = devices,
             isAnyDeviceConnected = connectedDevice != null,
             onDeviceTapped = { device ->
-                context.findActivity()
-                    ?.let {
+                if (device == connectedDevice) {
+                    viewModel.disconnectBluetoothDevice(device)
+                } else {
+                    context.findActivity()?.let {
                         viewModel.connectToBluetoothDevice(it, bluetoothAdapter, device)
                     }
+                }
             },
             navigateToNextScreen = {
                 val nextScreenRoute = bluetoothDeviceManagerScreenArgs.nextScreenRoute

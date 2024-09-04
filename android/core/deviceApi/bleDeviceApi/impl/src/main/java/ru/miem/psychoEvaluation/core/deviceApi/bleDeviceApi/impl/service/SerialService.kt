@@ -1,6 +1,7 @@
 package ru.miem.psychoEvaluation.core.deviceApi.bleDeviceApi.impl.service
 
 import android.app.Service
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.os.Binder
 import android.os.Handler
@@ -171,8 +172,8 @@ class SerialService : Service(), SerialListener {
      * Api
      */
     @Throws(IOException::class)
-    fun connect(socket: SerialSocket) {
-        socket.connect(listener)
+    fun connect(device: BluetoothDevice, socket: SerialSocket) {
+        socket.connect(device, listener)
         this.socket = socket
         isSocketConnected = true
     }

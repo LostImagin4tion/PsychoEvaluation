@@ -2,7 +2,6 @@ package ru.miem.psychoEvaluation.feature.trainingsList.impl
 
 import android.content.Context
 import android.hardware.usb.UsbManager
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +36,6 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDe
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
-import timber.log.Timber
 import javax.inject.Inject
 
 class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
@@ -227,7 +225,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         )
 
         LaunchedEffect(isDeviceAccessGranted) {
-            if (viewModel.hasConnectedDevices(usbManager)) {
+            if (viewModel.hasConnectedUsbDevices(usbManager)) {
                 if (!isDeviceAccessGranted) {
                     usbManager.requestUsbDeviceAccess(context)
                 } else {

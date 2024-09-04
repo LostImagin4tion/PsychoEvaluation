@@ -57,14 +57,16 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
 
         val registrationState by viewModel.registrationState.collectAsStateWithLifecycle()
 
-        when (registrationState) {
-            is SuccessResult -> navigateToRoute(Routes.userProfile) {
-                popUpTo(Routes.registration) { inclusive = true }
+        registrationState.run {
+            when (this) {
+                is SuccessResult -> navigateToRoute(Routes.userProfile) {
+                    popUpTo(Routes.registration) { inclusive = true }
+                }
+                is ErrorResult -> this.message?.let {
+                    showMessage(context.getString(it))
+                }
+                else -> {}
             }
-            is ErrorResult -> (registrationState as? ErrorResult<Unit>)?.message?.let {
-                showMessage(context.getString(it))
-            }
-            else -> {}
         }
 
         StateHolder(state = registrationState)

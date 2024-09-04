@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +57,12 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
 
         BackHandler {
             navigateBack()
+        }
+
+        DisposableEffect(viewModel) {
+            onDispose {
+                viewModel.disconnect()
+            }
         }
 
         when (currentScreen) {

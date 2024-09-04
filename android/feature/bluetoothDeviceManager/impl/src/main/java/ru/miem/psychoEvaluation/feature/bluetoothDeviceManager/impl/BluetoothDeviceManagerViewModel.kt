@@ -79,7 +79,10 @@ class BluetoothDeviceManagerViewModel(
         }
     }
 
-    fun disconnectBluetoothDevice() = bleDeviceInteractor.disconnect()
+    fun disconnectBluetoothDevice(deviceState: BluetoothDeviceState) {
+        bleDeviceInteractor.disconnect()
+        changeDeviceConnectionStatus(deviceState, BluetoothDeviceConnectionStatus.Unknown)
+    }
 
     private fun changeDeviceConnectionStatus(
         deviceState: BluetoothDeviceState,
