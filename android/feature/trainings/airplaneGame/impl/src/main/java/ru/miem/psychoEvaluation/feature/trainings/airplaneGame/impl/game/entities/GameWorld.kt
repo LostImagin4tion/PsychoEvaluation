@@ -1,6 +1,5 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities
 
-import android.content.Context
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
@@ -10,12 +9,10 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text
 fun Container.gameWorld(
     screenWidth: Double,
     screenHeight: Double,
-    context: Context,
     onGameOver: () -> Unit,
 ) = GameWorld(
     screenWidth,
     screenHeight,
-    context,
     onGameOver,
 ).addTo(this)
 
@@ -28,7 +25,6 @@ private enum class GameState {
 class GameWorld(
     override var width: Double,
     override var height: Double,
-    private val context: Context,
     private val onGameOver: () -> Unit,
 ) : Container() {
 
@@ -52,14 +48,14 @@ class GameWorld(
 
     fun start() {
         currentState = GameState.Running
-        airplane.onStart(context)
+        airplane.onStart()
     }
 
     fun restart() {
         currentState = GameState.Ready
         score = 0
         scroller.onRestart()
-        airplane.onRestart(midPointY, context)
+        airplane.onRestart(midPointY)
     }
 
     fun update(delta: TimeSpan) {
@@ -79,7 +75,7 @@ class GameWorld(
         }
     }
 
-    fun onNewData(rawData: Double, speed: Double) = airplane.onNewData(rawData, speed)
+    fun onNewData(speed: Double) = airplane.onNewData(speed)
 
     fun onDestroy() {
         airplane.onDestroy()

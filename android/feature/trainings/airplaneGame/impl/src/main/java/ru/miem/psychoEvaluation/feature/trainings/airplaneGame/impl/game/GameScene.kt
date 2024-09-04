@@ -1,6 +1,7 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game
 
 import android.content.Context
+import android.os.Environment
 import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.SContainer
 import com.soywiz.korge.view.addUpdater
@@ -10,6 +11,13 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entitie
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
+import java.io.BufferedWriter
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 class GameScene(
@@ -24,6 +32,9 @@ class GameScene(
     private var gameWorld: GameWorld? = null
     private var previousData: Double? = null
 
+    private val calendar = Calendar.getInstance()
+    private var fileOutputWriter: BufferedWriter? = null
+
     override suspend fun SContainer.sceneInit() {
         setSize(screenWidth, screenHeight)
         AssetLoader.load()
@@ -35,7 +46,6 @@ class GameScene(
         gameWorld = gameWorld(
             screenWidth,
             screenHeight,
-            context,
             onGameOver = {
                 when {
                     gameTime < 15.seconds -> decreaseGameDifficulty()
@@ -53,17 +63,17 @@ class GameScene(
             if (input.mouseButtons != 0) {
                 if (gameWorld?.isReady == true) {
                     gameWorld?.start()
+                    setupFileInputStream(context)
                 }
                 if (gameWorld?.isGameOver == true) {
                     previousData = null
                     gameWorld?.restart()
+                    setupFileInputStream(context)
                 }
-            } else if (gameWorld?.isRunning == true) {
+            }
+            else if (gameWorld?.isRunning == true) {
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
-
-//                val bordersHeight = with(currentData) { upperLimit - lowerLimit }
-//                val data = normalizedData * screenHeight / bordersHeight
 
                 if (previousData == null) {
                     previousData = normalizedData
@@ -73,12 +83,16 @@ class GameScene(
                     (normalizedData - it) / delta.seconds
                 }
 
-                Timber.tag("HELLO").i("$currentData speed $speed previous $previousData current $normalizedData")
+                Timber.tag("HELLO").d("$currentData speed $speed previous $previousData current $normalizedData")
 
                 if (speed != null && speed != 0.0) {
                     previousData = normalizedData
-                    gameWorld?.onNewData(normalizedData, speed)
+                    gameWorld?.onNewData(speed)
+                    fileOutputWriter?.write("${currentData.rawData}\n")
                 }
+            }
+            else if (gameWorld?.isGameOver == true) {
+                closeStream()
             }
 
             gameWorld?.update(delta)
@@ -89,5 +103,42 @@ class GameScene(
         gameWorld?.onDestroy()
         gameWorld = null
         super.sceneDestroy()
+    }
+
+
+    private fun setupFileInputStream(context: Context) {
+        try {
+            closeStream()
+
+            val datetime = calendar.time.toString("yyyy-MM-dd_HH:mm:ss")
+            val filename = "$datetime-psycho.txt"
+
+            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
+            fileOutputWriter = file.bufferedWriter()
+
+            Timber.tag(TAG).i(
+                "Created new file ${file.absolutePath}, " +
+                        "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
+            )
+        } catch (e: IOException) {
+            Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
+        }
+    }
+
+    private fun closeStream() {
+        fileOutputWriter?.let {
+            it.close()
+            Timber.tag(TAG).i("Closed file output writer")
+        }
+        fileOutputWriter = null
+    }
+
+    private fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
+        val formatter = SimpleDateFormat(format, locale)
+        return formatter.format(this)
+    }
+
+    private companion object {
+        private val TAG = GameScene::class.java.simpleName
     }
 }
