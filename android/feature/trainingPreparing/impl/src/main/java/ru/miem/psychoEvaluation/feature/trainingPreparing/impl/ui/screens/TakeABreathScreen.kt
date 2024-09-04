@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,35 +27,11 @@ import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.LargeHeadlineText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
-import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
-import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackButton
-import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 
 @Composable
-fun TakeABreathScreen(
-    onBackButtonClick: () -> Unit,
-) = Box(
-    contentAlignment = Alignment.TopStart,
-    modifier = Modifier
-        .fillMaxSize()
-        .imePadding()
+fun BoxScope.TakeABreathScreen(
 ) {
-    CircleBackgroundDecoration(
-        modifier = Modifier
-            .align(Alignment.TopEnd)
-    )
-
-    BackButton(
-        onClick = onBackButtonClick,
-        modifier = Modifier
-            .align(alignment = Alignment.TopStart)
-            .padding(
-                start = Dimensions.primaryVerticalPadding,
-                top = Dimensions.primaryVerticalPadding,
-            )
-    )
-
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,

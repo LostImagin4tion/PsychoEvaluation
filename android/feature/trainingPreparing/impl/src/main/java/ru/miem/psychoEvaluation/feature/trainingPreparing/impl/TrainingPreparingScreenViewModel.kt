@@ -74,7 +74,7 @@ class TrainingPreparingScreenViewModel(
             }
             .zip(_currentScreen) { _, screen ->
                 when (screen) {
-                    CurrentScreen.Welcome -> CurrentScreen.TakeABreath
+                    CurrentScreen.Welcome -> CurrentScreen.Exhale
                     CurrentScreen.TakeABreath -> CurrentScreen.Exhale
                     CurrentScreen.Exhale -> CurrentScreen.TakeABreath
                 }
