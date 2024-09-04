@@ -70,8 +70,7 @@ class GameScene(
                     gameWorld?.restart()
                     setupFileInputStream(context)
                 }
-            }
-            else if (gameWorld?.isRunning == true) {
+            } else if (gameWorld?.isRunning == true) {
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
 
@@ -90,8 +89,7 @@ class GameScene(
                     gameWorld?.onNewData(speed)
                     fileOutputWriter?.write("${currentData.rawData}\n")
                 }
-            }
-            else if (gameWorld?.isGameOver == true) {
+            } else if (gameWorld?.isGameOver == true) {
                 closeStream()
             }
 
@@ -105,7 +103,6 @@ class GameScene(
         super.sceneDestroy()
     }
 
-
     private fun setupFileInputStream(context: Context) {
         try {
             closeStream()
@@ -118,7 +115,7 @@ class GameScene(
 
             Timber.tag(TAG).i(
                 "Created new file ${file.absolutePath}, " +
-                        "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
+                    "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
             )
         } catch (e: IOException) {
             Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
