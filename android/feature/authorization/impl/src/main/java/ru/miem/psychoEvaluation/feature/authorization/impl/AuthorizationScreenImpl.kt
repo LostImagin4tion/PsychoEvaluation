@@ -62,6 +62,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
                 }
                 is ErrorResult -> this.message?.let {
                     showMessage(context.getString(it))
+                    viewModel.resetState()
                 }
                 else -> {}
             }

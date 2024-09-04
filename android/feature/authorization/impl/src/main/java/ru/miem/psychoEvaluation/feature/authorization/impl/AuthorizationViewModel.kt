@@ -57,6 +57,12 @@ class AuthorizationViewModel : ViewModel() {
         }
     }
 
+    fun resetState() {
+        viewModelScope.launch {
+            _authorizationState.emit(NothingResult())
+        }
+    }
+
     private fun <T>AuthorizationState.toResult(): Result<T> = when (this.state) {
         AuthorizationResponseType.Authorized -> SuccessResult()
         AuthorizationResponseType.NoRefreshToken -> ErrorResult()

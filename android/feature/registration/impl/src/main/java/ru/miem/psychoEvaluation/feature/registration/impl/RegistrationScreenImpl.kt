@@ -64,6 +64,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
                 }
                 is ErrorResult -> this.message?.let {
                     showMessage(context.getString(it))
+                    viewModel.resetState()
                 }
                 else -> {}
             }
