@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,28 +43,44 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             }
         )
 
+        val navigateBack = {
+            navigateToRoute(Routes.trainingsList)
+            viewModel.disconnect()
+        }
+
         val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle()
 
+        LaunchedEffect(Unit) {
+            viewModel.subscribeForSettingsChanges()
+        }
+
         BackHandler {
-            navigateToRoute(Routes.trainingsList)
+            navigateBack()
         }
 
         when (currentScreen) {
-            CurrentScreen.Welcome -> WelcomeScreen {
-                viewModel.startCollectingAndNormalizingSensorData(
-                    usbManager = usbManager,
-                    onTimerEnded = {
-                        val route = Routes.generalTrainingRoute
-                            .format(
-                                trainingPreparingScreenArgs.trainingRoute,
-                                trainingPreparingScreenArgs.bleDeviceHardwareAddress
-                            )
-                        navigateToRoute(route)
-                    }
-                )
-            }
-            CurrentScreen.TakeABreath -> TakeABreathScreen()
-            CurrentScreen.Exhale -> ExhaleScreen()
+            CurrentScreen.Welcome -> WelcomeScreen(
+                onContinueButtonClick = {
+                    viewModel.startCollectingAndNormalizingSensorData(
+                        usbManager = usbManager,
+                        onTimerEnded = {
+                            val route = Routes.generalTrainingRoute
+                                .format(
+                                    trainingPreparingScreenArgs.trainingRoute,
+                                    trainingPreparingScreenArgs.bleDeviceHardwareAddress
+                                )
+                            navigateToRoute(route)
+                        }
+                    )
+                },
+                onBackButtonClick = navigateBack,
+            )
+            CurrentScreen.TakeABreath -> TakeABreathScreen(
+                onBackButtonClick = navigateBack,
+            )
+            CurrentScreen.Exhale -> ExhaleScreen(
+                onBackButtonClick = navigateBack,
+            )
         }
     }
 

@@ -32,7 +32,9 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackBu
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 
 @Composable
-fun TakeABreathScreen() = Box(
+fun TakeABreathScreen(
+    onBackButtonClick: () -> Unit,
+) = Box(
     contentAlignment = Alignment.TopStart,
     modifier = Modifier
         .fillMaxSize()
@@ -44,6 +46,7 @@ fun TakeABreathScreen() = Box(
     )
 
     BackButton(
+        onClick = onBackButtonClick,
         modifier = Modifier
             .align(alignment = Alignment.TopStart)
             .padding(

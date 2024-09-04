@@ -33,8 +33,15 @@ class TrainingPreparingScreenViewModel(
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _currentScreen = MutableStateFlow(CurrentScreen.Welcome)
+    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     val currentScreen: StateFlow<CurrentScreen> = _currentScreen
+
+    fun subscribeForSettingsChanges() {
+        settingsInteractor.getCurrentSensorDeviceType()
+            .onEach { _sensorDeviceType.emit(it) }
+            .launchIn(viewModelScope)
+    }
 
     fun startCollectingAndNormalizingSensorData(
         usbManager: UsbManager,
@@ -76,6 +83,14 @@ class TrainingPreparingScreenViewModel(
                 _currentScreen.emit(newScreen)
             }
             .launchIn(viewModelScope)
+    }
+
+    fun disconnect() {
+        when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
+            SensorDeviceType.Unknown -> {}
+        }
     }
 
     private fun findDataBordersWithUsbDevice(usbManager: UsbManager) {
