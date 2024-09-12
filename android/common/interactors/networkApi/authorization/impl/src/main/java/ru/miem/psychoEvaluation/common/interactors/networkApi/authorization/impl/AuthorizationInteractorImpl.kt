@@ -42,6 +42,7 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
                     ?.run {
                         dataStore.set(DataStorageKeys.refreshToken, refreshToken)
                         apiAccessToken = accessToken
+                        dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                         AuthorizationState(AuthorizationResponseType.Authorized)
                     }
                     ?: AuthorizationState(AuthorizationResponseType.WrongCredentials)

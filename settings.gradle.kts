@@ -27,6 +27,7 @@ include(":multiplatform:core:utils")
 include(":multiplatform:core:httpClient")
 include(":multiplatform:core:networkApi:authorization")
 include(":multiplatform:core:networkApi:registration")
+include(":multiplatform:core:networkApi:statistics")
 
 // Common
 include(":multiplatform:common")
@@ -75,6 +76,9 @@ include(":android:common:interactors:networkApi:authorization:impl")
 include(":android:common:interactors:networkApi:registration:api")
 include(":android:common:interactors:networkApi:registration:impl")
 
+include(":android:common:interactors:networkApi:statistics:api")
+include(":android:common:interactors:networkApi:statistics:impl")
+
 // Features
 include(":android:feature:navigation:api")
 include(":android:feature:navigation:impl")
@@ -111,3 +115,6 @@ include(":android:feature:trainings:stopwatchGame:impl")
 
 include(":android:feature:trainings:clocksGame:api")
 include(":android:feature:trainings:clocksGame:impl")
+
+include(":android:feature:statistics:api")
+include(":android:feature:statistics:impl")

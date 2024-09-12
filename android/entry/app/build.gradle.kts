@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":multiplatform:core:httpClient"))
     implementation(project(":multiplatform:core:networkApi:authorization"))
     implementation(project(":multiplatform:core:networkApi:registration"))
+    implementation(project(":multiplatform:core:networkApi:statistics"))
 
     // ==== Core layer ====
 
@@ -39,6 +40,7 @@ dependencies {
     implementation(project(":android:common:interactors:settingsInteractor:impl"))
     implementation(project(":android:common:interactors:networkApi:authorization:impl"))
     implementation(project(":android:common:interactors:networkApi:registration:impl"))
+    implementation(project(":android:common:interactors:networkApi:statistics:impl"))
 
     // ==== Feature layer ====
 
@@ -54,4 +56,5 @@ dependencies {
     implementation(project(":android:feature:trainings:airplaneGame:impl"))
     implementation(project(":android:feature:trainings:stopwatchGame:impl"))
     implementation(project(":android:feature:trainings:clocksGame:impl"))
+    implementation(project(":android:feature:statistics:impl"))
 }

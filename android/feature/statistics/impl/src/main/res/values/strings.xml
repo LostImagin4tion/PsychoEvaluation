@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_header">Statistics</string>
+
+    <string name="title_dates_picker">Enter date or period (no more than 10 days)</string>
+    <string name="snackbar_dates_picker_dismiss">Dismiss</string>
+    <string name="snackbar_dates_picker_save">OK</string>
+
+    <string name="authorization_data_section_title">Authorization data</string>
+    <string name="title_login">Login</string>
+    <string name="title_password">Password</string>
+
+    <string name="open_settings_button_text">Settings</string>
+    <string name="logout_button_text">Log out from account</string>
+</resources>

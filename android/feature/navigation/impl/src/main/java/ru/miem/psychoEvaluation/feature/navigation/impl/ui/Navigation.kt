@@ -47,6 +47,8 @@ import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
 import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
 import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileDiApi
+import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
+import ru.miem.psychoEvaluation.feature.statistics.api.di.StatisticsDiApi
 
 @Composable
 fun Navigation(
@@ -73,6 +75,7 @@ fun Navigation(
     val airplaneGameScreen by diApi(AirplaneGameScreenDiApi::airplaneGameScreen)
     val stopwatchGameScreen by diApi(StopwatchGameScreenDiApi::stopwatchGameScreen)
     val clocksGameScreen by diApi(ClocksGameScreenDiApi::clocksGameScreen)
+    val statisticsScreen by diApi(StatisticsDiApi::statisticsScreen)
 
     NavigationContent(
         paddingValues = paddingValues,
@@ -90,6 +93,7 @@ fun Navigation(
         airplaneGameScreen = airplaneGameScreen,
         stopwatchGameScreen = stopwatchGameScreen,
         clocksGameScreen = clocksGameScreen,
+        statisticsScreen = statisticsScreen,
     )
 }
 
@@ -110,6 +114,7 @@ fun NavigationContent(
     airplaneGameScreen: AirplaneGameScreen,
     stopwatchGameScreen: StopwatchGameScreen,
     clocksGameScreen: ClocksGameScreen,
+    statisticsScreen: StatisticsScreen,
 ) {
     val usbDeviceInteractor by remember {
         diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
@@ -260,6 +265,7 @@ fun NavigationContent(
                 )
             }
 
+
             composable(
                 route = Routes.stopwatchGameRouteDeclaration,
                 arguments = TrainingRouteArgs.args,
@@ -290,7 +296,12 @@ fun NavigationContent(
                             ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
                     ),
                     navigateToRoute = navigateToRoute,
-                    showMessage = showMessage,
+                    showMessage = showMessage)}
+            composable(Routes.statistics) {
+                setupSystemBarColors()
+                statisticsScreen.StatisticsScreen(
+                    navigateToRoute = navigateToRoute,
+                    showMessage = showMessage
                 )
             }
         }

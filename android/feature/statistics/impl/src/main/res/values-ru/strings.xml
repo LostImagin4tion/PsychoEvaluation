@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_header">Статистика</string>
+
+    <string name="title_dates_picker">Выберите дату или период (не более 10 дней)</string>
+    <string name="snackbar_dates_picker_dismiss">Отмена</string>
+    <string name="snackbar_dates_picker_save">OK</string>
+
+    <string name="authorization_data_section_title">Данные авторизации</string>
+    <string name="title_login">Логин</string>
+    <string name="title_password">Пароль</string>
+
+    <string name="open_settings_button_text">Настройки</string>
+    <string name="logout_button_text">Выйти из аккаунта</string>
+</resources>
