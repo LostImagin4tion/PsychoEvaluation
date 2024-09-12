@@ -1,6 +1,5 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartClock
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartConcentration
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryContainerLight
 import ru.miem.psychoEvaluation.feature.statistics.impl.R
@@ -65,28 +65,24 @@ fun StatisticsCard(
             .fillMaxWidth()
     ) {
         Column() {
-//            LabelText(textRes = dateRes, isLarge = true)
             BodyText(statisticsData.dateRes, isLarge = true)
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-//            BodyText(textRes = ("Тренировки: " + allValueRes))
             BodyText("Тренировки: " + statisticsData.allValueRes)
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            Row(){
+            Row() {
                 Image(
                     painter = painterResource(R.drawable.concentration_game),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-//                        .weight(1f)
                         .size(60.dp)
                         .fillMaxSize()
                         .clip(CircleShape)
                         .border(2.dp, psychoChartConcentration, CircleShape)
-
                 )
 
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
@@ -99,19 +95,17 @@ fun StatisticsCard(
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            Row(){
+            Row() {
                 Image(
                     painter = painterResource(R.drawable.clock_game),
                     contentDescription = null,
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
-//                        .weight(1f)
                         .size(60.dp)
                         .background(psychoPrimaryContainerLight, CircleShape)
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .border(2.dp, psychoChartConcentration, CircleShape)
-
+                        .border(2.dp, psychoChartClock, CircleShape)
                 )
 
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
@@ -120,10 +114,9 @@ fun StatisticsCard(
                     LabelText(text = "Бдительность:")
                     BodyText(statisticsData.clockTimeRes)
                 }
-
             }
-
         }
     }
+
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 1))
 }

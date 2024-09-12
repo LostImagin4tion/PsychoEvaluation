@@ -33,6 +33,8 @@ import ru.miem.psychoEvaluation.feature.registration.api.RegistrationScreen
 import ru.miem.psychoEvaluation.feature.registration.api.di.RegistrationDiApi
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
 import ru.miem.psychoEvaluation.feature.settings.api.di.SettingsScreenDiApi
+import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
+import ru.miem.psychoEvaluation.feature.statistics.api.di.StatisticsDiApi
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.di.TrainingPreparingDiApi
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
@@ -47,8 +49,6 @@ import ru.miem.psychoEvaluation.feature.trainingsList.api.TrainingsListScreen
 import ru.miem.psychoEvaluation.feature.trainingsList.api.di.TrainingsScreenDiApi
 import ru.miem.psychoEvaluation.feature.userProfile.api.UserProfileScreen
 import ru.miem.psychoEvaluation.feature.userProfile.api.di.UserProfileDiApi
-import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
-import ru.miem.psychoEvaluation.feature.statistics.api.di.StatisticsDiApi
 
 @Composable
 fun Navigation(
@@ -265,7 +265,6 @@ fun NavigationContent(
                 )
             }
 
-
             composable(
                 route = Routes.stopwatchGameRouteDeclaration,
                 arguments = TrainingRouteArgs.args,
@@ -296,7 +295,9 @@ fun NavigationContent(
                             ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
                     ),
                     navigateToRoute = navigateToRoute,
-                    showMessage = showMessage)}
+                    showMessage = showMessage
+                )
+            }
             composable(Routes.statistics) {
                 setupSystemBarColors()
                 statisticsScreen.StatisticsScreen(

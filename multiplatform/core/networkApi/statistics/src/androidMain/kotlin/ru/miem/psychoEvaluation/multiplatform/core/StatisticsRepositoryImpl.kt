@@ -20,7 +20,7 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
 
     private val safeHttpClientFactory = SafeHttpClientFactory { baseHttpClient.create() }
 
-    override suspend fun common_statistics(
+    override suspend fun commonStatistics(
         request: StatisticsRequest
     ): StatisticsResponse? {
         val url = URLBuilder(STATISTICS_BASE_URL)

@@ -4,5 +4,5 @@ import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsResponse
 
 interface StatisticsRepository {
-    suspend fun common_statistics(request: StatisticsRequest): StatisticsResponse?
+    suspend fun commonStatistics(request: StatisticsRequest): StatisticsResponse?
 }

@@ -1,8 +1,6 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
-
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,18 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gmail.orlandroyd.composecalendar.util.getParsedDate
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.playmoweb.multidatepicker.MultiDatePicker
 import com.playmoweb.multidatepicker.models.MultiDatePickerColors
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.handleCoroutineException
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
@@ -57,19 +50,13 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCardData
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartUpdate
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalQueries.localDate
 import java.util.Date
 import javax.inject.Inject
-
 
 class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     private val labelListKey = ExtraStore.Key<Map<Int, LocalDate>>()
     var cardsList: MutableList<StatisticsCardData?> = mutableListOf(null)
-
 
     @SuppressLint("UnrememberedMutableState")
     @Composable
@@ -114,11 +101,9 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
         val startDate: MutableState<Date?> = remember { mutableStateOf(null) }
         val endDate: MutableState<Date?> = remember { mutableStateOf(null) }
 
-
-        val chart = ChartUpdate(null, null, modelProducer, labelListKey)
+        val chart = ChartUpdate(modelProducer, labelListKey)
         val dataStore by diApi(DataStorageDiApi::dataStorage)
 
-        //                            snackState.showSnackbar("Saved range (timestamps): $startDate $endDate")
         // ===== UI SECTION =====
 
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
@@ -130,20 +115,24 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 1))
 
-//        Spacer(modifier = Modifier.weight(1f))
-
         val snackState = remember { SnackbarHostState() }
         val snackScope = rememberCoroutineScope()
-        SnackbarHost(hostState = snackState, Modifier.zIndex(1f))
 
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-
             BodyText(textRes = R.string.title_dates_picker, isLarge = false)
 
             MultiDatePicker(
                 startDate = startDate,
                 endDate = endDate,
-                colors = MultiDatePickerColors(cardColor = MaterialTheme.colorScheme.background, dayNumberColor = MaterialTheme.colorScheme.onPrimaryContainer, disableDayColor = MaterialTheme.colorScheme.surfaceDim, iconColor = psychoChartSelectedDayBackground, monthColor = psychoChartSelectedDayBackground, selectedDayBackgroundColor = psychoChartSelectedBackground, selectedDayNumberColor = psychoPrimaryContainerLight, weekDayColor = MaterialTheme.colorScheme.onPrimary, selectedIndicatorColor = psychoChartSelectedDayBackground )
+                colors = MultiDatePickerColors(cardColor = MaterialTheme.colorScheme.background,
+                    dayNumberColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    disableDayColor = MaterialTheme.colorScheme.surfaceDim,
+                    iconColor = psychoChartSelectedDayBackground,
+                    monthColor = psychoChartSelectedDayBackground,
+                    selectedDayBackgroundColor = psychoChartSelectedBackground,
+                    selectedDayNumberColor = psychoPrimaryContainerLight,
+                    weekDayColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedIndicatorColor = psychoChartSelectedDayBackground)
             )
             Row(
                 modifier =
@@ -153,8 +142,8 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                     .padding(start = 12.dp, end = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
-            ) {
-
+            )
+            {
                 SimpleTextButton(
                     textRes = R.string.snackbar_dates_picker_dismiss,
                     onClick = {
@@ -165,18 +154,26 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                 )
                 SimpleTextButton(
                     textRes = R.string.snackbar_dates_picker_save,
-                    onClick ={
+                    onClick = {
                         snackScope.launch {
                             cardsList = viewModel.onUpdateCards(startDate, endDate)
                             val apiAccessToken =
-                                dataStore[DataStorageKeys.refreshToken].first()
+                                dataStore[DataStorageKeys.apiAccessToken].first()
                                     .takeIf { it.isNotBlank() }
-                            Log.d("haha", apiAccessToken.toString())
-                            viewModel.common_statistics(
-                                apiAccessToken = apiAccessToken.toString(),
-                                viewModel.parsedApiDate(startDate)!!,
-                                viewModel.parsedApiDate(endDate)!!
-                            )
+                            if (endDate.value != null) {
+                                viewModel.common_statistics(
+                                    apiAccessToken = apiAccessToken.toString(),
+                                    viewModel.parsedApiDate(startDate)!!,
+                                    viewModel.parsedApiDate(endDate)!!
+                                )
+                            }
+                            else {
+                                viewModel.common_statistics(
+                                    apiAccessToken = apiAccessToken.toString(),
+                                    viewModel.parsedApiDate(startDate)!!,
+                                    viewModel.parsedApiDate(startDate)!!
+                                )
+                            }
                             viewModel.onUpdateChart(startDate, endDate, chart)
                         }
                     },
@@ -193,18 +190,9 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-//            Log.d("gg", cardsList.toString())
-
-            viewModel.onComposeCards(cardsList)
-//)
+            viewModel.OnComposeCards(cardsList)
         }
-
-
-
-//
-//        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
     }
-
 
     operator fun LocalDate.rangeTo(other: LocalDate) =
         StatisticsScreenViewModel.DateProgression(this, other)
@@ -213,4 +201,3 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
         val TAG: String = StatisticsScreenImpl::class.java.simpleName
     }
 }
-
