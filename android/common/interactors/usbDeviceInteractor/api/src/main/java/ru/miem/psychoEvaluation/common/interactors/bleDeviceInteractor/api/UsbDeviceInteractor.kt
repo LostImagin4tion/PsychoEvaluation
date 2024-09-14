@@ -25,4 +25,5 @@ interface UsbDeviceInteractor {
 
     fun increaseGameDifficulty()
     fun decreaseGameDifficulty()
+    fun changeDataBorders(upperLimit: Double?, lowerLimit: Double?)
 }

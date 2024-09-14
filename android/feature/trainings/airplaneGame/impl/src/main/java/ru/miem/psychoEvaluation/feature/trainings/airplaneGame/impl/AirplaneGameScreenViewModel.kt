@@ -12,13 +12,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameScreenState
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
+import timber.log.Timber
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 class AirplaneGameScreenViewModel(
     private val usbDeviceInteractor: UsbDeviceInteractor,
@@ -27,18 +34,27 @@ class AirplaneGameScreenViewModel(
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
+    private val gameScreenStateMutex = Mutex()
     private val _stressData = MutableStateFlow(defaultSensorData)
-    private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
+    private val _gameScreenState = MutableStateFlow(defaultGameScreenState)
 
-    val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
     val stressData: StateFlow<SensorData> = _stressData
+    val gameScreenState: StateFlow<AirplaneGameScreenState> = _gameScreenState
 
     private val allStress = mutableListOf<Int>()
     val chartModelProducer = CartesianChartModelProducer.build()
 
     fun subscribeForSettingsChanges() {
         settingsInteractor.getCurrentSensorDeviceType()
-            .onEach { _sensorDeviceType.emit(it) }
+            .onEach {
+                gameScreenStateMutex.withLock {
+                    val newState = _gameScreenState.value.copy(
+                        sensorDeviceType = it
+                    )
+                    Timber.tag("HELLO").d("HELLO EMIT settings changes new state $newState")
+                    _gameScreenState.emit(newState)
+                }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -69,7 +85,7 @@ class AirplaneGameScreenViewModel(
     }
 
     fun disconnect() {
-        when (_sensorDeviceType.value) {
+        when (_gameScreenState.value.sensorDeviceType) {
             SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
             SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
             SensorDeviceType.Unknown -> {}
@@ -77,7 +93,7 @@ class AirplaneGameScreenViewModel(
     }
 
     fun increaseGameDifficulty() {
-        when (_sensorDeviceType.value) {
+        when (_gameScreenState.value.sensorDeviceType) {
             SensorDeviceType.Usb -> usbDeviceInteractor.increaseGameDifficulty()
             SensorDeviceType.Bluetooth -> bleDeviceInteractor.increaseGameDifficulty()
             SensorDeviceType.Unknown -> {}
@@ -85,10 +101,34 @@ class AirplaneGameScreenViewModel(
     }
 
     fun decreaseGameDifficulty() {
-        when (_sensorDeviceType.value) {
+        when (_gameScreenState.value.sensorDeviceType) {
             SensorDeviceType.Usb -> usbDeviceInteractor.decreaseGameDifficulty()
             SensorDeviceType.Bluetooth -> bleDeviceInteractor.decreaseGameDifficulty()
             SensorDeviceType.Unknown -> {}
+        }
+    }
+
+    fun changeGameParameters(
+        gsrUpperBound: Double?,
+        gsrLowerBound: Double?,
+        gameTime: Duration?,
+    ) {
+        when (_gameScreenState.value.sensorDeviceType) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.changeDataBorders(gsrUpperBound, gsrLowerBound)
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.changeDataBorders(gsrUpperBound, gsrLowerBound)
+            SensorDeviceType.Unknown -> {}
+        }
+        viewModelScope.launch {
+            gameScreenStateMutex.withLock {
+                val newState = _gameScreenState.value.run {
+                    copy(
+                        maxGameTime = gameTime ?: this.maxGameTime,
+                        currentScreen = CurrentScreen.AirplaneGame,
+                    )
+                }
+                Timber.tag("HELLO").d("HELLO EMIT game parameters new state $newState")
+                _gameScreenState.emit(newState)
+            }
         }
     }
 
@@ -104,5 +144,10 @@ class AirplaneGameScreenViewModel(
         val TAG: String = AirplaneGameScreenViewModel::class.java.simpleName
 
         val defaultSensorData = SensorData(0, 0.0, 0.0, 0.0)
+        val defaultGameScreenState = AirplaneGameScreenState(
+            sensorDeviceType = SensorDeviceType.Unknown,
+            currentScreen = CurrentScreen.AirplaneGameSettings,
+            maxGameTime = 3.minutes
+        )
     }
 }

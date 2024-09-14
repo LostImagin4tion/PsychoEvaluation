@@ -93,4 +93,17 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
     override fun decreaseGameDifficulty() {
         dataBorders = dataBorders?.let { airplaneGameDataAnalysis.decreaseDifficulty(it) }
     }
+
+    override fun changeDataBorders(upperLimit: Double?, lowerLimit: Double?) {
+        dataBorders = dataBorders?.run {
+            copy(
+                upperLimit = upperLimit
+                    ?.let { 1 + it }
+                    ?: this.upperLimit,
+                lowerLimit = lowerLimit
+                    ?.let { 1 - it }
+                    ?: this.lowerLimit
+            )
+        }
+    }
 }

@@ -4,7 +4,9 @@ import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameOverText
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameTimeText
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.welcomeText
+import kotlin.time.Duration
 
 fun Container.gameWorld(
     screenWidth: Double,
@@ -40,6 +42,7 @@ class GameWorld(
     private val scroller = scrollHandler(width, height)
 
     private val welcomeText = welcomeText(x = midPointX, y = 300.0)
+    private val gameTimeText = gameTimeText(x = width - 200.0, y = 100.0)
     private val gameOverText = gameOverText(x = midPointX, y = 300.0)
 
     val isReady get() = currentState == GameState.Ready
@@ -58,24 +61,39 @@ class GameWorld(
         airplane.onRestart(midPointY)
     }
 
+    fun finishGame() {
+        scroller.stop()
+        airplane.die()
+        currentState = GameState.GameOver
+        onGameOver()
+    }
+
     fun update(delta: TimeSpan) {
         when (currentState) {
             GameState.Ready -> {
                 welcomeText.visible = true
+                gameTimeText.visible = false
                 gameOverText.visible = false
             }
             GameState.Running -> {
+                welcomeText.visible = false
                 gameOverText.visible = false
+                gameTimeText.visible = true
                 updateRunning(delta)
             }
             GameState.GameOver -> {
+                welcomeText.visible = false
                 gameOverText.visible = true
+                gameTimeText.visible = true
                 updateRunning(delta)
             }
         }
     }
 
-    fun onNewData(speed: Double) = airplane.onNewData(speed)
+    fun onNewData(speed: Double, gameTime: Duration) {
+        gameTimeText.changeTime(gameTime)
+        airplane.onNewData(speed)
+    }
 
     fun onDestroy() {
         airplane.onDestroy()
@@ -90,11 +108,7 @@ class GameWorld(
         if (currentState == GameState.Running &&
             (airplane.highestY <= 0 || airplane.lowestY > height)
         ) {
-            scroller.stop()
-            airplane.die()
-
-            currentState = GameState.GameOver
-            onGameOver()
+            finishGame()
         }
     }
 }
