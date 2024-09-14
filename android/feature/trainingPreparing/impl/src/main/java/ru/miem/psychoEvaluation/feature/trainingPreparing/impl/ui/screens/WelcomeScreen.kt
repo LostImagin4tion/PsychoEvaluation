@@ -2,13 +2,11 @@ package ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,22 +19,11 @@ import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.ContinueButton
-import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 
 @Composable
-fun WelcomeScreen(
+fun BoxScope.WelcomeScreen(
     onContinueButtonClick: () -> Unit,
-) = Box(
-    contentAlignment = Alignment.TopStart,
-    modifier = Modifier
-        .fillMaxSize()
-        .imePadding()
 ) {
-    CircleBackgroundDecoration(
-        modifier = Modifier
-            .align(Alignment.TopEnd)
-    )
-
     Column(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,

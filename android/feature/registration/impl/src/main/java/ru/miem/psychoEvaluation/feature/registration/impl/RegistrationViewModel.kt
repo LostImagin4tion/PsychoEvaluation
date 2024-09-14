@@ -42,6 +42,12 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
+    fun resetState() {
+        viewModelScope.launch {
+            _registrationState.emit(NothingResult())
+        }
+    }
+
     private fun <T> RegistrationState.toResult(): Result<T> = when (this.state) {
         RegistrationResponseType.Registered -> SuccessResult()
         RegistrationResponseType.AlreadyRegistered -> ErrorResult(R.string.already_registered_alert)

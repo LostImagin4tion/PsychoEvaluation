@@ -110,9 +110,9 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
 
         if (context != null && bluetoothAdapter != null && deviceAddress != null) {
             val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
-            val socket = SerialSocket(context, device)
+            val socket = SerialSocket(context)
 
-            serialService?.connect(socket)
+            serialService?.connect(device, socket)
         }
     }
 

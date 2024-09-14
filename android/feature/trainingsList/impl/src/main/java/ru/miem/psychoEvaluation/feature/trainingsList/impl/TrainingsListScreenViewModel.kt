@@ -39,7 +39,7 @@ class TrainingsListScreenViewModel(
         return device != null && usbManager.hasPermission(device)
     }
 
-    fun hasConnectedDevices(usbManager: UsbManager) = usbManager.deviceList.isNotEmpty()
+    fun hasConnectedUsbDevices(usbManager: UsbManager) = usbManager.deviceList.isNotEmpty()
 
     fun disconnect() {
         when (_sensorDeviceType.value) {

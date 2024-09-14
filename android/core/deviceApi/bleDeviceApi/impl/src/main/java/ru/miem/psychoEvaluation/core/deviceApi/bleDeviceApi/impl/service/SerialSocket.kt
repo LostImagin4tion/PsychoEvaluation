@@ -29,8 +29,9 @@ import kotlin.math.min
 @SuppressLint("MissingPermission")
 class SerialSocket(
     private val context: Context,
-    private var device: BluetoothDevice?
 ) : BluetoothGattCallback() {
+
+    private var device: BluetoothDevice? = null
 
     private val writeBuffer: ArrayList<ByteArray> = ArrayList()
 
@@ -62,35 +63,39 @@ class SerialSocket(
 
         delegate?.disconnect()
 
-        if (gatt != null) {
+        gatt?.run {
             Timber.tag(TAG).d("GATT disconnect")
-            gatt?.disconnect()
+            disconnect()
 
             Timber.tag(TAG).d("GATT close")
-            gatt?.close()
+            close()
 
-            gatt = null
             isConnectedToDevice = false
         }
+        gatt = null
     }
 
     /**
      * connect-success and most connect-errors are returned asynchronously to listener
      */
     @Throws(IOException::class)
-    fun connect(listener: SerialListener?) {
+    fun connect(
+        device: BluetoothDevice,
+        listener: SerialListener?
+    ) {
         Timber.tag(TAG).d("connect(SerialListener?)")
         if (isConnectedToDevice || gatt != null) {
             throw IOException("Already connected")
         }
 
         cancelled = false
+        this.device = device
         this.listener = listener
 
         Timber.tag(TAG).d("Connected $device")
         Timber.tag(TAG).d("Connect GATT, LE")
 
-        gatt = device?.connectGatt(
+        gatt = device.connectGatt(
             context,
             false,
             this,

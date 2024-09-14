@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.dialogs.SystemDialog
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
@@ -47,6 +47,9 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
+        val unknownDeviceAlertText =
+            stringResource(ru.miem.psychoEvaluation.common.designSystem.R.string.unknown_device_alert)
+
         val viewModel: TrainingsListScreenViewModel = viewModel(
             factory = viewModelFactory {
                 TrainingsListScreenViewModel(
@@ -59,6 +62,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         var canShowBluetoothRequestDialog by remember { mutableStateOf(false) }
         var tappedTraining: String? by remember { mutableStateOf(null) }
 
+        val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
+
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
         }
@@ -67,6 +72,10 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             onTrainingTapped = { trainingRoute ->
                 tappedTraining = trainingRoute
                 canShowBluetoothRequestDialog = true
+
+                if (sensorDeviceType == SensorDeviceType.Unknown || sensorDeviceType == null) {
+                    showMessage(unknownDeviceAlertText)
+                }
             },
         )
 
@@ -74,7 +83,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             ConnectDeviceOnTrainingTapped(
                 showMessage = showMessage,
                 viewModel = viewModel,
-                shouldShowBluetoothRequestDialog = canShowBluetoothRequestDialog,
+                sensorDeviceType = sensorDeviceType,
+                canShowBluetoothRequestDialog = canShowBluetoothRequestDialog,
                 hideBluetoothRequestDialog = { canShowBluetoothRequestDialog = false },
                 navigateToNextScreenWithUsbDevice = {
                     val route = when (training) {
@@ -156,6 +166,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                     titleRes = R.string.reaction_training_level_2_title,
                     descriptionRes = R.string.reaction_training_level_2_description,
                     imageRes = R.drawable.reaction_training_icon,
+                    modifier = Modifier.padding(bottom = Dimensions.primaryVerticalPadding),
                     onClick = {
                         onTrainingTapped(Routes.clocksGame)
                     }
@@ -168,28 +179,24 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
     private fun ConnectDeviceOnTrainingTapped(
         showMessage: (String) -> Unit,
         viewModel: TrainingsListScreenViewModel,
-        shouldShowBluetoothRequestDialog: Boolean,
+        sensorDeviceType: SensorDeviceType?,
+        canShowBluetoothRequestDialog: Boolean,
         hideBluetoothRequestDialog: () -> Unit = {},
         navigateToNextScreenWithUsbDevice: () -> Unit = {},
         navigateToBluetoothDeviceManager: () -> Unit = {},
     ) {
-        val unknownDeviceAlertText =
-            stringResource(ru.miem.psychoEvaluation.common.designSystem.R.string.unknown_device_alert)
-
-        val sensorDeviceType = viewModel.sensorDeviceType.collectAsState()
-
-        when (sensorDeviceType.value) {
+        when (sensorDeviceType) {
             SensorDeviceType.Usb -> RequestUsbDeviceAccess(
                 viewModel = viewModel,
                 onDeviceAccessGranted = navigateToNextScreenWithUsbDevice
             )
             SensorDeviceType.Bluetooth -> RequestBluetoothPermission(
                 showMessage = showMessage,
-                shouldShowBluetoothRequestDialog = shouldShowBluetoothRequestDialog,
+                shouldShowBluetoothRequestDialog = canShowBluetoothRequestDialog,
                 hideBluetoothRequestDialog = hideBluetoothRequestDialog,
                 navigateToBluetoothDeviceManager = navigateToBluetoothDeviceManager
             )
-            SensorDeviceType.Unknown, null -> showMessage(unknownDeviceAlertText)
+            else -> {}
         }
     }
 
@@ -218,7 +225,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         )
 
         LaunchedEffect(isDeviceAccessGranted) {
-            if (viewModel.hasConnectedDevices(usbManager)) {
+            if (viewModel.hasConnectedUsbDevices(usbManager)) {
                 if (!isDeviceAccessGranted) {
                     usbManager.requestUsbDeviceAccess(context)
                 } else {

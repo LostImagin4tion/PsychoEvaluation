@@ -10,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavOptionsBuilder
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
@@ -55,24 +55,27 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         val context = LocalContext.current
         val viewModel: RegistrationViewModel = viewModel()
 
-        val registrationState = viewModel.registrationState.collectAsState()
+        val registrationState by viewModel.registrationState.collectAsStateWithLifecycle()
 
-        when (registrationState.value) {
-            is SuccessResult -> navigateToRoute(Routes.userProfile) {
-                popUpTo(Routes.registration) { inclusive = true }
+        registrationState.run {
+            when (this) {
+                is SuccessResult -> navigateToRoute(Routes.userProfile) {
+                    popUpTo(Routes.registration) { inclusive = true }
+                }
+                is ErrorResult -> this.message?.let {
+                    showMessage(context.getString(it))
+                    viewModel.resetState()
+                }
+                else -> {}
             }
-            is ErrorResult -> (registrationState.value as? ErrorResult<Unit>)?.message?.let {
-                showMessage(context.getString(it))
-            }
-            else -> {}
         }
 
-        StateHolder(state = registrationState.value)
+        StateHolder(state = registrationState)
 
-        if (registrationState.value !is FullScreenLoadingResult) {
+        if (registrationState !is FullScreenLoadingResult) {
             RegistrationScreenContent(
                 showMessage = showMessage,
-                isRegistrationInProgress = registrationState.value is LoadingResult,
+                isRegistrationInProgress = registrationState is LoadingResult,
                 tryRegistration = { email, password -> viewModel.registration(email, password) },
                 navigateToAuthorization = { navigateToRoute(Routes.authorization) {} },
             )
