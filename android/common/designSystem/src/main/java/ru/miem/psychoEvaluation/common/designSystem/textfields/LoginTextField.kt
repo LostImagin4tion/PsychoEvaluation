@@ -22,7 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryGray
 
 /**
- * [LoginTextField] - Text Field for [IAuthorizationScreen]
+ * [LoginTextField] - Text Field for AuthorizationScreen
  *
  * @author Egor Danilov
  */

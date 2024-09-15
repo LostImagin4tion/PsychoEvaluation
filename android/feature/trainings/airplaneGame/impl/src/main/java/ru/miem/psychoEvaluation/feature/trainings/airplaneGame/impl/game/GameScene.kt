@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 class GameScene(
@@ -25,6 +26,7 @@ class GameScene(
     private val screenHeight: Double,
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
+    private val maxGameTime: Duration,
     private val increaseGameDifficulty: () -> Unit,
     private val decreaseGameDifficulty: () -> Unit,
 ) : Scene() {
@@ -41,31 +43,35 @@ class GameScene(
     }
 
     override suspend fun SContainer.sceneMain() {
-        var gameTime = 0.seconds
+        var totalGameTime = 0.seconds
+        var currentGameTime = 0.seconds
 
         gameWorld = gameWorld(
             screenWidth,
             screenHeight,
             onGameOver = {
                 when {
-                    gameTime < 15.seconds -> decreaseGameDifficulty()
-                    gameTime > 60.seconds -> increaseGameDifficulty
+                    totalGameTime < 15.seconds -> decreaseGameDifficulty()
+                    totalGameTime > 60.seconds -> increaseGameDifficulty
                 }
-                gameTime = 0.seconds
+                totalGameTime = 0.seconds
             }
         )
 
         val input = views.input
 
         addUpdater { delta ->
-            gameTime += delta.seconds.seconds
+            totalGameTime += delta.seconds.seconds
+            currentGameTime += delta.seconds.seconds
 
             if (input.mouseButtons != 0) {
                 if (gameWorld?.isReady == true) {
+                    currentGameTime = 0.seconds
                     gameWorld?.start()
                     setupFileInputStream(context)
                 }
                 if (gameWorld?.isGameOver == true) {
+                    currentGameTime = 0.seconds
                     previousData = null
                     gameWorld?.restart()
                     setupFileInputStream(context)
@@ -82,12 +88,19 @@ class GameScene(
                     (normalizedData - it) / delta.seconds
                 }
 
-                Timber.tag("HELLO").d("$currentData speed $speed previous $previousData current $normalizedData")
+//                Timber.tag("HELLO").d("$currentData speed $speed previous $previousData current $normalizedData")
 
-                if (speed != null && speed != 0.0) {
-                    previousData = normalizedData
-                    gameWorld?.onNewData(speed)
-                    fileOutputWriter?.write("${currentData.rawData}\n")
+//                if (speed != null && speed != 0.0) {
+//                    previousData = normalizedData
+//                    gameWorld?.onNewData(speed, currentGameTime)
+//                    fileOutputWriter?.write("${currentData.rawData}\n")
+//                }
+                previousData = normalizedData
+                gameWorld?.onNewData(0.0, currentGameTime)
+                fileOutputWriter?.write("${currentData.rawData}\n")
+
+                if (currentGameTime >= maxGameTime) {
+                    gameWorld?.finishGame()
                 }
             } else if (gameWorld?.isGameOver == true) {
                 closeStream()

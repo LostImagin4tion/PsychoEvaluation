@@ -26,4 +26,5 @@ interface BluetoothDeviceInteractor {
 
     fun increaseGameDifficulty()
     fun decreaseGameDifficulty()
+    fun changeDataBorders(upperLimit: Double?, lowerLimit: Double?)
 }

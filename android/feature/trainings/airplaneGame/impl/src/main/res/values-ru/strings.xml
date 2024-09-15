@@ -2,4 +2,12 @@
 <resources>
     <string name="dialog_header_text">Подключение устройства</string>
     <string name="dialog_description_text">Похоже, Вы используете BLE-устройство. Его нужно подключить вручную</string>
+
+    <string name="settings_header_text">Настройки</string>
+    <string name="gsr_upper_limit_parameter">Параметр верхней границы КГР (0…1)</string>
+    <string name="gsr_lower_limit_parameter">Параметр нижней границы КГР (0…1)</string>
+    <string name="time_in_game_parameter">Время в игре (минуты)</string>
+
+    <string name="settings_disclaimer">Если вы не знаете, какие параметры поставить, оставьте их по умолчанию</string>
+    <string name="continue_button_text">Далее</string>
 </resources>

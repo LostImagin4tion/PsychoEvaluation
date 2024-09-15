@@ -37,9 +37,12 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.screens.AirplaneGameSettingsScreen
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration
 
 class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
@@ -64,9 +67,9 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             }
         )
 
-        val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
+        val gameScreenState by viewModel.gameScreenState.collectAsStateWithLifecycle()
 
-        when (sensorDeviceType) {
+        when (gameScreenState.sensorDeviceType) {
             SensorDeviceType.Usb -> {
                 viewModel.connectToUsbDevice(usbManager = usbManager)
             }
@@ -95,21 +98,29 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             navigateToRoute(Routes.trainingsList)
         }
 
-        ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-
         DisposableEffect(viewModel) {
             onDispose {
                 viewModel.disconnect()
             }
         }
 
-        AirplaneGameScreenContent(
-            showMessage = showMessage,
-            dataFlow = viewModel.stressData,
-            modelProducer = viewModel.chartModelProducer,
-            increaseGameDifficulty = viewModel::increaseGameDifficulty,
-            decreaseGameDifficulty = viewModel::decreaseGameDifficulty
-        )
+        Timber.tag(TAG).d("HELLO current screen ${gameScreenState.currentScreen}")
+        when (gameScreenState.currentScreen) {
+            CurrentScreen.AirplaneGameSettings -> AirplaneGameSettingsScreen(
+                onBackClick = { navigateToRoute(Routes.trainingsList) },
+                onContinueButtonClick = { upperBound, lowerBound, gameTime ->
+                    viewModel.changeGameParameters(upperBound, lowerBound, gameTime)
+                }
+            )
+            CurrentScreen.AirplaneGame -> AirplaneGameScreenContent(
+                showMessage = showMessage,
+                dataFlow = viewModel.stressData,
+                modelProducer = viewModel.chartModelProducer,
+                maxGameTime = gameScreenState.maxGameTime,
+                increaseGameDifficulty = viewModel::increaseGameDifficulty,
+                decreaseGameDifficulty = viewModel::decreaseGameDifficulty
+            )
+        }
     }
 
     @Composable
@@ -117,11 +128,14 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         showMessage: (String) -> Unit,
         dataFlow: StateFlow<SensorData>,
         modelProducer: CartesianChartModelProducer,
+        maxGameTime: Duration,
         increaseGameDifficulty: () -> Unit,
         decreaseGameDifficulty: () -> Unit,
     ) = Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
+
         AndroidView(
             factory = { context ->
                 val displayMetrics = context.resources.displayMetrics
@@ -136,6 +150,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                             screenHeight = height,
                             context = context,
                             dataFlow = dataFlow,
+                            maxGameTime = maxGameTime,
                             increaseGameDifficulty = increaseGameDifficulty,
                             decreaseGameDifficulty = decreaseGameDifficulty,
                         )

@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
+import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
@@ -59,18 +60,18 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
                 viewModel.connectToUsbDevice(usbManager = usbManager)
             }
             SensorDeviceType.Bluetooth -> {
-//                val activity = context.findActivity()
-//                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
+                val activity = context.findActivity()
+                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
 
-//                require(activity != null && deviceHardwareAddress != null) {
-//                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
-//                }
+                require(activity != null && deviceHardwareAddress != null) {
+                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+                }
 
-//                viewModel.retrieveDataFromBluetoothDevice(
-//                    activity = activity,
-//                    bluetoothAdapter = bluetoothManager.adapter,
-//                    bleDeviceHardwareAddress = deviceHardwareAddress,
-//                )
+                viewModel.retrieveDataFromBluetoothDevice(
+                    activity = activity,
+                    bluetoothAdapter = bluetoothManager.adapter,
+                    bleDeviceHardwareAddress = deviceHardwareAddress,
+                )
             }
             SensorDeviceType.Unknown -> {}
         }

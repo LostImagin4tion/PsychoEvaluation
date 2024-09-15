@@ -23,7 +23,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryGray
 /**
  * [BaseTextField] is base implementation of text field
  *
- * @author Vorozhtsov Mikhail
+ * @author Egor Danilov
  */
 @Composable
 fun BaseTextField(

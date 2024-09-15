@@ -142,6 +142,19 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
         dataBorders = dataBorders?.let { airplaneGameDataAnalysis.decreaseDifficulty(it) }
     }
 
+    override fun changeDataBorders(upperLimit: Double?, lowerLimit: Double?) {
+        dataBorders = dataBorders?.run {
+            copy(
+                upperLimit = upperLimit
+                    ?.let { 1 + it }
+                    ?: this.upperLimit,
+                lowerLimit = lowerLimit
+                    ?.let { 1 - it }
+                    ?: this.lowerLimit
+            )
+        }
+    }
+
     @OptIn(FlowPreview::class)
     private fun createScanCallbackFlow(): Flow<BluetoothDevice> = callbackFlow {
         devicesScanCallback.apply {
