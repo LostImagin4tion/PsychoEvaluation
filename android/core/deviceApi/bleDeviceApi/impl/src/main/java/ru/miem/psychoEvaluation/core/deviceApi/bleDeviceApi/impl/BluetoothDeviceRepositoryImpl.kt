@@ -124,7 +124,7 @@ class BluetoothDeviceRepositoryImpl @Inject constructor() :
                 trySendBlocking(stressData).onFailure { throwable ->
                     Timber.tag(TAG).e(
                         message = "Failed to send new bytes from bluetooth device %s with error %s, %s",
-                        bytes.joinToString(","),
+                        bytes.joinToString(" "),
                         throwable.toString(),
                         throwable?.message
                     )

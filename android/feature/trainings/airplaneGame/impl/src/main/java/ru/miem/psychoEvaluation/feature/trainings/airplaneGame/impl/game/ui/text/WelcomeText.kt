@@ -21,13 +21,13 @@ class WelcomeText(
 
     init {
         text(
-            text = "Touch me",
+            text = "Click start button",
             textSize = textSize,
             font = AssetLoader.shadow,
         ) { xy(x - this.width / 2, y - textSize / 2) }
 
         text(
-            text = "Touch me",
+            text = "Click start button",
             textSize = textSize,
             font = AssetLoader.text,
         ) { xy(x - this.width / 2, y - textSize / 2) }

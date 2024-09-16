@@ -27,6 +27,8 @@ class GameScene(
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
     private val maxGameTime: Duration,
+    private val onSettingsButtonClick: () -> Unit,
+    private val onExitButtonClick: () -> Unit,
     private val increaseGameDifficulty: () -> Unit,
     private val decreaseGameDifficulty: () -> Unit,
 ) : Scene() {
@@ -34,7 +36,6 @@ class GameScene(
     private var gameWorld: GameWorld? = null
     private var previousData: Double? = null
 
-    private val calendar = Calendar.getInstance()
     private var fileOutputWriter: BufferedWriter? = null
 
     override suspend fun SContainer.sceneInit() {
@@ -49,34 +50,33 @@ class GameScene(
         gameWorld = gameWorld(
             screenWidth,
             screenHeight,
+            onStartButtonClick = {
+                currentGameTime = 0.seconds
+                setupFileInputStream(context)
+                previousData = null
+            },
+            onSettingsButtonClick = {
+                closeStream()
+                onSettingsButtonClick()
+            },
+            onExitButtonClick = {
+                closeStream()
+                onExitButtonClick()
+            },
             onGameOver = {
-                when {
-                    totalGameTime < 15.seconds -> decreaseGameDifficulty()
-                    totalGameTime > 60.seconds -> increaseGameDifficulty
-                }
+//                when {
+//                    totalGameTime < 15.seconds -> decreaseGameDifficulty()
+//                    totalGameTime > 60.seconds -> increaseGameDifficulty
+//                }
                 totalGameTime = 0.seconds
             }
         )
-
-        val input = views.input
 
         addUpdater { delta ->
             totalGameTime += delta.seconds.seconds
             currentGameTime += delta.seconds.seconds
 
-            if (input.mouseButtons != 0) {
-                if (gameWorld?.isReady == true) {
-                    currentGameTime = 0.seconds
-                    gameWorld?.start()
-                    setupFileInputStream(context)
-                }
-                if (gameWorld?.isGameOver == true) {
-                    currentGameTime = 0.seconds
-                    previousData = null
-                    gameWorld?.restart()
-                    setupFileInputStream(context)
-                }
-            } else if (gameWorld?.isRunning == true) {
+            if (gameWorld?.isRunning == true) {
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
 
@@ -90,16 +90,13 @@ class GameScene(
 
 //                Timber.tag("HELLO").d("$currentData speed $speed previous $previousData current $normalizedData")
 
-//                if (speed != null && speed != 0.0) {
-//                    previousData = normalizedData
-//                    gameWorld?.onNewData(speed, currentGameTime)
-//                    fileOutputWriter?.write("${currentData.rawData}\n")
-//                }
-                previousData = normalizedData
-                gameWorld?.onNewData(0.0, currentGameTime)
+                if (speed != null && speed != 0.0) {
+                    previousData = normalizedData
+                    gameWorld?.onNewData(speed, currentGameTime)
+                }
                 fileOutputWriter?.write("${currentData.rawData}\n")
 
-                if (currentGameTime >= maxGameTime) {
+                if (currentGameTime > maxGameTime) {
                     gameWorld?.finishGame()
                 }
             } else if (gameWorld?.isGameOver == true) {
@@ -113,6 +110,7 @@ class GameScene(
     override suspend fun sceneDestroy() {
         gameWorld?.onDestroy()
         gameWorld = null
+        closeStream()
         super.sceneDestroy()
     }
 
@@ -120,7 +118,7 @@ class GameScene(
         try {
             closeStream()
 
-            val datetime = calendar.time.toString("yyyy-MM-dd_HH:mm:ss")
+            val datetime = Calendar.getInstance().time.toString("yyyy-MM-dd_HH:mm:ss")
             val filename = "$datetime-psycho.txt"
 
             val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
@@ -137,6 +135,7 @@ class GameScene(
 
     private fun closeStream() {
         fileOutputWriter?.let {
+            it.flush()
             it.close()
             Timber.tag(TAG).i("Closed file output writer")
         }

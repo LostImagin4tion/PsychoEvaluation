@@ -37,6 +37,15 @@ object AssetLoader {
     lateinit var rockRight: Bitmap
         private set
 
+    lateinit var startButton: Bitmap
+        private set
+
+    lateinit var settingsButton: Bitmap
+        private set
+
+    lateinit var exitButton: Bitmap
+        private set
+
     lateinit var text: BitmapFont
         private set
 
@@ -54,6 +63,10 @@ object AssetLoader {
         mountain = resourcesVfs["mountain/mountain.png"].readBitmap()
         rockLeft = resourcesVfs["rock/rock_left.png"].readBitmap()
         rockRight = resourcesVfs["rock/rock_right.png"].readBitmap()
+
+        startButton = resourcesVfs["buttons/start_button.png"].readBitmap()
+        settingsButton = resourcesVfs["buttons/settings_button.png"].readBitmap()
+        exitButton = resourcesVfs["buttons/exit_button.png"].readBitmap()
 
         text = resourcesVfs["text/text.fnt"].readBitmapFont()
         shadow = resourcesVfs["text/shadow.fnt"].readBitmapFont()

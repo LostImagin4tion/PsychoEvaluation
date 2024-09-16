@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.take
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.Borders
 import ru.miem.psychoEvaluation.core.dataAnalysis.airplaneGame.api.DataAnalysis
-import timber.log.Timber
 import javax.inject.Inject
 
 @Suppress("MagicNumber")
@@ -22,9 +21,9 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
         val slope = calculateSlope(y)
         val mean = y.sum().toDouble() / y.size
 
-        Timber.tag(TAG).d("HELLO ys $y slope $slope mean $mean")
+//        Timber.tag(TAG).d("HELLO ys $y slope $slope mean $mean")
         val borders = findBorders(slope, mean)
-        Timber.tag(TAG).d("HELLO BORDERS $borders")
+//        Timber.tag(TAG).d("HELLO BORDERS $borders")
         return borders
     }
 

@@ -104,7 +104,6 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             }
         }
 
-        Timber.tag(TAG).d("HELLO current screen ${gameScreenState.currentScreen}")
         when (gameScreenState.currentScreen) {
             CurrentScreen.AirplaneGameSettings -> AirplaneGameSettingsScreen(
                 onBackClick = { navigateToRoute(Routes.trainingsList) },
@@ -117,6 +116,12 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                 dataFlow = viewModel.stressData,
                 modelProducer = viewModel.chartModelProducer,
                 maxGameTime = gameScreenState.maxGameTime,
+                onSettingsButtonClick = {
+                    viewModel.changeScreen(CurrentScreen.AirplaneGameSettings)
+                },
+                onExitButtonClick = {
+                    navigateToRoute(Routes.trainingsList)
+                },
                 increaseGameDifficulty = viewModel::increaseGameDifficulty,
                 decreaseGameDifficulty = viewModel::decreaseGameDifficulty
             )
@@ -129,6 +134,8 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
         dataFlow: StateFlow<SensorData>,
         modelProducer: CartesianChartModelProducer,
         maxGameTime: Duration,
+        onSettingsButtonClick: () -> Unit,
+        onExitButtonClick: () -> Unit,
         increaseGameDifficulty: () -> Unit,
         decreaseGameDifficulty: () -> Unit,
     ) = Box(
@@ -151,6 +158,8 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                             context = context,
                             dataFlow = dataFlow,
                             maxGameTime = maxGameTime,
+                            onSettingsButtonClick = onSettingsButtonClick,
+                            onExitButtonClick = onExitButtonClick,
                             increaseGameDifficulty = increaseGameDifficulty,
                             decreaseGameDifficulty = decreaseGameDifficulty,
                         )

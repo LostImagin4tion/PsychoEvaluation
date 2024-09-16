@@ -141,7 +141,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             }
 
             FilledTextButton(
-                isEnabled = true /* isAnyDeviceConnected */,
+                isEnabled = isAnyDeviceConnected,
                 textRes = R.string.continue_button_text,
                 modifier = Modifier
                     .fillMaxWidth()
