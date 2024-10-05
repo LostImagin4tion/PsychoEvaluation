@@ -33,7 +33,7 @@ fun BoxScope.WelcomeScreen(
             .padding(bottom = 40.dp)
     ) {
         Image(
-            painter = painterResource(R.drawable.meditating_girl),
+            painter = painterResource(R.drawable.girl_meditating),
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxWidth()
