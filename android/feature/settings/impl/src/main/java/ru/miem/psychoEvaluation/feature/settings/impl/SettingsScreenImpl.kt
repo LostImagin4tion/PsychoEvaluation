@@ -106,6 +106,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
                     flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
                     val fileUris = docs.listFiles()
+                        ?.filter { it.readLines().joinToString().isNotBlank() }
                         ?.map {
                             FileProvider.getUriForFile(
                                 context,

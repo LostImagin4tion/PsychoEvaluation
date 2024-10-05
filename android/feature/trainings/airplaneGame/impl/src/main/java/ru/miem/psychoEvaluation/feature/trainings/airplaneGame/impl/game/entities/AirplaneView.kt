@@ -14,19 +14,23 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resourc
 
 fun Container.airplaneView(
     x: Double,
-    y: Double
-) = AirplaneView(x, y).addTo(this)
+    y: Double,
+    lowestY: Double,
+    highestY: Double,
+) = AirplaneView(x, y, lowestY, highestY).addTo(this)
 
 class AirplaneView(
     x: Double,
-    y: Double
+    y: Double,
+    private val minY: Double,
+    private val maxY: Double,
 ) : Container() {
 
     private var isAlive = true
     private var airplaneRotationDegrees = 0.0
 
     // todo: is there a vector2d class just to name it more suitable?
-    private val position = Point(x, y)
+    private var position = Point(x, y)
 
     private val velocity = Point()
     private val acceleration = Point()
@@ -56,7 +60,10 @@ class AirplaneView(
             velocity.y = 0.0
         }
 
-        position += velocity * delta.seconds
+        position = (position + velocity * delta.seconds)
+            .run {
+                copy(y = y.coerceIn(minY + AIRPLANE_HEIGHT_PX / 2, maxY - AIRPLANE_HEIGHT_PX / 2))
+            }
 
         if (acceleration.y > 0) {
             airplaneRotationDegrees -= AIRPLANE_ROTATION_DEGREES_DELTA
@@ -73,14 +80,14 @@ class AirplaneView(
 
     private fun updateView() {
         image.rotation(Angle.fromDegrees(airplaneRotationDegrees))
-        this.xy(position.x, position.y)
+        xy(position.x, position.y)
     }
 
     fun onNewData(speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
             velocity.y += speed * AIRPLANE_VELOCITY_MULTIPLIER
-//            Timber.tag("HELLO").i("velocity ${velocity.y} acceleration ${acceleration.y}")
+//            Timber.tag("HELLO").i("velocity ${velocity.y} position ${position.y}")
         }
     }
 

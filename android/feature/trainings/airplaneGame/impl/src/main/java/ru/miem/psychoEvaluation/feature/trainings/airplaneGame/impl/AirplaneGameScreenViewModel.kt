@@ -23,7 +23,6 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.Airpla
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
-import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -51,7 +50,6 @@ class AirplaneGameScreenViewModel(
                     val newState = _gameScreenState.value.copy(
                         sensorDeviceType = it
                     )
-                    Timber.tag("HELLO").d("HELLO EMIT settings changes new state $newState")
                     _gameScreenState.emit(newState)
                 }
             }
@@ -126,7 +124,17 @@ class AirplaneGameScreenViewModel(
                         currentScreen = CurrentScreen.AirplaneGame,
                     )
                 }
-                Timber.tag("HELLO").d("HELLO EMIT game parameters new state $newState")
+                _gameScreenState.emit(newState)
+            }
+        }
+    }
+
+    fun changeScreen(newScreen: CurrentScreen) {
+        viewModelScope.launch {
+            gameScreenStateMutex.withLock {
+                val newState = _gameScreenState.value.run {
+                    copy(currentScreen = newScreen)
+                }
                 _gameScreenState.emit(newState)
             }
         }

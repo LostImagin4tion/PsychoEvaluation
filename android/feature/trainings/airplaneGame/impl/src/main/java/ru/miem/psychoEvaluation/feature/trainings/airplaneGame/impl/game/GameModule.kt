@@ -17,6 +17,8 @@ class GameModule(
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
     private val maxGameTime: Duration,
+    private val onSettingsButtonClick: () -> Unit,
+    private val onExitButtonClick: () -> Unit,
     private val increaseGameDifficulty: () -> Unit,
     private val decreaseGameDifficulty: () -> Unit,
 ) : Module() {
@@ -35,6 +37,8 @@ class GameModule(
                 context = context,
                 dataFlow = dataFlow,
                 maxGameTime = maxGameTime,
+                onSettingsButtonClick = onSettingsButtonClick,
+                onExitButtonClick = onExitButtonClick,
                 increaseGameDifficulty = increaseGameDifficulty,
                 decreaseGameDifficulty = decreaseGameDifficulty,
             )

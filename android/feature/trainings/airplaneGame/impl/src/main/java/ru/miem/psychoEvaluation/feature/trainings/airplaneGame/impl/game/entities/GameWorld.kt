@@ -3,6 +3,8 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entiti
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
+import com.soywiz.korge.view.xy
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameOverText
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameTimeText
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.welcomeText
@@ -11,10 +13,16 @@ import kotlin.time.Duration
 fun Container.gameWorld(
     screenWidth: Double,
     screenHeight: Double,
+    onStartButtonClick: () -> Unit,
+    onSettingsButtonClick: () -> Unit,
+    onExitButtonClick: () -> Unit,
     onGameOver: () -> Unit,
 ) = GameWorld(
     screenWidth,
     screenHeight,
+    onStartButtonClick,
+    onSettingsButtonClick,
+    onExitButtonClick,
     onGameOver,
 ).addTo(this)
 
@@ -27,6 +35,9 @@ private enum class GameState {
 class GameWorld(
     override var width: Double,
     override var height: Double,
+    private val onStartButtonClick: () -> Unit,
+    private val onSettingsButtonClick: () -> Unit,
+    private val onExitButtonClick: () -> Unit,
     private val onGameOver: () -> Unit,
 ) : Container() {
 
@@ -38,12 +49,53 @@ class GameWorld(
     private var currentState = GameState.Ready
 
     private val backgroundView = backgroundView(width, height)
-    private val airplane = airplaneView(x = 700.0, y = midPointY)
+    private val airplane = airplaneView(
+        x = 700.0,
+        y = midPointY,
+        lowestY = height * 0.1,
+        highestY = height * 0.9,
+    )
     private val scroller = scrollHandler(width, height)
 
     private val welcomeText = welcomeText(x = midPointX, y = 300.0)
-    private val gameTimeText = gameTimeText(x = width - 200.0, y = 100.0)
+    private val gameTimeText = gameTimeText(x = width - 200.0, y = 80.0)
     private val gameOverText = gameOverText(x = midPointX, y = 300.0)
+
+    private val upperGsrBorder = gsrBorderView(width = width, height = 5.0, y = height * 0.1)
+    private val lowerGsrBorder = gsrBorderView(width = width, height = 5.0, y = height * 0.9)
+
+    private val startButton = imageButton(
+        AssetLoader.startButton,
+        width = 336.0,
+        height = 120.0,
+        onClick = {
+            onStartButtonClick()
+            when {
+                isReady -> start()
+                isGameOver -> restart()
+            }
+        }
+    ).apply {
+        xy(midPointX - 250, midPointY + 300)
+    }
+
+    private val settingsButton = imageButton(
+        AssetLoader.settingsButton,
+        width = 336.0,
+        height = 120.0,
+        onClick = { onSettingsButtonClick() }
+    ).apply {
+        xy(midPointX + 250, midPointY + 300)
+    }
+
+//    private val exitButton = imageButton(
+//        AssetLoader.exitButton,
+//        width = 336.0,
+//        height = 120.0,
+//        onClick = { onExitButtonClick() }
+//    ).apply {
+//        xy(this@GameWorld.width - 200, 100.0)
+//    }
 
     val isReady get() = currentState == GameState.Ready
     val isRunning get() = currentState == GameState.Running
@@ -55,10 +107,10 @@ class GameWorld(
     }
 
     fun restart() {
-        currentState = GameState.Ready
         score = 0
         scroller.onRestart()
         airplane.onRestart(midPointY)
+        start()
     }
 
     fun finishGame() {
@@ -74,17 +126,23 @@ class GameWorld(
                 welcomeText.visible = true
                 gameTimeText.visible = false
                 gameOverText.visible = false
+                startButton.visible = true
+                settingsButton.visible = true
             }
             GameState.Running -> {
                 welcomeText.visible = false
                 gameOverText.visible = false
                 gameTimeText.visible = true
+                startButton.visible = false
+                settingsButton.visible = false
                 updateRunning(delta)
             }
             GameState.GameOver -> {
                 welcomeText.visible = false
                 gameOverText.visible = true
                 gameTimeText.visible = true
+                startButton.visible = true
+                settingsButton.visible = true
                 updateRunning(delta)
             }
         }
