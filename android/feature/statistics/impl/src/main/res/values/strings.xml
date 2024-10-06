@@ -6,10 +6,7 @@
     <string name="snackbar_dates_picker_dismiss">Dismiss</string>
     <string name="snackbar_dates_picker_save">OK</string>
 
-    <string name="authorization_data_section_title">Authorization data</string>
-    <string name="title_login">Login</string>
-    <string name="title_password">Password</string>
-
-    <string name="open_settings_button_text">Settings</string>
-    <string name="logout_button_text">Log out from account</string>
+    <string name="trainings_title">Trainings: </string>
+    <string name="concentration_title">Concentration: </string>
+    <string name="alertness_title">Alertness: </string>
 </resources>

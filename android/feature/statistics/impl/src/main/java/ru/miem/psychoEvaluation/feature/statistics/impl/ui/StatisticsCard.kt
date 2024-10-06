@@ -3,8 +3,6 @@ package ru.miem.psychoEvaluation.feature.statistics.impl.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -40,18 +37,18 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.R
 fun StatisticsCard(
     statisticsData: StatisticsCardData
 ) {
-    val shape = RoundedCornerShape(10.dp)
+    val shape = remember { RoundedCornerShape(10.dp) }
 
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = statisticsData.modifier
+        modifier = Modifier
             .clip(shape)
-            .clickable(
-                onClick = statisticsData.onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
-            )
+//            .clickable(
+//                onClick = statisticsData.onClick,
+//                interactionSource = remember { MutableInteractionSource() },
+//                indication = rememberRipple()
+//            )
             .shadow(
                 elevation = 5.dp,
                 shape = shape,
@@ -69,7 +66,13 @@ fun StatisticsCard(
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            BodyText("Тренировки: " + statisticsData.allValueRes)
+            Row() {
+                BodyText(R.string.trainings_title)
+
+                Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+
+                BodyText(statisticsData.allValueRes.toString())
+            }
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
@@ -88,7 +91,7 @@ fun StatisticsCard(
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
 
                 Column {
-                    LabelText(text = "Концентрация:")
+                    LabelText(textRes = R.string.concentration_title)
                     BodyText(statisticsData.concentrationTimeRes)
                 }
             }
@@ -111,12 +114,12 @@ fun StatisticsCard(
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
 
                 Column {
-                    LabelText(text = "Бдительность:")
+                    LabelText(textRes = R.string.alertness_title)
                     BodyText(statisticsData.clockTimeRes)
                 }
             }
         }
     }
 
-    Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 1))
+    Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 }

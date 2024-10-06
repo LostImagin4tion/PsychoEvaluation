@@ -41,7 +41,6 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
                     }
                     ?.run {
                         dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                        apiAccessToken = accessToken
                         dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                         AuthorizationState(AuthorizationResponseType.Authorized)
                     }
@@ -64,7 +63,7 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
             }
             ?.run {
                 dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                apiAccessToken = accessToken
+                dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                 AuthorizationResponseType.Authorized
             }
             ?: AuthorizationResponseType.RefreshTokenExpired
