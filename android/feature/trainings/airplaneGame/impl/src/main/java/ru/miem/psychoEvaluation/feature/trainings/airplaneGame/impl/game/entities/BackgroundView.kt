@@ -3,7 +3,7 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entiti
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
 import com.soywiz.korge.view.image
-import com.soywiz.korge.view.scale
+import com.soywiz.korge.view.size
 import com.soywiz.korge.view.solidRect
 import com.soywiz.korge.view.xy
 import com.soywiz.korim.color.RGBA
@@ -31,9 +31,8 @@ class BackgroundView(
 
         image(AssetLoader.background) {
             smoothing = false
-            scale(width / this.width, height / this.height)
+            size(width, height)
             xy(0.0, 0.0)
-//            scaleWhileMaintainingAspect(ScalingOption.ByWidthAndHeight(width, height))
         }
     }
 

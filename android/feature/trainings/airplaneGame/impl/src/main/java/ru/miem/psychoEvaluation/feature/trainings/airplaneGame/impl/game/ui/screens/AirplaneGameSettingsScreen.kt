@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.screens
 
+import android.content.pm.ActivityInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
+import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.textfields.AirplaneGameSettingsTextField
@@ -67,10 +69,12 @@ fun AirplaneGameSettingsScreen(
     var isLowerBoundInputError by remember { mutableStateOf(false) }
     var isTimeInGameInputError by remember { mutableStateOf(false) }
 
+    ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 30.dp)
+            .padding(top = Dimensions.commonPadding)
             .padding(horizontal = Dimensions.primaryHorizontalPadding)
     ) {
         Row(
@@ -97,15 +101,15 @@ fun AirplaneGameSettingsScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
         Image(
             painter = painterResource(R.drawable.airplane_with_clouds),
             contentDescription = null,
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.FillWidth
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,7 +133,7 @@ fun AirplaneGameSettingsScreen(
 
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
 
-                Column() {
+                Column {
                     LabelText(
                         textRes = R.string.gsr_upper_limit_parameter,
                         textColor = Color.Black,

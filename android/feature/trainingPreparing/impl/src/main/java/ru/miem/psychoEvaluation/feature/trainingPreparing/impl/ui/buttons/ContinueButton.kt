@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
@@ -21,12 +22,12 @@ fun ContinueButton(
     Icon(
         painter = painterResource(R.drawable.arrow_right),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.primary,
+        tint = Color.White,
         modifier = Modifier
             .clip(CircleShape)
             .clickable { onClick() }
             .background(
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.primary,
                 shape = CircleShape,
             )
             .padding(16.dp)

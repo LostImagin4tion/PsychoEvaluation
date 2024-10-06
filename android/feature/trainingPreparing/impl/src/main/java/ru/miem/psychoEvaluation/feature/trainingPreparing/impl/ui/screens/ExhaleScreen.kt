@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,7 +37,7 @@ fun BoxScope.ExhaleScreen(
         .screenPaddings()
         .align(Alignment.TopCenter)
 ) {
-    Spacer(modifier = Modifier.height(120.dp))
+    Spacer(modifier = Modifier.height(100.dp))
 
     TitleText(
         text = roundNumber,
@@ -44,7 +45,7 @@ fun BoxScope.ExhaleScreen(
         isLarge = false
     )
 
-    Spacer(modifier = Modifier.height(160.dp))
+    Spacer(modifier = Modifier.height(100.dp))
 
     Image(
         painter = painterResource(R.drawable.ic_lips_opened),
@@ -52,8 +53,8 @@ fun BoxScope.ExhaleScreen(
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .background(
-                color = MaterialTheme.colorScheme.onPrimary,
-                shape = CircleShape
+                color = Color.White,
+                shape = CircleShape,
             )
             .padding(30.dp)
             .size(120.dp)

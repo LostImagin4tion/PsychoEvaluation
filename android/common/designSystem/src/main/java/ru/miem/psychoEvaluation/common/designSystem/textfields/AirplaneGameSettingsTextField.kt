@@ -31,6 +31,7 @@ fun AirplaneGameSettingsTextField(
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = imeAction),
         shape = MaterialTheme.shapes.small,
         colors = OutlinedTextFieldDefaults.colors(
+            unfocusedTextColor = Color.White,
             focusedTextColor = Color.White,
             cursorColor = Color.White,
             errorTextColor = Color.White,

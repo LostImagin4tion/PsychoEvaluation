@@ -14,6 +14,10 @@ val Int.dpd: Double
     @Px
     get() = this * displayMetrics.density.toDouble()
 
+val Double.dpd: Double
+    @Px
+    get() = this * displayMetrics.density
+
 val Int.dpf: Float
     @Px
     get() = this * displayMetrics.density

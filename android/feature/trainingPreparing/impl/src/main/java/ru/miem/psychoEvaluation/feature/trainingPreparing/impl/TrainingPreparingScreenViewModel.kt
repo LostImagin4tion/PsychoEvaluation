@@ -105,9 +105,6 @@ class TrainingPreparingScreenViewModel(
                         }
                     }
                 }
-
-                Timber.tag(TAG).d("HELLO current round time $currentRoundTime current screen ${state.currentScreen} new screen $newScreen")
-
                 numberOfTicks to newScreen
             }
             .onEach { (numberOfTicks, newScreen) ->

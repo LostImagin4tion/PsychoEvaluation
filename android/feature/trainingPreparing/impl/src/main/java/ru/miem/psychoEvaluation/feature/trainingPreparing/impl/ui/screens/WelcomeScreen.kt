@@ -39,7 +39,7 @@ fun BoxScope.WelcomeScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(120.dp))
 
         TitleText(
             textRes = R.string.training_preparing_title_text,

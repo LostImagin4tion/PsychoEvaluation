@@ -4,6 +4,7 @@ import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
 import com.soywiz.korge.view.xy
+import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameOverText
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameTimeText
@@ -50,24 +51,24 @@ class GameWorld(
 
     private val backgroundView = backgroundView(width, height)
     private val airplane = airplaneView(
-        x = 700.0,
+        x = 150.dpd,
         y = midPointY,
-        lowestY = height * 0.1,
-        highestY = height * 0.9,
+        lowestY = 0.0,
+        highestY = height,
     )
     private val scroller = scrollHandler(width, height)
 
-    private val welcomeText = welcomeText(x = midPointX, y = 300.0)
-    private val gameTimeText = gameTimeText(x = width - 200.0, y = 80.0)
-    private val gameOverText = gameOverText(x = midPointX, y = 300.0)
+    private val welcomeText = welcomeText(x = midPointX, y = 80.dpd)
+    private val gameTimeText = gameTimeText(x = width - 50.dpd, y = 16.dpd)
+    private val gameOverText = gameOverText(x = midPointX, y = 80.dpd)
 
-    private val upperGsrBorder = gsrBorderView(width = width, height = 5.0, y = height * 0.1)
-    private val lowerGsrBorder = gsrBorderView(width = width, height = 5.0, y = height * 0.9)
+    private val upperGsrBorder = gsrBorderView(width = width, height = 1.dpd, y = height * 0.1)
+    private val lowerGsrBorder = gsrBorderView(width = width, height = 1.dpd, y = height * 0.9)
 
     private val startButton = imageButton(
         AssetLoader.startButton,
-        width = 336.0,
-        height = 120.0,
+        width = 96.dpd,
+        height = 34.dpd,
         onClick = {
             onStartButtonClick()
             when {
@@ -76,16 +77,16 @@ class GameWorld(
             }
         }
     ).apply {
-        xy(midPointX - 250, midPointY + 300)
+        xy(midPointX - 75.dpd, midPointY + 85.dpd)
     }
 
     private val settingsButton = imageButton(
         AssetLoader.settingsButton,
-        width = 336.0,
-        height = 120.0,
+        width = 96.dpd,
+        height = 34.dpd,
         onClick = { onSettingsButtonClick() }
     ).apply {
-        xy(midPointX + 250, midPointY + 300)
+        xy(midPointX + 75.dpd, midPointY + 85.dpd)
     }
 
 //    private val exitButton = imageButton(
@@ -163,10 +164,10 @@ class GameWorld(
         airplane.update(delta)
         scroller.update(delta)
 
-        if (currentState == GameState.Running &&
-            (airplane.highestY <= 0 || airplane.lowestY > height)
-        ) {
-            finishGame()
-        }
+//        if (currentState == GameState.Running &&
+//            (airplane.highestY <= 0 || airplane.lowestY > height)
+//        ) {
+//            finishGame()
+//        }
     }
 }

@@ -3,6 +3,7 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entiti
 import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
+import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
 
 fun Container.scrollHandler(
     screenWidth: Double,
@@ -14,68 +15,68 @@ class ScrollHandler(
     private val screenHeight: Double,
 ) : Container() {
 
-    private val mountain1 = mountainView(100.0, screenHeight, SCROLL_SPEED)
-    private val mountain2 = mountainView(mountain1.rightmostX + MOUNTAIN_GAP, screenHeight, SCROLL_SPEED)
+    private val mountain1 = mountainView((28.5).dpd, screenHeight, scrollSpeed)
+    private val mountain2 = mountainView(mountain1.rightmostX + mountainGap, screenHeight, scrollSpeed)
 
-    private val clouds1 = cloudsView(210.0, 100.0, SCROLL_SPEED)
-    private val clouds2 = cloudsView(clouds1.rightmostX + CLOUDS_GAP, 100.0, SCROLL_SPEED)
-    private val clouds3 = cloudsView(clouds2.rightmostX + CLOUDS_GAP, 100.0, SCROLL_SPEED)
+    private val clouds1 = cloudsView(60.dpd, 28.dpd, scrollSpeed)
+    private val clouds2 = cloudsView(clouds1.rightmostX + cloudsGap, 28.dpd, scrollSpeed)
+    private val clouds3 = cloudsView(clouds2.rightmostX + cloudsGap, 28.dpd, scrollSpeed)
 
     private val forest1X
-        get() = -FOREST_GAP
-    private val forest1 = forestView(forest1X, screenHeight, SCROLL_SPEED)
+        get() = -forestGap
+    private val forest1 = forestView(forest1X, screenHeight, scrollSpeed)
 
     private val forest2X
-        get() = (screenWidth / 2).coerceAtLeast(forest1.rightmostX) + FOREST_GAP
-    private val forest2 = forestView(forest2X, screenHeight, SCROLL_SPEED)
+        get() = (screenWidth / 2).coerceAtLeast(forest1.rightmostX) + forestGap
+    private val forest2 = forestView(forest2X, screenHeight, scrollSpeed)
 
     private val forest3X
-        get() = forest2.rightmostX + FOREST_GAP
-    private val forest3 = forestView(forest3X, screenHeight, SCROLL_SPEED)
+        get() = forest2.rightmostX + forestGap
+    private val forest3 = forestView(forest3X, screenHeight, scrollSpeed)
 
     private val forest4X
-        get() = forest3.rightmostX + screenWidth / 2 + FOREST_GAP
-    private val forest4 = forestView(forest4X, screenHeight, SCROLL_SPEED)
+        get() = forest3.rightmostX + screenWidth / 2 + forestGap
+    private val forest4 = forestView(forest4X, screenHeight, scrollSpeed)
 
     private val rockLeft1X
-        get() = -ROCK_GAP
-    private val rockLeft1 = rockLeftView(rockLeft1X, screenHeight, SCROLL_SPEED)
+        get() = -rockGap
+    private val rockLeft1 = rockLeftView(rockLeft1X, screenHeight, scrollSpeed)
 
     private val rockRight1X
-        get() = (screenWidth / 2).coerceAtLeast(rockLeft1.rightmostX) + ROCK_GAP
-    private val rockRight1 = rockRightView(rockRight1X, screenHeight, SCROLL_SPEED)
+        get() = (screenWidth / 2).coerceAtLeast(rockLeft1.rightmostX) + rockGap
+    private val rockRight1 = rockRightView(rockRight1X, screenHeight, scrollSpeed)
 
     private val rockLeft2X
-        get() = rockRight1.rightmostX + ROCK_GAP
-    private val rockLeft2 = rockLeftView(rockLeft2X, screenHeight, SCROLL_SPEED)
+        get() = rockRight1.rightmostX + rockGap
+    private val rockLeft2 = rockLeftView(rockLeft2X, screenHeight, scrollSpeed)
 
     private val rockRight2X
-        get() = rockLeft2.rightmostX + screenWidth / 2 + ROCK_GAP
-    private val rockRight2 = rockRightView(rockRight2X, screenHeight, SCROLL_SPEED)
+        get() = rockLeft2.rightmostX + screenWidth / 2 + rockGap
+    private val rockRight2 = rockRightView(rockRight2X, screenHeight, scrollSpeed)
 
     private val grassLeft1X
-        get() = GRASS_GAP
-    private val grassLeft1 = grassLeftView(grassLeft1X, screenHeight, SCROLL_SPEED)
+        get() = grassGap
+    private val grassLeft1 = grassLeftView(grassLeft1X, screenHeight, scrollSpeed)
 
     private val grassMiddle1X
-        get() = grassLeft1.rightmostX + GRASS_GAP
-    private val grassMiddle1 = grassMiddleView(grassMiddle1X, screenHeight, SCROLL_SPEED)
+        get() = grassLeft1.rightmostX + grassGap
+    private val grassMiddle1 = grassMiddleView(grassMiddle1X, screenHeight, scrollSpeed)
 
     private val grassRight1X
-        get() = grassMiddle1.rightmostX + GRASS_GAP
-    private val grassRight1 = grassRightView(grassRight1X, screenHeight, SCROLL_SPEED)
+        get() = grassMiddle1.rightmostX + grassGap
+    private val grassRight1 = grassRightView(grassRight1X, screenHeight, scrollSpeed)
 
     private val grassLeft2X
-        get() = grassRight1.rightmostX + GRASS_GAP
-    private val grassLeft2 = grassLeftView(grassLeft2X, screenHeight, SCROLL_SPEED)
+        get() = grassRight1.rightmostX + grassGap
+    private val grassLeft2 = grassLeftView(grassLeft2X, screenHeight, scrollSpeed)
 
     private val grassMiddle2X
-        get() = grassLeft2.rightmostX + GRASS_GAP
-    private val grassMiddle2 = grassMiddleView(grassMiddle2X, screenHeight, SCROLL_SPEED)
+        get() = grassLeft2.rightmostX + grassGap
+    private val grassMiddle2 = grassMiddleView(grassMiddle2X, screenHeight, scrollSpeed)
 
     private val grassRight2X
-        get() = grassMiddle2.rightmostX + GRASS_GAP
-    private val grassRight2 = grassRightView(grassRight2X, screenHeight, SCROLL_SPEED)
+        get() = grassMiddle2.rightmostX + grassGap
+    private val grassRight2 = grassRightView(grassRight2X, screenHeight, scrollSpeed)
 
     fun update(delta: TimeSpan) {
         mountain1.update(delta)
@@ -105,25 +106,25 @@ class ScrollHandler(
         grassRight2.update(delta)
 
         when {
-            mountain1.isScrolledLeft -> mountain1.reset(mountain2.rightmostX + MOUNTAIN_GAP)
-            mountain2.isScrolledLeft -> mountain2.reset(mountain1.rightmostX + MOUNTAIN_GAP)
+            mountain1.isScrolledLeft -> mountain1.reset(mountain2.rightmostX + mountainGap)
+            mountain2.isScrolledLeft -> mountain2.reset(mountain1.rightmostX + mountainGap)
 
-            clouds1.isScrolledLeft -> clouds1.reset(clouds3.rightmostX + CLOUDS_GAP)
-            clouds2.isScrolledLeft -> clouds2.reset(clouds1.rightmostX + CLOUDS_GAP)
-            clouds3.isScrolledLeft -> clouds3.reset(clouds2.rightmostX + CLOUDS_GAP)
+            clouds1.isScrolledLeft -> clouds1.reset(clouds3.rightmostX + cloudsGap)
+            clouds2.isScrolledLeft -> clouds2.reset(clouds1.rightmostX + cloudsGap)
+            clouds3.isScrolledLeft -> clouds3.reset(clouds2.rightmostX + cloudsGap)
 
-            forest1.isScrolledLeft -> forest1.reset(forest4.rightmostX + FOREST_GAP)
-            forest2.isScrolledLeft -> forest2.reset(forest1.rightmostX + screenWidth / 2 + FOREST_GAP)
-            forest3.isScrolledLeft -> forest3.reset(forest2.rightmostX + FOREST_GAP)
-            forest4.isScrolledLeft -> forest4.reset(forest3.rightmostX + screenWidth / 2 + FOREST_GAP)
+            forest1.isScrolledLeft -> forest1.reset(forest4.rightmostX + forestGap)
+            forest2.isScrolledLeft -> forest2.reset(forest1.rightmostX + screenWidth / 2 + forestGap)
+            forest3.isScrolledLeft -> forest3.reset(forest2.rightmostX + forestGap)
+            forest4.isScrolledLeft -> forest4.reset(forest3.rightmostX + screenWidth / 2 + forestGap)
 
-            rockLeft1.isScrolledLeft -> rockLeft1.reset(rockRight2.rightmostX + ROCK_GAP)
-            rockRight1.isScrolledLeft -> rockRight1.reset(rockLeft1.rightmostX + screenWidth / 2 + ROCK_GAP)
+            rockLeft1.isScrolledLeft -> rockLeft1.reset(rockRight2.rightmostX + rockGap)
+            rockRight1.isScrolledLeft -> rockRight1.reset(rockLeft1.rightmostX + screenWidth / 2 + rockGap)
 
-            rockLeft2.isScrolledLeft -> rockLeft2.reset(rockRight1.rightmostX + ROCK_GAP)
-            rockRight2.isScrolledLeft -> rockRight2.reset(rockLeft2.rightmostX + screenWidth / 2 + ROCK_GAP)
+            rockLeft2.isScrolledLeft -> rockLeft2.reset(rockRight1.rightmostX + rockGap)
+            rockRight2.isScrolledLeft -> rockRight2.reset(rockLeft2.rightmostX + screenWidth / 2 + rockGap)
 
-            grassLeft1.isScrolledLeft -> grassLeft1.reset(grassRight2.rightmostX + GRASS_GAP)
+            grassLeft1.isScrolledLeft -> grassLeft1.reset(grassRight2.rightmostX + grassGap)
             grassMiddle1.isScrolledLeft -> grassMiddle1.reset(grassMiddle1X)
             grassRight1.isScrolledLeft -> grassRight1.reset(grassRight1X)
 
@@ -162,43 +163,43 @@ class ScrollHandler(
     }
 
     fun onRestart() {
-        mountain1.onRestart(0.0, SCROLL_SPEED)
-        mountain2.onRestart(mountain1.rightmostX + MOUNTAIN_GAP, SCROLL_SPEED)
+        mountain1.onRestart(0.0, scrollSpeed)
+        mountain2.onRestart(mountain1.rightmostX + mountainGap, scrollSpeed)
 
-        clouds1.onRestart(CLOUD_DEFAULT_X, SCROLL_SPEED)
-        clouds2.onRestart(clouds1.rightmostX + CLOUDS_GAP, SCROLL_SPEED)
-        clouds3.onRestart(clouds2.rightmostX + CLOUDS_GAP, SCROLL_SPEED)
+        clouds1.onRestart(cloudDefaultX, scrollSpeed)
+        clouds2.onRestart(clouds1.rightmostX + cloudsGap, scrollSpeed)
+        clouds3.onRestart(clouds2.rightmostX + cloudsGap, scrollSpeed)
 
-        forest1.onRestart(forest1X, SCROLL_SPEED)
-        forest2.onRestart(forest2X, SCROLL_SPEED)
+        forest1.onRestart(forest1X, scrollSpeed)
+        forest2.onRestart(forest2X, scrollSpeed)
 
-        forest3.onRestart(forest3X, SCROLL_SPEED)
-        forest4.onRestart(forest4X, SCROLL_SPEED)
+        forest3.onRestart(forest3X, scrollSpeed)
+        forest4.onRestart(forest4X, scrollSpeed)
 
-        rockLeft1.onRestart(rockLeft1X, SCROLL_SPEED)
-        rockRight1.onRestart(rockRight1X, SCROLL_SPEED)
+        rockLeft1.onRestart(rockLeft1X, scrollSpeed)
+        rockRight1.onRestart(rockRight1X, scrollSpeed)
 
-        rockLeft2.onRestart(rockLeft1X, SCROLL_SPEED)
-        rockRight2.onRestart(rockRight2X, SCROLL_SPEED)
+        rockLeft2.onRestart(rockLeft1X, scrollSpeed)
+        rockRight2.onRestart(rockRight2X, scrollSpeed)
 
-        grassLeft1.onRestart(grassLeft1X, SCROLL_SPEED)
-        grassMiddle1.onRestart(grassMiddle1X, SCROLL_SPEED)
-        grassRight1.onRestart(grassRight1X, SCROLL_SPEED)
+        grassLeft1.onRestart(grassLeft1X, scrollSpeed)
+        grassMiddle1.onRestart(grassMiddle1X, scrollSpeed)
+        grassRight1.onRestart(grassRight1X, scrollSpeed)
 
-        grassLeft2.onRestart(grassLeft2X, SCROLL_SPEED)
-        grassMiddle2.onRestart(grassMiddle2X, SCROLL_SPEED)
-        grassRight2.onRestart(grassRight2X, SCROLL_SPEED)
+        grassLeft2.onRestart(grassLeft2X, scrollSpeed)
+        grassMiddle2.onRestart(grassMiddle2X, scrollSpeed)
+        grassRight2.onRestart(grassRight2X, scrollSpeed)
     }
 
     private companion object {
-        const val CLOUD_DEFAULT_X = 210.0
+        val cloudDefaultX = 60.dpd
 
-        const val SCROLL_SPEED = -100.0
+        val scrollSpeed = (-28.5).dpd
 
-        const val MOUNTAIN_GAP = 0.0
-        const val CLOUDS_GAP = 300
-        const val FOREST_GAP = 100.0
-        const val ROCK_GAP = 100.0
-        const val GRASS_GAP = -200.0
+        val mountainGap = 0.0.dpd
+        val cloudsGap = 85.dpd
+        val forestGap = 28.dpd
+        val rockGap = 28.dpd
+        val grassGap = (-57).dpd
     }
 }
