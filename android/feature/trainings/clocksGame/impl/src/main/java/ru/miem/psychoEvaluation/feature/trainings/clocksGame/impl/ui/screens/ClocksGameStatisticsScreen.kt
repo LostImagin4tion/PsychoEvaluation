@@ -74,16 +74,29 @@ fun ClocksGameStatisticsScreen(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        val starCount = (state.successPercent * 5).toInt()
-        for (i in 0 until starCount) {
+        val successStarsCount = (state.successPercent * 5).toInt()
+        for (i in 0 until successStarsCount) {
             Icon(
-                painter = painterResource(R.drawable.star_icon),
+                painter = painterResource(R.drawable.ic_star_filled),
                 contentDescription = null,
                 tint = Color(0xFFFF9D40),
                 modifier = Modifier.size(54.dp)
             )
 
             if (i != 4) {
+                Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+            }
+        }
+        val starsCount = 5 - successStarsCount
+        for (i in 0 until starsCount) {
+            Icon(
+                painter = painterResource(R.drawable.ic_star),
+                contentDescription = null,
+                tint = Color(0xFFFF9D40),
+                modifier = Modifier.size(54.dp)
+            )
+
+            if (i != starsCount - 1) {
                 Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
             }
         }

@@ -95,9 +95,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         stopwatchGameState.let { state ->
             when (state) {
-                is StopwatchGameLoading -> StopwatchGameLoaderScreen(
-                    state = state,
-                )
+                is StopwatchGameLoading -> StopwatchGameLoaderScreen(state = state)
                 is StopwatchGameInProgress -> StopwatchGameScreenContent(
                     state = state,
                     navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },

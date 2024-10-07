@@ -29,6 +29,9 @@ fun StopwatchGameLoaderScreen(
     )
 
     DisplayText(
-        text = state.timeBeforeStart.inWholeSeconds.toString(),
+        text = state.timeBeforeStart
+            .inWholeSeconds
+            .plus(1)
+            .toString(),
     )
 }

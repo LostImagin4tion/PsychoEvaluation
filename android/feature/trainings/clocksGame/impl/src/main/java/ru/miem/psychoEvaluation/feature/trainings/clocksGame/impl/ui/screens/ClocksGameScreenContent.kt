@@ -21,7 +21,7 @@ import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.R
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.buttons.ActionButton
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.buttons.BackButton
-import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.clocks.Stopwatch
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.clocks.Clocks
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.health.HealthBar
 
 @Composable
@@ -52,28 +52,29 @@ fun ClocksGameScreenContent(
         )
     }
 
-    Spacer(modifier = Modifier.height(36.dp))
+    Spacer(modifier = Modifier.height(30.dp))
 
     TitleText(
         text = state.gameTime,
         modifier = Modifier.align(Alignment.CenterHorizontally),
     )
 
-    Spacer(modifier = Modifier.height(60.dp))
+    Spacer(modifier = Modifier.height(32.dp))
 
-    Stopwatch(
+    Clocks(
         state = state,
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(60.dp))
+    Spacer(modifier = Modifier.height(40.dp))
 
     ActionButton(
         textRes = R.string.action_button_text,
+        indicatorType = state.currentIndicatorType,
         onClick = onActionButtonClick
     )
 
-    Spacer(modifier = Modifier.height(36.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 
     LabelText(
         textRes = R.string.bottom_description_text,

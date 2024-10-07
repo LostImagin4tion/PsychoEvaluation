@@ -53,10 +53,6 @@ class AirplaneView(
 
         val newPosition = position + velocity * delta.seconds
 
-        if (newPosition.y !in positionRange) {
-            velocity.y = 0.0
-        }
-
         position = newPosition.run {
             copy(y = y.coerceIn(positionRange))
         }
