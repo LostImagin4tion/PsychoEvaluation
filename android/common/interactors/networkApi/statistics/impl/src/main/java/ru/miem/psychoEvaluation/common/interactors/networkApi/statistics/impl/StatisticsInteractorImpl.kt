@@ -18,7 +18,7 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
 
     private val statisticsRepository by diApi(StatisticsRepositoryDiApi::statisticsRepository)
 
-    override var valueScheme: Map<String, Map<String, Int>>? = null
+    override var commonStatisticsValueScheme: Map<String, Map<String, Int>>? = null
         private set
 
     override suspend fun commonStatistics(
@@ -28,13 +28,13 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
         val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
             .takeIf { it.isNotBlank() }
         val requestEntity = StatisticsRequest(apiAccessToken.toString(), startDate, endDate)
-        return requestEntity?.let {
+        return requestEntity.let {
             statisticsRepository.commonStatistics(it)
                 .also {
                     Timber.tag(TAG).d("Got statistics response $it")
                 }
                 ?.run {
-                    valueScheme = valuescheme
+                    commonStatisticsValueScheme = valueScheme
                     StatisticsState(StatisticsResponseType.StatisticAvailable)
                 }
         }

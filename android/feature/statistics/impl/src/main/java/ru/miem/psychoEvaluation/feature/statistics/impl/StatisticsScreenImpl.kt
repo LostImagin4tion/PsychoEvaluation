@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -55,6 +56,7 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartSelectedDay
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryContainerLight
 import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
 import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
+import ru.miem.psychoEvaluation.feature.statistics.impl.ui.OnComposeCards
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCardData
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartProvider
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartUpdate
@@ -113,8 +115,6 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     ) {
         val startDate: MutableState<Date?> = remember { mutableStateOf(null) }
         val endDate: MutableState<Date?> = remember { mutableStateOf(null) }
-
-        val percent = 50
 
         // ===== UI SECTION =====
 
@@ -191,23 +191,29 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         listOf(
                             rememberLegendItem(
                                 icon = ShapeComponent(
-                                    shape = Shapes.roundedCornerShape(percent, percent, percent, percent),
+                                    shape = Shapes.roundedCornerShape(
+                                        HALF_PERCENT, HALF_PERCENT,
+                                        HALF_PERCENT, HALF_PERCENT
+                                    ),
                                     dynamicShader = DynamicShaders.color(psychoChartConcentration)
                                 ),
                                 label = TextComponent.build {
                                     color = MaterialTheme.colorScheme.onSurface.toArgb()
                                 },
-                                labelText = "Концентрация"
+                                labelText = stringResource(id = R.string.concentration_title)
                             ),
                             rememberLegendItem(
                                 icon = ShapeComponent(
-                                    shape = Shapes.roundedCornerShape(percent, percent, percent, percent),
+                                    shape = Shapes.roundedCornerShape(
+                                        HALF_PERCENT, HALF_PERCENT,
+                                        HALF_PERCENT, HALF_PERCENT
+                                    ),
                                     dynamicShader = DynamicShaders.color(psychoChartClock)
                                 ),
                                 label = TextComponent.build {
                                     color = MaterialTheme.colorScheme.onSurface.toArgb()
                                 },
-                                labelText = "Бдительность"
+                                labelText = stringResource(id = R.string.alertness_title)
                             )
                         ),
                         15.dp, 10.dp, 3.dp
@@ -218,7 +224,10 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            viewModel.cardUpdate.OnComposeCards(cardsList)
+            OnComposeCards(cardsList)
         }
+    }
+    companion object {
+        private const val HALF_PERCENT = 50
     }
 }

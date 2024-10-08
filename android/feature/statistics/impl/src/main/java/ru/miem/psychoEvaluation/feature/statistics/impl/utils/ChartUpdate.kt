@@ -18,7 +18,7 @@ class ChartUpdate(
 ) {
     private lateinit var xToDates: Map<Int, LocalDate,>
 
-    val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d")
+    private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d")
 
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
 

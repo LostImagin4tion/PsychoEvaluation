@@ -16,9 +16,6 @@ class RegistrationInteractorImpl @Inject constructor() : RegistrationInteractor 
     private val dataStore by diApi(DataStorageDiApi::dataStorage)
     private val registrationRepository by diApi(RegistrationRepositoryDiApi::registrationRepository)
 
-    override var apiAccessToken: String? = null
-        private set
-
     override suspend fun registration(
         email: String,
         password: String,
@@ -31,7 +28,7 @@ class RegistrationInteractorImpl @Inject constructor() : RegistrationInteractor 
             }
             ?.run {
                 dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                apiAccessToken = accessToken
+                dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                 RegistrationState(RegistrationResponseType.Registered)
             }
             ?: RegistrationState(RegistrationResponseType.AlreadyRegistered)

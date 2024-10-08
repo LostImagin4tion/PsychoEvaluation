@@ -18,9 +18,6 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
     private val dataStore by diApi(DataStorageDiApi::dataStorage)
     private val authorizationRepository by diApi(AuthorizationRepositoryDiApi::authorizationRepository)
 
-    override var apiAccessToken: String? = null
-        private set
-
     override suspend fun authorization(
         email: String?,
         password: String?,

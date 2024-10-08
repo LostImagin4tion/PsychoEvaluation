@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StatisticsResponse(
-    @SerialName("value_scheme") val valuescheme: Map<String, Map<String, Int>>
+    @SerialName("valueScheme") var valueScheme: Map<String, Map<String, Int>>
 )

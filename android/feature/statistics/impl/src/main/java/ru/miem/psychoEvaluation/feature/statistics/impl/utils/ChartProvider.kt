@@ -21,8 +21,6 @@ class ChartProvider(private val chart: ChartUpdate) : ColumnCartesianLayer.Colum
         seriesIndex: Int,
         extraStore: ExtraStore
     ): LineComponent {
-        val roundPercent = 40
-        val thickness = 10f
         val x = entry.x.toInt()
         val gameValues = getGamesValues(extraStore[chart.labelListKey][x])
         val concentrationGames = gameValues.get(1)
@@ -33,28 +31,35 @@ class ChartProvider(private val chart: ChartUpdate) : ColumnCartesianLayer.Colum
 //            arrayOf(psychoChartConcentration, psychoChartClock), floatArrayOf(percent, percent+0.01f)))
 //        }
         lineComponent = LineComponent(
-            color = Color.Black.toArgb(), thicknessDp = thickness,
-            shape = Shapes.roundedCornerShape(roundPercent, roundPercent, 0, 0),
+            color = Color.Black.toArgb(), thicknessDp = THICKNESS,
+            shape = Shapes.roundedCornerShape(ROUND_PERCENT, ROUND_PERCENT, 0, 0),
             dynamicShader = DynamicShaders.verticalGradient(
                 arrayOf(psychoChartConcentration, psychoChartClock),
-                floatArrayOf(0.6f, 0.61f)
+                floatArrayOf(CHART_COLOR_HEIGHT_CONCENTRATION, CHART_COLOR_HEIGHT_VIGILANCE)
             )
         )
         return lineComponent
     }
 
     private fun getGamesValues(data: LocalDate?): Array<Int> {
-        val randomVal1 = 1
-        val randomVal2 = 10
-        val datesOfMonth = 30
         return if (data != null) {
-            arrayOf(data.dayOfMonth, (randomVal1..randomVal2).random())
+            arrayOf(data.dayOfMonth, (RANDOM_VAL_1..RANDOM_VAL_2).random())
         } else {
-            arrayOf(datesOfMonth, (randomVal1..randomVal2).random())
+            arrayOf(DATES_IN_MONTH, (RANDOM_VAL_1..RANDOM_VAL_2).random())
         }
     }
 
     override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore): LineComponent {
         return lineComponent
+    }
+
+    companion object {
+        private const val ROUND_PERCENT = 40
+        private const val THICKNESS = 10f
+        private const val CHART_COLOR_HEIGHT_CONCENTRATION = 0.6f
+        private const val CHART_COLOR_HEIGHT_VIGILANCE = 0.61f
+        private const val RANDOM_VAL_1 = 1
+        private const val RANDOM_VAL_2 = 12
+        private const val DATES_IN_MONTH = 30
     }
 }

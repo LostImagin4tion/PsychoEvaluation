@@ -15,10 +15,12 @@ class DateIterator(
 
     override fun hasNext() = currentDate <= endDateInclusive
     override fun next(): LocalDate {
+        if (!hasNext()) {
+            throw NoSuchElementException("Iterator has reached the end")
+        }
+
         val next = currentDate
-
         currentDate = currentDate.plusDays(stepDays)
-
         return next
     }
 }

@@ -123,3 +123,12 @@ fun StatisticsCard(
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 }
+
+@Composable
+fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>) {
+    for (i in cardsList) {
+        if (i != null) {
+            StatisticsCard(statisticsData = i)
+        }
+    }
+}

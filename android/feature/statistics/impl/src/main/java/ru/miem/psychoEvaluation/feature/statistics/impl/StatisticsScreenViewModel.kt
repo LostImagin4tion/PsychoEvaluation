@@ -36,7 +36,7 @@ class StatisticsScreenViewModel : ViewModel() {
 
     val cardUpdate = CardUpdate()
 
-    fun commonStatistics(
+    private fun commonStatistics(
         startDate: String,
         endDate: String
     ) {
