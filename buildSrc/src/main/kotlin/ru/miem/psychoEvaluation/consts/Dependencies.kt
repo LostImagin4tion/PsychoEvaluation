@@ -248,4 +248,12 @@ object Dependencies {
         const val DETEKT_FORMATTING =
             "io.gitlab.arturbosch.detekt:detekt-formatting:$DETEKT_VERSION"
     }
+
+    object Calendar {
+        const val CALENDAR1_VERSION = "1.0.1"
+
+        val allDeps = listOf(
+            "com.github.playmoweb:MultiDatePicker:$CALENDAR1_VERSION",
+        )
+    }
 }

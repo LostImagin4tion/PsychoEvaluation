@@ -18,9 +18,6 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
     private val dataStore by diApi(DataStorageDiApi::dataStorage)
     private val authorizationRepository by diApi(AuthorizationRepositoryDiApi::authorizationRepository)
 
-    override var apiAccessToken: String? = null
-        private set
-
     override suspend fun authorization(
         email: String?,
         password: String?,
@@ -41,7 +38,7 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
                     }
                     ?.run {
                         dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                        apiAccessToken = accessToken
+                        dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                         AuthorizationState(AuthorizationResponseType.Authorized)
                     }
                     ?: AuthorizationState(AuthorizationResponseType.WrongCredentials)
@@ -63,7 +60,7 @@ class AuthorizationInteractorImpl @Inject constructor() : AuthorizationInteracto
             }
             ?.run {
                 dataStore.set(DataStorageKeys.refreshToken, refreshToken)
-                apiAccessToken = accessToken
+                dataStore.set(DataStorageKeys.apiAccessToken, accessToken)
                 AuthorizationResponseType.Authorized
             }
             ?: AuthorizationResponseType.RefreshTokenExpired

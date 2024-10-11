@@ -6,6 +6,7 @@ object DataStorageKeys {
 
     val refreshToken = string("refresh_token")
     val sensorDeviceConnectionType = string("sensor_device_connectionType")
+    val apiAccessToken = string("api_access_token")
 }
 
 @Suppress("UnusedPrivateMember")

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_header">Statistics</string>
+
+    <string name="title_dates_picker">Enter date or period (no more than 10 days)</string>
+    <string name="snackbar_dates_picker_dismiss">Dismiss</string>
+    <string name="snackbar_dates_picker_save">OK</string>
+
+    <string name="trainings_title">Trainings: </string>
+    <string name="concentration_title">Concentration: </string>
+    <string name="alertness_title">Vigilance: </string>
+</resources>

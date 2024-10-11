@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="statistics_header">Статистика</string>
+
+    <string name="title_dates_picker">Выберите дату или период (не более 10 дней)</string>
+    <string name="snackbar_dates_picker_dismiss">Отмена</string>
+    <string name="snackbar_dates_picker_save">OK</string>
+
+    <string name="trainings_title">Тренировки: </string>
+    <string name="concentration_title">Концентрация: </string>
+    <string name="alertness_title">Бдительность: </string>
+</resources>

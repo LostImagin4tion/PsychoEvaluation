@@ -6,6 +6,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.common.BluetoothDeviceIn
 import ru.miem.psychoEvaluation.di.apiProviders.android.common.DataAnalysisApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.common.RegistrationInteractorApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.common.SettingsInteractorApiProvider
+import ru.miem.psychoEvaluation.di.apiProviders.android.common.StatisticsInteractorApiProvider
 import ru.miem.psychoEvaluation.di.apiProviders.android.common.UsbDeviceInteractorApiProvider
 
 @Module(
@@ -16,6 +17,7 @@ import ru.miem.psychoEvaluation.di.apiProviders.android.common.UsbDeviceInteract
         SettingsInteractorApiProvider::class,
         RegistrationInteractorApiProvider::class,
         AuthorizationInteractorApiProvider::class,
+        StatisticsInteractorApiProvider::class,
     ]
 )
 interface CommonAggregationModule
