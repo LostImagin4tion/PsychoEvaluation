@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.cancellable
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
-import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
@@ -21,6 +21,7 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.Set
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScreen
+import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.TrainingPreparingScreenState
 import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -32,10 +33,10 @@ class TrainingPreparingScreenViewModel(
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
-    private val _currentScreen = MutableStateFlow(CurrentScreen.Welcome)
+    private val _screenState = MutableStateFlow(defaultState)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
-    val currentScreen: StateFlow<CurrentScreen> = _currentScreen
+    val screenState: StateFlow<TrainingPreparingScreenState> = _screenState
 
     fun subscribeForSettingsChanges() {
         settingsInteractor.getCurrentSensorDeviceType()
@@ -66,21 +67,53 @@ class TrainingPreparingScreenViewModel(
                 numberOfTicks + 1
             }
             .onEach { numberOfTicks ->
-                check(numberOfTicks / NUMBER_OF_SCREENS < NUMBER_OF_ROUNDS)
+                check(numberOfTicks / ROUND_DURATION < NUMBER_OF_ROUNDS)
             }
             .catch {
-                _currentScreen.emit(CurrentScreen.Exhale)
+                Timber.tag(TAG).d("HELLO caught exception")
+                val newScreenState = _screenState.value.copy(currentScreen = CurrentScreen.Exhale)
+                _screenState.emit(newScreenState)
                 onTimerEnded()
             }
-            .zip(_currentScreen) { _, screen ->
-                when (screen) {
-                    CurrentScreen.Welcome -> CurrentScreen.Exhale
-                    CurrentScreen.TakeABreath -> CurrentScreen.Exhale
-                    CurrentScreen.Exhale -> CurrentScreen.TakeABreath
+            .combine(_screenState) { numberOfTicks, state ->
+                val currentRoundTime = (numberOfTicks % ROUND_DURATION).seconds
+
+                val newScreen = when (state.currentScreen) {
+                    CurrentScreen.Welcome -> CurrentScreen.TakeABreath
+                    CurrentScreen.TakeABreath -> {
+                        if (currentRoundTime >= CurrentScreen.TakeABreath.durationTime) {
+                            CurrentScreen.HoldYourBreath
+                        } else {
+                            CurrentScreen.TakeABreath
+                        }
+                    }
+                    CurrentScreen.HoldYourBreath -> {
+                        val timeSpentAtCurrentScreen = currentRoundTime
+                            .minus(CurrentScreen.TakeABreath.durationTime)
+
+                        if (timeSpentAtCurrentScreen >= CurrentScreen.HoldYourBreath.durationTime) {
+                            CurrentScreen.Exhale
+                        } else {
+                            CurrentScreen.HoldYourBreath
+                        }
+                    }
+                    CurrentScreen.Exhale -> {
+                        if (currentRoundTime == 0.seconds) {
+                            CurrentScreen.TakeABreath
+                        } else {
+                            CurrentScreen.Exhale
+                        }
+                    }
                 }
+                numberOfTicks to newScreen
             }
-            .onEach { newScreen ->
-                _currentScreen.emit(newScreen)
+            .onEach { (numberOfTicks, newScreen) ->
+                val roundNumber = numberOfTicks / ROUND_DURATION + 1
+                val newState = _screenState.value.copy(
+                    currentScreen = newScreen,
+                    roundNumberString = ROUND_NUMBER_PLACEHOLDER.format(roundNumber)
+                )
+                _screenState.emit(newState)
             }
             .launchIn(viewModelScope)
     }
@@ -115,9 +148,17 @@ class TrainingPreparingScreenViewModel(
     private companion object {
         val TAG: String = TrainingPreparingScreenViewModel::class.java.simpleName
 
-        val DEFAULT_PERIOD = 3.seconds
-        val NUMBER_OF_SCREENS = CurrentScreen.entries.size - 1
+        const val NUMBER_OF_ROUNDS = 7
+        const val ROUND_NUMBER_PLACEHOLDER = "%s/${NUMBER_OF_ROUNDS}"
 
-        const val NUMBER_OF_ROUNDS = 3
+        val DEFAULT_PERIOD = 1.seconds
+        val ROUND_DURATION = CurrentScreen.entries
+            .sumOf { it.durationTime.inWholeSeconds }
+            .toInt()
+
+        val defaultState = TrainingPreparingScreenState(
+            currentScreen = CurrentScreen.Welcome,
+            roundNumberString = ROUND_NUMBER_PLACEHOLDER.format("1")
+        )
     }
 }

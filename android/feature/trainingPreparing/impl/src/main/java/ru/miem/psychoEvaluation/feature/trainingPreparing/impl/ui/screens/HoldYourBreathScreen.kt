@@ -28,7 +28,7 @@ import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
 
 @Composable
-fun BoxScope.ExhaleScreen(
+fun BoxScope.HoldYourBreathScreen(
     roundNumber: String,
 ) = Column(
     verticalArrangement = Arrangement.Top,
@@ -48,7 +48,7 @@ fun BoxScope.ExhaleScreen(
     Spacer(modifier = Modifier.height(100.dp))
 
     Image(
-        painter = painterResource(R.drawable.ic_lips_opened),
+        painter = painterResource(R.drawable.ic_lips_closed),
         contentDescription = null,
         contentScale = ContentScale.Fit,
         modifier = Modifier
@@ -63,7 +63,7 @@ fun BoxScope.ExhaleScreen(
     Spacer(modifier = Modifier.height(60.dp))
 
     LargeHeadlineText(
-        text = stringResource(R.string.exhale_text),
+        text = stringResource(R.string.hold_your_breath_text),
         textAlign = TextAlign.Center
     )
 

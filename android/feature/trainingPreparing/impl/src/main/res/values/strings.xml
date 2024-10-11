@@ -3,5 +3,6 @@
     <string name="training_preparing_title_text">Breathing exercises await you</string>
     <string name="gymnastics_title_text">Gymnastics</string>
     <string name="take_a_breath_text">Take a breath</string>
+    <string name="hold_your_breath_text">Hold your breath</string>
     <string name="exhale_text">Exhale</string>
 </resources>

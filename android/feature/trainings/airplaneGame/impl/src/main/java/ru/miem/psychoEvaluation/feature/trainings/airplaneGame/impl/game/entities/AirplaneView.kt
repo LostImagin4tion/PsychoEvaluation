@@ -10,6 +10,7 @@ import com.soywiz.korge.view.xy
 import com.soywiz.korge.view.zIndex
 import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
+import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 
 fun Container.airplaneView(
@@ -32,19 +33,13 @@ class AirplaneView(
     // todo: is there a vector2d class just to name it more suitable?
     private var position = Point(x, y)
 
-    private val velocity = Point()
-    private val acceleration = Point()
+    private val velocity = Point(0, -30)
+    private val acceleration = Point(0, 5)
 
-    private val image = image(AssetLoader.airplane, 0.5, 0.5) {
+    private val airplane = image(AssetLoader.airplane, 0.5, 0.5) {
         smoothing = false
-        size(AIRPLANE_WIDTH_PX, AIRPLANE_HEIGHT_PX)
+        size(airplaneWidth, airplaneHeight)
     }
-
-    val highestY
-        get() = (position.y - BOUNDING_RADIUS)
-
-    val lowestY
-        get() = position.y + BOUNDING_RADIUS
 
     init {
         updateView()
@@ -52,25 +47,26 @@ class AirplaneView(
     }
 
     fun update(delta: TimeSpan) {
-//        velocity += acceleration * delta.seconds
-//        velocity.y = minOf(10.0, velocity.y)
+        val minPosition = minY + airplaneHeight / 2
+        val maxPosition = maxY - airplaneHeight / 2
+        val positionRange = minPosition..maxPosition
 
-        if (position.y < 0) {
-            position.y = 0.0
+        val newPosition = position + velocity * delta.seconds
+
+        if (newPosition.y !in positionRange) {
             velocity.y = 0.0
         }
 
-        position = (position + velocity * delta.seconds)
-            .run {
-                copy(y = y.coerceIn(minY + AIRPLANE_HEIGHT_PX / 2, maxY - AIRPLANE_HEIGHT_PX / 2))
-            }
+        position = newPosition.run {
+            copy(y = y.coerceIn(positionRange))
+        }
 
         if (acceleration.y > 0) {
-            airplaneRotationDegrees -= AIRPLANE_ROTATION_DEGREES_DELTA
-            airplaneRotationDegrees = maxOf(-AIRPLANE_MAXIMUM_ROTATION, airplaneRotationDegrees)
+            airplaneRotationDegrees -= airplaneRotationDegreesDelta
+            airplaneRotationDegrees = maxOf(-airplaneMaximumRotation, airplaneRotationDegrees)
         } else if (acceleration.y < 0) {
-            airplaneRotationDegrees += AIRPLANE_ROTATION_DEGREES_DELTA
-            airplaneRotationDegrees = minOf(AIRPLANE_MAXIMUM_ROTATION, airplaneRotationDegrees)
+            airplaneRotationDegrees += airplaneRotationDegreesDelta
+            airplaneRotationDegrees = minOf(airplaneMaximumRotation, airplaneRotationDegrees)
         } else {
             airplaneRotationDegrees = 0.0
         }
@@ -79,14 +75,14 @@ class AirplaneView(
     }
 
     private fun updateView() {
-        image.rotation(Angle.fromDegrees(airplaneRotationDegrees))
+        airplane.rotation(Angle.fromDegrees(airplaneRotationDegrees))
         xy(position.x, position.y)
     }
 
     fun onNewData(speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
-            velocity.y += speed * AIRPLANE_VELOCITY_MULTIPLIER
+            velocity.y += speed * airplaneVelocityMultiplier
 //            Timber.tag("HELLO").i("velocity ${velocity.y} position ${position.y}")
         }
     }
@@ -113,14 +109,14 @@ class AirplaneView(
     companion object {
         private val TAG = AirplaneView::class.java.simpleName
 
-        private const val BOUNDING_RADIUS = 110.0
+        private val boundingRadius = 31.dpd
 
-        private const val AIRPLANE_WIDTH_PX = 637.5
-        private const val AIRPLANE_HEIGHT_PX = 207.0
+        private val airplaneWidth = 182.dpd
+        private val airplaneHeight = 59.dpd
 
-        private const val AIRPLANE_VELOCITY_MULTIPLIER = -15.0
+        private val airplaneVelocityMultiplier = (-4.28).dpd
 
-        private const val AIRPLANE_ROTATION_DEGREES_DELTA = 0.25
-        private const val AIRPLANE_MAXIMUM_ROTATION = 15.0
+        private val airplaneRotationDegreesDelta = (0.071).dpd
+        private val airplaneMaximumRotation = (4.3).dpd
     }
 }

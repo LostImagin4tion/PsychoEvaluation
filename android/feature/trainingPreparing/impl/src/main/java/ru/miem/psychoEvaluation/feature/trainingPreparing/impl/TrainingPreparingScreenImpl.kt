@@ -24,9 +24,11 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingPreparingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScreen
+import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.TrainingPreparingScreenState
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackButton
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.ExhaleScreen
+import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.HoldYourBreathScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.TakeABreathScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.WelcomeScreen
 import javax.inject.Inject
@@ -58,7 +60,7 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             viewModel.disconnect()
         }
 
-        val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle()
+        val screenState by viewModel.screenState.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
@@ -75,7 +77,7 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
         }
 
         TrainingPreparingScreenContent(
-            currentScreen = currentScreen,
+            screenState = screenState,
             onBackButtonClick = navigateBack,
             onContinueButtonClick = {
                 viewModel.startCollectingAndNormalizingSensorData(
@@ -95,7 +97,7 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
 
     @Composable
     private fun TrainingPreparingScreenContent(
-        currentScreen: CurrentScreen,
+        screenState: TrainingPreparingScreenState,
         onBackButtonClick: () -> Unit,
         onContinueButtonClick: () -> Unit,
     ) = Box(
@@ -118,12 +120,13 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
                 )
         )
 
-        when (currentScreen) {
+        when (screenState.currentScreen) {
             CurrentScreen.Welcome -> WelcomeScreen(
                 onContinueButtonClick = onContinueButtonClick,
             )
-            CurrentScreen.TakeABreath -> TakeABreathScreen()
-            CurrentScreen.Exhale -> ExhaleScreen()
+            CurrentScreen.TakeABreath -> TakeABreathScreen(screenState.roundNumberString)
+            CurrentScreen.HoldYourBreath -> HoldYourBreathScreen(screenState.roundNumberString)
+            CurrentScreen.Exhale -> ExhaleScreen(screenState.roundNumberString)
         }
     }
 

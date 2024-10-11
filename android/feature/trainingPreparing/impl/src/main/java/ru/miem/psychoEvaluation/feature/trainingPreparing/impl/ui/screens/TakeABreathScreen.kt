@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -27,50 +28,51 @@ import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
 
 @Composable
-fun BoxScope.TakeABreathScreen() {
-    Column(
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally,
+fun BoxScope.TakeABreathScreen(
+    roundNumber: String,
+) = Column(
+    verticalArrangement = Arrangement.Top,
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+        .screenPaddings()
+        .align(Alignment.TopCenter)
+) {
+    Spacer(modifier = Modifier.height(100.dp))
+
+    TitleText(
+        text = roundNumber,
+        textAlign = TextAlign.Center,
+        isLarge = false
+    )
+
+    Spacer(modifier = Modifier.height(100.dp))
+
+    Image(
+        painter = painterResource(R.drawable.ic_nose),
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
         modifier = Modifier
-            .screenPaddings()
-            .align(Alignment.TopCenter)
-            .padding(top = 100.dp)
-    ) {
-        TitleText(
-            textRes = R.string.gymnastics_title_text,
-            textAlign = TextAlign.Center,
-            isLarge = false
-        )
+            .background(
+                color = Color.White,
+                shape = CircleShape,
+            )
+            .padding(30.dp)
+            .size(120.dp)
+    )
 
-        Spacer(modifier = Modifier.height(180.dp))
+    Spacer(modifier = Modifier.height(60.dp))
 
-        Image(
-            painter = painterResource(R.drawable.nose),
-            contentDescription = null,
-            contentScale = ContentScale.FillWidth,
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    shape = CircleShape
-                )
-                .padding(30.dp)
-                .size(120.dp)
-        )
+    LargeHeadlineText(
+        text = stringResource(R.string.take_a_breath_text),
+        textAlign = TextAlign.Center
+    )
 
-        Spacer(modifier = Modifier.height(60.dp))
+    Spacer(modifier = Modifier.height(30.dp))
 
-        LargeHeadlineText(
-            text = stringResource(R.string.take_a_breath_text),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        CircularProgressIndicator(
-            color = MaterialTheme.colorScheme.primary,
-            strokeWidth = 6.dp,
-            strokeCap = StrokeCap.Round,
-            modifier = Modifier.size(40.dp),
-        )
-    }
+    CircularProgressIndicator(
+        color = MaterialTheme.colorScheme.primary,
+        strokeWidth = 6.dp,
+        strokeCap = StrokeCap.Round,
+        modifier = Modifier.size(40.dp),
+    )
 }

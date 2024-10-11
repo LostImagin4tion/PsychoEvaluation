@@ -1,6 +1,8 @@
 package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources
 
+import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
+
 object Typography {
-    const val bodyTextTextSize = 96.0
-    const val headlineTextSize = 128.0
+    val bodyTextTextSize = 28.dpd
+    val headlineTextSize = 36.dpd
 }

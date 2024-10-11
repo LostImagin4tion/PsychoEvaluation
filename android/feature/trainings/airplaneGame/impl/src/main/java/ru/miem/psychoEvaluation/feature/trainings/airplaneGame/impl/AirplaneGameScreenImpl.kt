@@ -148,7 +148,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                 val displayMetrics = context.resources.displayMetrics
                 val width = displayMetrics.widthPixels
                 val height = displayMetrics.heightPixels
-                Timber.tag(TAG).d("Setting height $height and width  $width")
+                Timber.tag(TAG).d("Setting width $width and height $height")
 
                 KorgeAndroidView(context).apply {
                     loadModule(
