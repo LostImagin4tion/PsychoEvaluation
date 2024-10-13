@@ -9,7 +9,7 @@ data class ActionButtonClickSuccessful(
 ) : UiAction
 
 data class ActionButtonClickFailed(
-    val reactionTiming: Long,
+    val reactionTiming: Long?,
 ) : UiAction
 
 data object HideIndicatorAndBrokenHeart : UiAction

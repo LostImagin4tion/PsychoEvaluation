@@ -53,6 +53,7 @@ class ClocksGameScreenViewModel(
     private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
+    private var currentAction: UiAction? = null
     private var isActionButtonClicked = false
 
     val clocksGameState: StateFlow<ClocksGameState> = _clocksGameState
@@ -107,18 +108,21 @@ class ClocksGameScreenViewModel(
                         val state = _clocksGameState.value as? ClocksGameLoading
 
                         state?.let {
+                            val newProgress = 1f - it.timeBeforeStart / defaultLoadingTimer
                             val newTime = it.timeBeforeStart - delta
-
-                            check(newTime.inWholeSeconds >= 0)
 
                             val newState = it.copy(
                                 timeBeforeStart = newTime,
-                                progress = 1f - newTime / defaultLoadingTimer
+                                progress = newProgress,
                             )
+
                             _clocksGameState.emit(newState)
+
+                            check(newTime > 0.seconds)
                         }
                     }
                     .catch {
+                        delay(100.milliseconds)
                         _clocksGameState.emit(defaultInProgressState)
                         startGame()
                         this@coroutineScope.cancel()
@@ -129,53 +133,71 @@ class ClocksGameScreenViewModel(
     }
 
     private fun startGame() {
-        var timeForArrowJump = Random.Default
-            .nextInt(60..90)
-            .seconds
+        viewModelScope.launch {
+            _clocksGameState.emit(defaultInProgressState)
+        }
 
-        tickerFlow(defaultPeriod)
-            .runningReduce { accumulator, value ->
-                accumulator + value
-            }
-            .onEach { gameTime ->
-                _clocksGameState.run {
-                    val clocksTimeDelta = if (gameTime >= timeForArrowJump) {
-                        dispatchAction(ArrowJumped)
+        viewModelScope.launch {
+            var timeForArrowJump = Random.Default.nextInt(60..90).seconds
 
-                        timeForArrowJump += Random.Default
-                            .nextInt(60..90)
-                            .seconds
-
-                        arrowJumpDelta
-                    } else {
-                        defaultPeriod
+            coroutineScope {
+                tickerFlow(defaultPeriod)
+                    .runningReduce { accumulator, value ->
+                        accumulator + value
                     }
+                    .onEach { gameTime ->
+                        _clocksGameState.run {
+                            val clocksTimeDelta = if (gameTime >= timeForArrowJump) {
+                                dispatchAction(ArrowJumped)
 
-                    val state = _clocksGameState.value as? ClocksGameInProgress
-                    state?.let {
-                        val newState = it.copy(
-                            clocksTime = it.clocksTime + clocksTimeDelta,
-                            gameTime = createTimeString(gameTime),
-                        )
+                                timeForArrowJump += Random.Default.nextInt(60..90).seconds
 
-                        emit(newState)
+                                arrowJumpDelta
+                            } else {
+                                defaultPeriod
+                            }
+
+                            val state = _clocksGameState.value
+
+                            if (state is ClocksGameEnded) {
+                                currentAction = null
+                                isActionButtonClicked = false
+                                this@coroutineScope.cancel()
+                            }
+
+                            (state as? ClocksGameInProgress)
+                                ?.let {
+                                    val newState = it.copy(
+                                        clocksTime = it.clocksTime + clocksTimeDelta,
+                                        gameTime = createTimeString(gameTime),
+                                    )
+
+                                    emit(newState)
+                                }
+                        }
                     }
-                }
+                    .launchIn(this@coroutineScope)
             }
-            .launchIn(viewModelScope)
+        }
     }
 
     fun clickActionButton() {
-        isActionButtonClicked = true
+        if (currentAction is ArrowJumped) {
+            isActionButtonClicked = true
+        } else {
+            dispatchAction(ActionButtonClickFailed(null))
+        }
     }
 
     fun restartGame() {
         viewModelScope.launch {
-            _clocksGameState.emit(defaultInProgressState)
+            _clocksGameState.emit(defaultLoadingState)
         }
+        startTimerBeforeStart()
     }
 
     private fun dispatchAction(action: UiAction) {
+        currentAction = action
         viewModelScope.launch {
             when (action) {
                 ArrowJumped -> {
@@ -214,18 +236,29 @@ class ClocksGameScreenViewModel(
                     _clocksGameState.run {
                         val state = value as? ClocksGameInProgress
 
-                        state?.let {
-                            val newHeartsNumber = it.heartsNumber - 1
-                            val newState = if (newHeartsNumber == 0) {
-                                it.toGameEndedState()
-                            } else {
-                                it.copy(
-                                    heartsNumber = newHeartsNumber,
-                                    reactionTimings = it.reactionTimings + action.reactionTiming,
-                                    currentIndicatorType = ClocksGameInProgress.IndicatorType.Failure,
-                                )
+                        if (state != null) {
+                            val newHeartsNumber = state.heartsNumber - 1
+                            val failedState = state.copy(
+                                heartsNumber = newHeartsNumber,
+                                jumpCount = if (action.reactionTiming == null) {
+                                    state.jumpCount + 1
+                                } else {
+                                    state.jumpCount
+                                },
+                                reactionTimings = action.reactionTiming
+                                    ?.let { state.reactionTimings + it }
+                                    ?: state.reactionTimings,
+                                currentIndicatorType = ClocksGameInProgress.IndicatorType.Failure,
+                            )
+
+                            emit(failedState)
+                            startTimerForShowingBrokenHeartAndIndicatorButton()
+
+                            if (newHeartsNumber == 0) {
+                                val gameEndedState = failedState.toGameEndedState()
+                                delay(defaultPeriodForHidingIndicatorAndBrokenHeart)
+                                emit(gameEndedState)
                             }
-                            emit(newState)
                         }
                     }
                     startTimerForShowingBrokenHeartAndIndicatorButton()
@@ -295,7 +328,13 @@ class ClocksGameScreenViewModel(
 
     private suspend fun ClocksGameInProgress.toGameEndedState(): ClocksGameEnded {
         return withContext(Dispatchers.Default) {
-            val averageReactionTime = createTimeString(reactionTimings.average().milliseconds)
+            val averageReactionTime = createTimeString(
+                duration = reactionTimings
+                    .average()
+                    .takeIf { !it.isNaN() }
+                    ?.milliseconds
+                    ?: 0.milliseconds
+            )
             val vigilanceDelta = reactionTimings.takeIf { it.isNotEmpty() }
                 ?.reduce { accumulated, value -> accumulated - value }
                 ?: 0L

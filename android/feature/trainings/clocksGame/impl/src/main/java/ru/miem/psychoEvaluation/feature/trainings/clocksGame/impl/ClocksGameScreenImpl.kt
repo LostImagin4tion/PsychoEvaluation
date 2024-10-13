@@ -95,9 +95,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
 
         clocksGameState.let { state ->
             when (state) {
-                is ClocksGameLoading -> ClocksGameLoaderScreen(
-                    state = state,
-                )
+                is ClocksGameLoading -> ClocksGameLoaderScreen(state = state)
                 is ClocksGameInProgress -> ClocksGameScreenContent(
                     state = state,
                     navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },

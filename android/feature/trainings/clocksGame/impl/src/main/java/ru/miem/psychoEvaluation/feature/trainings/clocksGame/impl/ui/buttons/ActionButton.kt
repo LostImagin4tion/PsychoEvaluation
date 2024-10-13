@@ -14,10 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
 
 @Composable
 fun ActionButton(
     @StringRes textRes: Int,
+    indicatorType: ClocksGameInProgress.IndicatorType,
     onClick: () -> Unit = {},
 ) {
     val backgroundShape = RoundedCornerShape(percent = 30)
@@ -25,8 +27,12 @@ fun ActionButton(
     Button(
         shape = backgroundShape,
         border = BorderStroke(
-            width = 3.dp,
-            color = MaterialTheme.colorScheme.primary,
+            width = 6.dp,
+            color = when (indicatorType) {
+                ClocksGameInProgress.IndicatorType.Undefined -> MaterialTheme.colorScheme.primary
+                ClocksGameInProgress.IndicatorType.Success -> Color.Green
+                ClocksGameInProgress.IndicatorType.Failure -> Color.Red
+            }
         ),
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
