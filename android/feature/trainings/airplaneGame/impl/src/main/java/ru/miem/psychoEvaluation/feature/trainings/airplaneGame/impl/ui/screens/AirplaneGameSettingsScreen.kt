@@ -1,4 +1,4 @@
-package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.screens
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.ui.screens
 
 import android.content.pm.ActivityInfo
 import androidx.compose.foundation.Image

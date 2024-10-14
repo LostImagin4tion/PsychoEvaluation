@@ -10,4 +10,15 @@
 
     <string name="settings_disclaimer">Если вы не знаете, какие параметры поставить, оставьте их по умолчанию</string>
     <string name="continue_button_text">Далее</string>
+
+    <string name="statistics_screen_title">Ты молодец!</string>
+    <string name="statistics_screen_time_in_corridor_percent_text">%s%% времени в коридоре</string>
+    <string name="statistics_screen_time_in_corridor_text">Время в коридоре: %s</string>
+    <string name="statistics_screen_time_upper_corridor_text">Время вне коридора (верх): %s</string>
+    <string name="statistics_screen_time_lower_corridor_text">Время вне коридора (низ): %s</string>
+    <string name="statistics_screen_number_of_flights_from_outside_corridor">Кол-во вылетов за коридор: %s</string>
+
+    <string name="statistics_play_again">Играть снова</string>
+    <string name="statistics_settings">Настройки</string>
+    <string name="statistics_exit">Выйти в меню</string>
 </resources>

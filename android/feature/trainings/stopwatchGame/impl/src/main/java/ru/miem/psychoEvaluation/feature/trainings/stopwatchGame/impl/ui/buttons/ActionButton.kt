@@ -14,12 +14,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
 
 @Composable
 fun ActionButton(
     @StringRes textRes: Int,
-    indicatorType: StopwatchGameInProgress.IndicatorType,
+    indicatorType: StopwatchGameInProgressState.IndicatorType,
     onClick: () -> Unit = {},
 ) {
     val backgroundShape = RoundedCornerShape(percent = 30)
@@ -29,9 +29,9 @@ fun ActionButton(
         border = BorderStroke(
             width = 6.dp,
             color = when (indicatorType) {
-                StopwatchGameInProgress.IndicatorType.Undefined -> MaterialTheme.colorScheme.primary
-                StopwatchGameInProgress.IndicatorType.Success -> Color.Green
-                StopwatchGameInProgress.IndicatorType.Failure -> Color.Red
+                StopwatchGameInProgressState.IndicatorType.Undefined -> MaterialTheme.colorScheme.primary
+                StopwatchGameInProgressState.IndicatorType.Success -> Color.Green
+                StopwatchGameInProgressState.IndicatorType.Failure -> Color.Red
             }
         ),
         colors = ButtonDefaults.buttonColors(

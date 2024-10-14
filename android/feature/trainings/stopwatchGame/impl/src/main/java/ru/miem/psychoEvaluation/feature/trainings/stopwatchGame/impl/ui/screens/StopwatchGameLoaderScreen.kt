@@ -11,11 +11,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.DisplayText
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoadingState
 
 @Composable
 fun StopwatchGameLoaderScreen(
-    state: StopwatchGameLoading,
+    state: StopwatchGameLoadingState,
 ) = Box(
     contentAlignment = Alignment.Center,
     modifier = Modifier.screenPaddings(),

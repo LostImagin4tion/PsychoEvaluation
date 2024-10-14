@@ -27,7 +27,9 @@ class GameScene(
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
     private val maxGameTime: Duration,
+    private val onGameEnded: (Duration, Duration, Duration, Duration, Int) -> Unit,
     private val onSettingsButtonClick: () -> Unit,
+    private val onStatisticsButtonClick: (Duration, Duration, Duration, Duration, Int) -> Unit,
     private val onExitButtonClick: () -> Unit,
     private val increaseGameDifficulty: () -> Unit,
     private val decreaseGameDifficulty: () -> Unit,
@@ -44,7 +46,7 @@ class GameScene(
     }
 
     override suspend fun SContainer.sceneMain() {
-        var totalGameTime = 0.seconds
+//        var totalGameTime = 0.seconds
         var currentGameTime = 0.seconds
 
         gameWorld = gameWorld(
@@ -59,24 +61,52 @@ class GameScene(
                 closeStream()
                 onSettingsButtonClick()
             },
+            onStatisticsButtonClick = {
+                    timeInCorridor,
+                    timeUpperCorridor,
+                    timeLowerCorridor,
+                    numberOfFlightsOutsideCorridor,
+                ->
+                closeStream()
+                onStatisticsButtonClick(
+                    currentGameTime,
+                    timeInCorridor,
+                    timeUpperCorridor,
+                    timeLowerCorridor,
+                    numberOfFlightsOutsideCorridor
+                )
+            },
             onExitButtonClick = {
                 closeStream()
                 onExitButtonClick()
             },
             onGameOver = {
+                    timeInCorridor,
+                    timeUpperCorridor,
+                    timeLowerCorridor,
+                    numberOfFlightsOutsideCorridor,
+                ->
 //                when {
 //                    totalGameTime < 15.seconds -> decreaseGameDifficulty()
 //                    totalGameTime > 60.seconds -> increaseGameDifficulty
 //                }
-                totalGameTime = 0.seconds
+//                totalGameTime = 0.seconds
+                onGameEnded(
+                    currentGameTime,
+                    timeInCorridor,
+                    timeUpperCorridor,
+                    timeLowerCorridor,
+                    numberOfFlightsOutsideCorridor
+                )
             }
         )
 
         addUpdater { delta ->
-            totalGameTime += delta.seconds.seconds
-            currentGameTime += delta.seconds.seconds
+//            totalGameTime += delta.seconds.seconds
 
             if (gameWorld?.isRunning == true) {
+                currentGameTime += delta.seconds.seconds
+
                 val currentData = dataFlow.value
                 val normalizedData = currentData.normalizedData
 

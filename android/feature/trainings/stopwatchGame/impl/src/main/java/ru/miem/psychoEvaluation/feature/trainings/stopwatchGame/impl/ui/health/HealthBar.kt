@@ -14,18 +14,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
 
 @Composable
 @Suppress("MagicNumber")
 fun HealthBar(
-    state: StopwatchGameInProgress,
+    state: StopwatchGameInProgressState,
     modifier: Modifier = Modifier,
 ) {
     val backgroundShape = RoundedCornerShape(percent = 50)
     val maxHeartsNumber = 3
     val shouldShowBrokenHeart =
-        state.currentIndicatorType == StopwatchGameInProgress.IndicatorType.Failure
+        state.currentIndicatorType == StopwatchGameInProgressState.IndicatorType.Failure
     val additionalBrokenHeartNumber = if (shouldShowBrokenHeart) 1 else 0
     val heartsNumber = (state.heartsNumber + additionalBrokenHeartNumber)
         .coerceAtMost(maxHeartsNumber)

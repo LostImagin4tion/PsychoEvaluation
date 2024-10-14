@@ -43,6 +43,9 @@ object AssetLoader {
     lateinit var settingsButton: Bitmap
         private set
 
+    lateinit var statisticsButton: Bitmap
+        private set
+
     lateinit var exitButton: Bitmap
         private set
 
@@ -66,6 +69,7 @@ object AssetLoader {
 
         startButton = resourcesVfs["buttons/start_button.png"].readBitmap()
         settingsButton = resourcesVfs["buttons/settings_button.png"].readBitmap()
+        statisticsButton = resourcesVfs["buttons/statistics_button.png"].readBitmap()
         exitButton = resourcesVfs["buttons/exit_button.png"].readBitmap()
 
         text = resourcesVfs["text/text.fnt"].readBitmapFont()

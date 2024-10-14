@@ -2,32 +2,15 @@ package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.soywiz.korge.android.KorgeAndroidView
-import kotlinx.coroutines.flow.StateFlow
-import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
-import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
@@ -36,13 +19,14 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.api.AirplaneGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameModule
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.screens.AirplaneGameSettingsScreen
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameInProgressState
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameSettingsState
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.CurrentScreen
-import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
-import timber.log.Timber
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.ui.screens.AirplaneGameInProgressScreen
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.ui.screens.AirplaneGameSettingsScreen
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.ui.screens.AirplaneGameStatisticsScreen
 import javax.inject.Inject
-import kotlin.time.Duration
 
 class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
 
@@ -104,84 +88,73 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
             }
         }
 
-        when (gameScreenState.currentScreen) {
-            CurrentScreen.AirplaneGameSettings -> AirplaneGameSettingsScreen(
-                onBackClick = { navigateToRoute(Routes.trainingsList) },
-                onContinueButtonClick = { upperBound, lowerBound, gameTime ->
-                    viewModel.changeGameParameters(upperBound, lowerBound, gameTime)
-                }
-            )
-            CurrentScreen.AirplaneGame -> AirplaneGameScreenContent(
-                showMessage = showMessage,
-                dataFlow = viewModel.stressData,
-                modelProducer = viewModel.chartModelProducer,
-                maxGameTime = gameScreenState.maxGameTime,
-                onSettingsButtonClick = {
-                    viewModel.changeScreen(CurrentScreen.AirplaneGameSettings)
-                },
-                onExitButtonClick = {
-                    navigateToRoute(Routes.trainingsList)
-                },
-                increaseGameDifficulty = viewModel::increaseGameDifficulty,
-                decreaseGameDifficulty = viewModel::decreaseGameDifficulty
-            )
+        gameScreenState.let { state ->
+            when (state) {
+                is AirplaneGameSettingsState -> AirplaneGameSettingsScreen(
+                    onBackClick = { navigateToRoute(Routes.trainingsList) },
+                    onContinueButtonClick = { upperBound, lowerBound, gameTime ->
+                        viewModel.changeGameParameters(upperBound, lowerBound, gameTime)
+                    }
+                )
+
+                is AirplaneGameInProgressState -> AirplaneGameInProgressScreen(
+                    showMessage = showMessage,
+                    dataFlow = viewModel.stressData,
+                    modelProducer = viewModel.chartModelProducer,
+                    state = state,
+                    onGameEnded = {
+                            gameTime,
+                            timeInCorridor,
+                            timeUpperCorridor,
+                            timeLowerCorridor,
+                            numberOfFlightsOutsideCorridor,
+                        ->
+                        viewModel.finishGame(
+                            gameTime,
+                            timeInCorridor,
+                            timeUpperCorridor,
+                            timeLowerCorridor,
+                            numberOfFlightsOutsideCorridor,
+                        )
+                    },
+                    onSettingsButtonClick = {
+                        viewModel.changeScreen(CurrentScreen.AirplaneGameSettings)
+                    },
+                    onStatisticsButtonClick = {
+                            gameTime,
+                            timeInCorridor,
+                            timeUpperCorridor,
+                            timeLowerCorridor,
+                            numberOfFlightsOutsideCorridor,
+                        ->
+                        viewModel.goToStatisticsScreen(
+                            gameTime,
+                            timeInCorridor,
+                            timeUpperCorridor,
+                            timeLowerCorridor,
+                            numberOfFlightsOutsideCorridor,
+                        )
+                    },
+                    onExitButtonClick = {
+                        navigateToRoute(Routes.trainingsList)
+                    },
+                    increaseGameDifficulty = viewModel::increaseGameDifficulty,
+                    decreaseGameDifficulty = viewModel::decreaseGameDifficulty
+                )
+
+                is AirplaneGameStatisticsState -> AirplaneGameStatisticsScreen(
+                    state = state,
+                    restartGame = { viewModel.restartGame() },
+                    navigateToSettings = {
+                        viewModel.changeScreen(CurrentScreen.AirplaneGameSettings)
+                    },
+                    navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
+                )
+            }
         }
     }
 
-    @Composable
-    private fun AirplaneGameScreenContent(
-        showMessage: (String) -> Unit,
-        dataFlow: StateFlow<SensorData>,
-        modelProducer: CartesianChartModelProducer,
-        maxGameTime: Duration,
-        onSettingsButtonClick: () -> Unit,
-        onExitButtonClick: () -> Unit,
-        increaseGameDifficulty: () -> Unit,
-        decreaseGameDifficulty: () -> Unit,
-    ) = Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
-
-        AndroidView(
-            factory = { context ->
-                val displayMetrics = context.resources.displayMetrics
-                val width = displayMetrics.widthPixels
-                val height = displayMetrics.heightPixels
-                Timber.tag(TAG).d("Setting width $width and height $height")
-
-                KorgeAndroidView(context).apply {
-                    loadModule(
-                        GameModule(
-                            screenWidth = width,
-                            screenHeight = height,
-                            context = context,
-                            dataFlow = dataFlow,
-                            maxGameTime = maxGameTime,
-                            onSettingsButtonClick = onSettingsButtonClick,
-                            onExitButtonClick = onExitButtonClick,
-                            increaseGameDifficulty = increaseGameDifficulty,
-                            decreaseGameDifficulty = decreaseGameDifficulty,
-                        )
-                    )
-                }
-            }
-        )
-
-        SingleLineChart(
-            modelProducer = modelProducer,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .background(
-                    color = MaterialTheme.colorScheme.background,
-                    shape = RoundedCornerShape(topStart = 8.dp)
-                )
-                .size(width = 200.dp, height = 150.dp)
-                .padding(8.dp)
-        )
-    }
-
-    private companion object {
+    companion object {
         val TAG: String = AirplaneGameScreenImpl::class.java.simpleName
     }
 }

@@ -29,10 +29,10 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.Actio
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ActionButtonClickSuccessful
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.ArrowJumped
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.HideIndicatorAndBrokenHeart
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoadingState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.UiAction
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -104,7 +104,7 @@ class StopwatchGameScreenViewModel(
             coroutineScope {
                 tickerFlow(defaultLoadingPeriod)
                     .onEach { delta ->
-                        val state = _stopwatchGameState.value as? StopwatchGameLoading
+                        val state = _stopwatchGameState.value as? StopwatchGameLoadingState
 
                         state?.let {
                             val newProgress = 1f - it.timeBeforeStart / defaultLoadingTimer
@@ -158,13 +158,13 @@ class StopwatchGameScreenViewModel(
 
                             val state = _stopwatchGameState.value
 
-                            if (state is StopwatchGameEnded) {
+                            if (state is StopwatchGameStatisticsState) {
                                 currentAction = null
                                 isActionButtonClicked = false
                                 this@coroutineScope.cancel()
                             }
 
-                            (state as? StopwatchGameInProgress)
+                            (state as? StopwatchGameInProgressState)
                                 ?.let {
                                     val newState = it.copy(
                                         stopwatchTime = it.stopwatchTime + stopwatchTimeDelta,
@@ -201,7 +201,7 @@ class StopwatchGameScreenViewModel(
             when (action) {
                 ArrowJumped -> {
                     _stopwatchGameState.run {
-                        val state = value as? StopwatchGameInProgress
+                        val state = value as? StopwatchGameInProgressState
 
                         state?.let {
                             val newState = it.copy(
@@ -216,13 +216,13 @@ class StopwatchGameScreenViewModel(
                 is ActionButtonClickSuccessful -> {
                     isActionButtonClicked = false
                     _stopwatchGameState.run {
-                        val state = value as? StopwatchGameInProgress
+                        val state = value as? StopwatchGameInProgressState
 
                         state?.let {
                             val newState = it.copy(
                                 successfulReactionCount = it.successfulReactionCount + 1,
                                 reactionTimings = it.reactionTimings + action.reactionTiming,
-                                currentIndicatorType = StopwatchGameInProgress.IndicatorType.Success,
+                                currentIndicatorType = StopwatchGameInProgressState.IndicatorType.Success,
                             )
                             emit(newState)
                         }
@@ -233,7 +233,7 @@ class StopwatchGameScreenViewModel(
                 is ActionButtonClickFailed -> {
                     isActionButtonClicked = false
                     _stopwatchGameState.run {
-                        val state = value as? StopwatchGameInProgress
+                        val state = value as? StopwatchGameInProgressState
 
                         if (state != null) {
                             val newHeartsNumber = state.heartsNumber - 1
@@ -247,7 +247,7 @@ class StopwatchGameScreenViewModel(
                                 reactionTimings = action.reactionTiming
                                     ?.let { state.reactionTimings + it }
                                     ?: state.reactionTimings,
-                                currentIndicatorType = StopwatchGameInProgress.IndicatorType.Failure,
+                                currentIndicatorType = StopwatchGameInProgressState.IndicatorType.Failure,
                             )
 
                             emit(failedState)
@@ -262,7 +262,7 @@ class StopwatchGameScreenViewModel(
                     }
                 }
 
-                HideIndicatorAndBrokenHeart -> changeIndicatorType(StopwatchGameInProgress.IndicatorType.Undefined)
+                HideIndicatorAndBrokenHeart -> changeIndicatorType(StopwatchGameInProgressState.IndicatorType.Undefined)
             }
         }
     }
@@ -308,9 +308,9 @@ class StopwatchGameScreenViewModel(
         }
     }
 
-    private suspend fun changeIndicatorType(type: StopwatchGameInProgress.IndicatorType) {
+    private suspend fun changeIndicatorType(type: StopwatchGameInProgressState.IndicatorType) {
         _stopwatchGameState.run {
-            val state = value as? StopwatchGameInProgress
+            val state = value as? StopwatchGameInProgressState
             state?.let {
                 emit(it.copy(currentIndicatorType = type))
             }
@@ -324,7 +324,7 @@ class StopwatchGameScreenViewModel(
         }
     }.cancellable()
 
-    private suspend fun StopwatchGameInProgress.toGameEndedState(): StopwatchGameEnded {
+    private suspend fun StopwatchGameInProgressState.toGameEndedState(): StopwatchGameStatisticsState {
         return withContext(Dispatchers.Default) {
             val averageReactionTime = createTimeString(
                 duration = reactionTimings
@@ -340,7 +340,7 @@ class StopwatchGameScreenViewModel(
                 ?.reduce { accumulated, value -> accumulated - value }
                 ?: 0
 
-            StopwatchGameEnded(
+            StopwatchGameStatisticsState(
                 gameTime = gameTime,
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
                 averageReactionTimeString = averageReactionTime,
@@ -364,7 +364,7 @@ class StopwatchGameScreenViewModel(
 
     private suspend fun emitNewData(data: Int) {
         _stopwatchGameState.run {
-            val state = value as? StopwatchGameInProgress
+            val state = value as? StopwatchGameInProgressState
 
             state?.let {
                 val newState = it.copy(
@@ -385,11 +385,11 @@ class StopwatchGameScreenViewModel(
         val defaultTimeToClickActionButton = 3.seconds
         val defaultPeriodForHidingIndicatorAndBrokenHeart = 2.seconds
 
-        val defaultLoadingState = StopwatchGameLoading(
+        val defaultLoadingState = StopwatchGameLoadingState(
             timeBeforeStart = defaultLoadingTimer,
             progress = 1.0
         )
-        val defaultInProgressState = StopwatchGameInProgress(
+        val defaultInProgressState = StopwatchGameInProgressState(
             stopwatchTime = 0.seconds,
             gameTime = "00:00",
             heartsNumber = 3,
@@ -397,7 +397,7 @@ class StopwatchGameScreenViewModel(
             successfulReactionCount = 0,
             reactionTimings = emptyList(),
             stressData = emptyList(),
-            currentIndicatorType = StopwatchGameInProgress.IndicatorType.Undefined,
+            currentIndicatorType = StopwatchGameInProgressState.IndicatorType.Undefined,
         )
     }
 }

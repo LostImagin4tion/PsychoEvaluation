@@ -18,7 +18,7 @@ import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.ActionButton
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.buttons.BackButton
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.health.HealthBar
@@ -26,7 +26,7 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.stopwatc
 
 @Composable
 fun StopwatchGameScreenContent(
-    state: StopwatchGameInProgress,
+    state: StopwatchGameInProgressState,
     navigateToTrainingList: () -> Unit = {},
     onActionButtonClick: () -> Unit = {},
 ) = Column(

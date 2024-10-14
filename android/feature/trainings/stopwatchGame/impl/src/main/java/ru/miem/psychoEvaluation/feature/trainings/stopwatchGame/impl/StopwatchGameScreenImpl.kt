@@ -21,9 +21,9 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.api.StopwatchGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameEnded
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameLoadingState
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameLoaderScreen
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameScreenContent
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens.StopwatchGameStatisticsScreen
@@ -95,13 +95,13 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         stopwatchGameState.let { state ->
             when (state) {
-                is StopwatchGameLoading -> StopwatchGameLoaderScreen(state = state)
-                is StopwatchGameInProgress -> StopwatchGameScreenContent(
+                is StopwatchGameLoadingState -> StopwatchGameLoaderScreen(state = state)
+                is StopwatchGameInProgressState -> StopwatchGameScreenContent(
                     state = state,
                     navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
                     onActionButtonClick = viewModel::clickActionButton
                 )
-                is StopwatchGameEnded -> StopwatchGameStatisticsScreen(
+                is StopwatchGameStatisticsState -> StopwatchGameStatisticsScreen(
                     state = state,
                     restartGame = { viewModel.restartGame() },
                     navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }

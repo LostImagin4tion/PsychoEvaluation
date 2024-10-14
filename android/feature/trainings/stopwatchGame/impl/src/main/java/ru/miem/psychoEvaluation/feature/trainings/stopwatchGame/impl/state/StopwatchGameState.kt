@@ -4,12 +4,12 @@ import kotlin.time.Duration
 
 sealed interface StopwatchGameState
 
-data class StopwatchGameLoading(
+data class StopwatchGameLoadingState(
     val timeBeforeStart: Duration,
     val progress: Double,
 ) : StopwatchGameState
 
-data class StopwatchGameInProgress(
+data class StopwatchGameInProgressState(
     val stopwatchTime: Duration,
     val gameTime: String,
     val heartsNumber: Int,
@@ -27,7 +27,7 @@ data class StopwatchGameInProgress(
     }
 }
 
-data class StopwatchGameEnded(
+data class StopwatchGameStatisticsState(
     val gameTime: String,
     val successPercent: Float,
     val averageReactionTimeString: String, // Millis
