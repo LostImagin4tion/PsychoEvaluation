@@ -33,8 +33,8 @@ class AirplaneView(
     // todo: is there a vector2d class just to name it more suitable?
     private var position = Point(x, y)
 
-    private val velocity = Point(0, -30)
-    private val acceleration = Point(0, 5)
+    private val velocity = Point()
+    private val acceleration = Point()
 
     private val airplane = image(AssetLoader.airplane, 0.5, 0.5) {
         smoothing = false
@@ -45,6 +45,12 @@ class AirplaneView(
         updateView()
         zIndex(Int.MAX_VALUE)
     }
+
+    val highestY
+        get() = position.y - airplaneHeight / 2
+
+    val lowestY
+        get() = position.y + airplaneHeight / 2
 
     fun update(delta: TimeSpan) {
         val minPosition = minY + airplaneHeight / 2
@@ -59,10 +65,10 @@ class AirplaneView(
 
         if (acceleration.y > 0) {
             airplaneRotationDegrees -= airplaneRotationDegreesDelta
-            airplaneRotationDegrees = maxOf(-airplaneMaximumRotation, airplaneRotationDegrees)
+            airplaneRotationDegrees = maxOf(-airplaneMaximumRotationDegrees, airplaneRotationDegrees)
         } else if (acceleration.y < 0) {
             airplaneRotationDegrees += airplaneRotationDegreesDelta
-            airplaneRotationDegrees = minOf(airplaneMaximumRotation, airplaneRotationDegrees)
+            airplaneRotationDegrees = minOf(airplaneMaximumRotationDegrees, airplaneRotationDegrees)
         } else {
             airplaneRotationDegrees = 0.0
         }
@@ -113,6 +119,6 @@ class AirplaneView(
         private val airplaneVelocityMultiplier = (-4.28).dpd
 
         private val airplaneRotationDegreesDelta = (0.071).dpd
-        private val airplaneMaximumRotation = (4.3).dpd
+        private val airplaneMaximumRotationDegrees = (4.3).dpd
     }
 }

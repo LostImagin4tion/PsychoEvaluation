@@ -1,8 +1,7 @@
-package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.ui.screens
+package ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,48 +20,32 @@ import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
+import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameStatisticsState
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.R
+import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameStatisticsState
+import kotlin.math.roundToInt
 
 @Composable
 @Suppress("MagicNumber")
-fun StopwatchGameStatisticsScreen(
-    state: StopwatchGameStatisticsState,
+fun AirplaneGameStatisticsScreen(
+    state: AirplaneGameStatisticsState,
     restartGame: () -> Unit,
+    navigateToSettings: () -> Unit,
     navigateToTrainingListScreen: () -> Unit,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.screenPaddings()
 ) {
-    val vigilanceStringRes = if (state.vigilanceDelta < 0) {
-        R.string.statistics_bad_vigilance
-    } else {
-        R.string.statistics_good_vigilance
-    }
+    Spacer(modifier = Modifier.height(Dimensions.commonPadding))
 
-    val concentrationStringRes = if (state.concentrationDelta < 0) {
-        R.string.statistics_bad_reaction
-    } else {
-        R.string.statistics_good_reaction
-    }
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(R.drawable.confetti_background),
-            contentDescription = null
-        )
-
-        Image(
-            painter = painterResource(R.drawable.clocks_small),
-            contentDescription = null
-        )
-    }
+    Image(
+        painter = painterResource(R.drawable.airplane_small),
+        contentDescription = null,
+        modifier = Modifier.size(width = 234.dp, height = 188.dp)
+    )
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
@@ -102,6 +85,13 @@ fun StopwatchGameStatisticsScreen(
         }
     }
 
+    Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+
+    BodyText(
+        text = stringResource(id = R.string.statistics_screen_time_in_corridor_percent_text)
+            .format((state.successPercent * 100).roundToInt())
+    )
+
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
     TitleText(text = state.gameTime)
@@ -109,28 +99,32 @@ fun StopwatchGameStatisticsScreen(
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
     LabelText(
-        text = stringResource(R.string.statistics_result_title)
-            .format("${(state.successPercent * 10).toInt()}/10"),
+        text = stringResource(R.string.statistics_screen_time_in_corridor_text)
+            .format(state.timeInCorridor),
         modifier = Modifier.align(Alignment.Start),
     )
 
     Spacer(modifier = Modifier.height(Dimensions.commonPadding))
 
     LabelText(
-        text = stringResource(R.string.statistics_reaction_title)
-            .format(state.averageReactionTimeString),
+        text = stringResource(R.string.statistics_screen_time_upper_corridor_text)
+            .format(state.timeUpperCorridor),
         modifier = Modifier.align(Alignment.Start),
     )
 
-    Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
+    Spacer(modifier = Modifier.height(Dimensions.commonPadding))
 
     LabelText(
-        textRes = vigilanceStringRes,
+        text = stringResource(R.string.statistics_screen_time_lower_corridor_text)
+            .format(state.timeLowerCorridor),
         modifier = Modifier.align(Alignment.Start),
     )
 
+    Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+
     LabelText(
-        textRes = concentrationStringRes,
+        text = stringResource(R.string.statistics_screen_number_of_flights_from_outside_corridor)
+            .format(state.numberOfFlightsOutsideCorridor),
         modifier = Modifier.align(Alignment.Start),
     )
 
@@ -140,6 +134,13 @@ fun StopwatchGameStatisticsScreen(
         textRes = R.string.statistics_play_again,
         modifier = Modifier.fillMaxWidth(),
         onClick = restartGame,
+    )
+
+    Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+
+    SimpleTextButton(
+        textRes = R.string.statistics_settings,
+        onClick = navigateToSettings,
     )
 
     Spacer(modifier = Modifier.height(Dimensions.commonPadding))

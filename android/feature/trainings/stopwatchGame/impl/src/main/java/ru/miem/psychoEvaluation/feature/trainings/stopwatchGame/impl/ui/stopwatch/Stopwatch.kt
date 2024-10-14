@@ -18,13 +18,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgress
+import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameInProgressState
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
 fun Stopwatch(
-    state: StopwatchGameInProgress,
+    state: StopwatchGameInProgressState,
     modifier: Modifier = Modifier,
 ) = Box(
     contentAlignment = Alignment.Center,
