@@ -144,17 +144,17 @@ class SerialSocket(
         writePending = false
         for (gattService in gatt.services) {
             val onCharacteristicsCreated: (
-                BluetoothGattCharacteristic,
-                BluetoothGattCharacteristic
+                read: BluetoothGattCharacteristic,
+                write: BluetoothGattCharacteristic
             ) -> Unit = { read, write ->
                 readCharacteristic = read
                 writeCharacteristic = write
             }
 
             delegate = when (gattService.uuid) {
-                BleDevices.BLUETOOTH_LE_CC254X_SERVICE -> Cc245XDelegate(onCharacteristicsCreated)
-                BleDevices.BLUETOOTH_LE_MICROCHIP_SERVICE -> MicrochipDelegate(onCharacteristicsCreated)
-                BleDevices.BLUETOOTH_LE_NRF_SERVICE -> NrfDelegate(
+                BleDevices.CC254x.BLUETOOTH_LE_CC254X_SERVICE -> Cc245XDelegate(onCharacteristicsCreated)
+                BleDevices.Microchip.BLUETOOTH_LE_MICROCHIP_SERVICE -> MicrochipDelegate(onCharacteristicsCreated)
+                BleDevices.NordicNRF.BLUETOOTH_LE_NRF_SERVICE -> NrfDelegate(
                     onCharacteristicsCreated,
                     ::onSerialConnectError
                 )
