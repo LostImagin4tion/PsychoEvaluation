@@ -1,10 +1,15 @@
 package ru.miem.psychoEvaluation.feature.registration.impl
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,13 +22,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,19 +102,49 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.screenPaddings()
     ) {
+        val uriHandler = LocalUriHandler.current
+
         var emailInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue())
         }
         var passwordInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue())
         }
+        val acceptUserAgreementString = buildAnnotatedString {
+            val notClickableText = stringResource(R.string.registration_accept_user_agreement_not_clickable_text)
+            val clickableText = stringResource(R.string.registration_accept_user_agreement_clickable_text)
+
+            append(notClickableText)
+
+            pushStringAnnotation(tag = UserAgreementTag, annotation = UserAgreementUrl)
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                append(clickableText)
+            }
+            pop()
+        }
+        val acceptPrivacyPolicyString = buildAnnotatedString {
+            val notClickableText = stringResource(R.string.registration_accept_privacy_policy_not_clickable_text)
+            val clickableText = stringResource(R.string.registration_accept_privacy_policy_clickable_text)
+            append(notClickableText)
+
+            pushStringAnnotation(tag = PrivacyPolicyTag, annotation = PrivacyPolicyUrl)
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                append(clickableText)
+            }
+            pop()
+        }
 
         var isEmailInputError by remember { mutableStateOf(false) }
         var isPasswordInputError by remember { mutableStateOf(false) }
+        var isUserAgreementAccepted by remember { mutableStateOf(false) }
+        var isPrivacyPolicyAccepted by remember { mutableStateOf(false) }
 
         val invalidDataMessage = stringResource(R.string.registration_invalid_data_alert)
 
-        val isContinueButtonEnabled = emailInput.text.isNotBlank() && passwordInput.text.isNotBlank()
+        val isContinueButtonEnabled = emailInput.text.isNotBlank() &&
+            passwordInput.text.isNotBlank() &&
+            isUserAgreementAccepted &&
+            isPrivacyPolicyAccepted
 
         val onContinueButtonClick = {
             val email = emailInput.text
@@ -171,7 +211,77 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
             },
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Spacer(modifier = Modifier.width(Dimensions.commonPadding))
+
+            Checkbox(
+                checked = isUserAgreementAccepted,
+                onCheckedChange = { isUserAgreementAccepted = !isUserAgreementAccepted },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.primary,
+                    uncheckedColor = MaterialTheme.colorScheme.onPrimary,
+                    checkmarkColor = Color.White,
+                ),
+                modifier = Modifier.size(16.dp)
+            )
+
+            Spacer(modifier = Modifier.width(Dimensions.commonPadding))
+
+            ClickableText(
+                text = acceptUserAgreementString,
+                style = MaterialTheme.typography.bodyMedium
+                    .copy(color = MaterialTheme.colorScheme.onPrimary),
+            ) { offset ->
+                acceptUserAgreementString
+                    .getStringAnnotations(tag = UserAgreementTag, start = offset, end = offset)
+                    .firstOrNull()
+                    ?.let {
+                        uriHandler.openUri(it.item)
+                    }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Spacer(modifier = Modifier.width(Dimensions.commonPadding))
+
+            Checkbox(
+                checked = isPrivacyPolicyAccepted,
+                onCheckedChange = { isPrivacyPolicyAccepted = !isPrivacyPolicyAccepted },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.primary,
+                    uncheckedColor = MaterialTheme.colorScheme.onPrimary,
+                    checkmarkColor = Color.White,
+                ),
+                modifier = Modifier.size(16.dp)
+            )
+
+            Spacer(modifier = Modifier.width(Dimensions.commonPadding))
+
+            ClickableText(
+                text = acceptPrivacyPolicyString,
+                style = MaterialTheme.typography.bodyMedium
+                    .copy(color = MaterialTheme.colorScheme.onPrimary),
+            ) { offset ->
+                acceptPrivacyPolicyString
+                    .getStringAnnotations(tag = PrivacyPolicyTag, start = offset, end = offset)
+                    .firstOrNull()
+                    ?.let {
+                        uriHandler.openUri(it.item)
+                    }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         FilledTextButton(
             isEnabled = isContinueButtonEnabled,
@@ -197,5 +307,14 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
                 modifier = Modifier.size(32.dp),
             )
         }
+    }
+
+    @Suppress("MaxLineLength")
+    private companion object {
+        const val UserAgreementTag = "user_agreement"
+        const val PrivacyPolicyTag = "privacy_policy"
+
+        const val UserAgreementUrl = "https://docs.google.com/document/d/18B2euEyQRe21N3gy6BOljy_OZiQs-IKMioNXDE1wrOU/edit?usp=sharing"
+        const val PrivacyPolicyUrl = "https://docs.google.com/document/d/1Ew-IJou2W47RO4412q1_i3i5Usixpd9cpqnvZLyie94/edit?usp=sharing"
     }
 }
