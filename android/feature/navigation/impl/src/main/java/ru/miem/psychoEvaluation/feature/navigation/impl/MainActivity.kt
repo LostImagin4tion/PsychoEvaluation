@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -37,6 +38,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.PsychoEvaluationTheme
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
@@ -63,13 +65,17 @@ class MainActivity : AppCompatActivity() {
                         SnackbarHost(
                             hostState = snackbarHostState,
                             modifier = Modifier.navigationBarsPadding()
-                        ) {
+                        ) { data ->
                             Snackbar(
-                                snackbarData = it,
                                 containerColor = MaterialTheme.colorScheme.inverseSurface,
                                 contentColor = MaterialTheme.colorScheme.inverseOnSurface,
                                 shape = MaterialTheme.shapes.small
-                            )
+                            ) {
+                                BodyText(
+                                    text = data.visuals.message,
+                                    color = Color.Black
+                                )
+                            }
                         }
                     },
                     bottomBar = { NavigationBar() },
