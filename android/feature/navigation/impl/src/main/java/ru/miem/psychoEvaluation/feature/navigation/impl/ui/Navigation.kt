@@ -145,7 +145,7 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.authorization
+                Routes.settings
             }
         ) {
             composable(Routes.authorization) {
@@ -164,13 +164,13 @@ fun NavigationContent(
                 )
             }
 
-            composable(Routes.userProfile) {
-                setupSystemBarColors()
-                userProfileScreen.UserProfileScreen(
-                    navigateToRoute = navigateToRoute,
-                    showMessage = showMessage
-                )
-            }
+//            composable(Routes.userProfile) {
+//                setupSystemBarColors()
+//                userProfileScreen.UserProfileScreen(
+//                    navigateToRoute = navigateToRoute,
+//                    showMessage = showMessage
+//                )
+//            }
 
             composable(Routes.settings) {
                 setupSystemBarColors()

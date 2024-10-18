@@ -57,7 +57,7 @@ class AuthorizationScreenImpl @Inject constructor() : AuthorizationScreen {
 
         authorizationState.run {
             when (this) {
-                is SuccessResult -> navigateToRoute(Routes.userProfile) {
+                is SuccessResult -> navigateToRoute(Routes.settings) {
                     popUpTo(Routes.authorization) { inclusive = true }
                 }
                 is ErrorResult -> this.message?.let {

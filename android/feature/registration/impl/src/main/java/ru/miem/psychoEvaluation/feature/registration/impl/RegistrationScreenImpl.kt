@@ -69,7 +69,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
 
         registrationState.run {
             when (this) {
-                is SuccessResult -> navigateToRoute(Routes.userProfile) {
+                is SuccessResult -> navigateToRoute(Routes.settings) {
                     popUpTo(Routes.registration) { inclusive = true }
                 }
                 is ErrorResult -> this.message?.let {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bottom_bar_profile_button">Profile</string>
+    <string name="bottom_bar_settings_button">Settings</string>
     <string name="bottom_bar_statistics_button">Statistics</string>
     <string name="bottom_bar_trainings_button">Trainings</string>
 </resources>

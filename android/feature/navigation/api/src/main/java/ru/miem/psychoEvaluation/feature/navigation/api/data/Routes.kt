@@ -7,14 +7,14 @@ import androidx.navigation.navArgument
 object Routes {
     const val authorization = "authorization"
     const val registration = "registration"
-    const val settings = "settings"
 
     // === Navigation bar destinations ===
-    const val userProfile = "userProfile"
+//    const val userProfile = "userProfile"
+    const val settings = "settings"
     const val statistics = "statistics"
     const val trainingsList = "trainingsList"
 
-    val navigationBarDestinations = listOf(userProfile, statistics, trainingsList)
+    val navigationBarDestinations = listOf(settings, statistics, trainingsList)
 
     // === Trainings ===
 
