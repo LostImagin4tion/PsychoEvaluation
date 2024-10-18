@@ -205,6 +205,7 @@ fun NavigationContent(
                             ),
                     ),
                     navigateToRoute = navigateToRoute,
+                    navigateBack = navController::popBackStack,
                     showMessage = showMessage,
                 )
             }
@@ -244,6 +245,7 @@ fun NavigationContent(
                             ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
                     ),
                     navigateToRoute = navigateToRoute,
+                    navigateBack = navController::popBackStack,
                     showMessage = showMessage
                 )
             }

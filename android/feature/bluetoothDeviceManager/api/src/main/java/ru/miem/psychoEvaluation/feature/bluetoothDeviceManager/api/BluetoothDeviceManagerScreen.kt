@@ -13,6 +13,7 @@ interface BluetoothDeviceManagerScreen {
         bleDeviceInteractor: BluetoothDeviceInteractor,
         bluetoothDeviceManagerScreenArgs: BluetoothDeviceManagerScreenArgs,
         navigateToRoute: (route: String) -> Unit,
+        navigateBack: () -> Unit,
         showMessage: (String) -> Unit,
     )
 }

@@ -70,7 +70,6 @@ class TrainingPreparingScreenViewModel(
                 check(numberOfTicks / ROUND_DURATION < NUMBER_OF_ROUNDS)
             }
             .catch {
-                Timber.tag(TAG).d("HELLO caught exception")
                 val newScreenState = _screenState.value.copy(currentScreen = CurrentScreen.Exhale)
                 _screenState.emit(newScreenState)
                 onTimerEnded()

@@ -25,7 +25,7 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingP
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.TrainingPreparingScreenState
-import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackButton
+import ru.miem.psychoEvaluation.common.designSystem.buttons.BackButton
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.ExhaleScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.HoldYourBreathScreen
