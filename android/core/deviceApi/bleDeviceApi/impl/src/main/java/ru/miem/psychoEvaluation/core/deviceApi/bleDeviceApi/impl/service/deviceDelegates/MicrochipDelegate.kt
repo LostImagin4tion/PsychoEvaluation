@@ -8,19 +8,19 @@ import timber.log.Timber
 class MicrochipDelegate(
     private val onCharacteristicsCreated: (
         read: BluetoothGattCharacteristic,
-        write: BluetoothGattCharacteristic
-    ) -> Unit
-) : DeviceDelegate() {
+        write: BluetoothGattCharacteristic,
+    ) -> Unit,
+) : DeviceDelegate {
 
     override fun connectCharacteristics(gattService: BluetoothGattService): Boolean {
         Timber.tag(TAG).d("Connect characteristics of microchip device")
 
         val readCharacteristic = gattService
-            .getCharacteristic(BleDevices.BLUETOOTH_LE_MICROCHIP_CHAR_RW)
+            .getCharacteristic(BleDevices.Microchip.BLUETOOTH_LE_MICROCHIP_CHAR_RW)
 
         val writeCharacteristic = gattService
-            .getCharacteristic(BleDevices.BLUETOOTH_LE_MICROCHIP_CHAR_W)
-            ?: gattService.getCharacteristic(BleDevices.BLUETOOTH_LE_MICROCHIP_CHAR_RW)
+            .getCharacteristic(BleDevices.Microchip.BLUETOOTH_LE_MICROCHIP_CHAR_W)
+            ?: gattService.getCharacteristic(BleDevices.Microchip.BLUETOOTH_LE_MICROCHIP_CHAR_RW)
 
         onCharacteristicsCreated(readCharacteristic, writeCharacteristic)
         return true

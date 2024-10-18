@@ -5,28 +5,28 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
 
-open class DeviceDelegate {
-    open fun connectCharacteristics(gattService: BluetoothGattService): Boolean = true
+sealed interface DeviceDelegate {
+    fun connectCharacteristics(gattService: BluetoothGattService): Boolean = true
 
     // following methods only overwritten for Telit devices
-    open fun onDescriptorWrite(
+    fun onDescriptorWrite(
         gatt: BluetoothGatt,
         descriptor: BluetoothGattDescriptor,
         status: Int
     ) {}
 
-    open fun onCharacteristicChanged(
+    fun onCharacteristicChanged(
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic
     ) {}
 
-    open fun onCharacteristicWrite(
+    fun onCharacteristicWrite(
         gatt: BluetoothGatt,
         characteristic: BluetoothGattCharacteristic,
         status: Int
     ) {}
 
-    open fun canWrite(): Boolean = true
+    fun canWrite(): Boolean = true
 
-    open fun disconnect() {}
+    fun disconnect() {}
 }
