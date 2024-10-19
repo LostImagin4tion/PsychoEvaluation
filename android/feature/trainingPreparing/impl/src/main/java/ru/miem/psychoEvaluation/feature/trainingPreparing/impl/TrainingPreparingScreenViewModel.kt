@@ -24,6 +24,7 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScre
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.TrainingPreparingScreenState
 import timber.log.Timber
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class TrainingPreparingScreenViewModel(
@@ -63,8 +64,8 @@ class TrainingPreparingScreenViewModel(
 
         tickerFlow(period = DEFAULT_PERIOD)
             .cancellable()
-            .scan(initial = 0) { numberOfTicks, _ ->
-                numberOfTicks + 1
+            .scan(initial = 0.seconds) { accumulated, _ ->
+                accumulated + DEFAULT_PERIOD
             }
             .onEach { numberOfTicks ->
                 check(numberOfTicks / ROUND_DURATION < NUMBER_OF_ROUNDS)
@@ -75,21 +76,30 @@ class TrainingPreparingScreenViewModel(
                 onTimerEnded()
             }
             .combine(_screenState) { numberOfTicks, state ->
-                val currentRoundTime = (numberOfTicks % ROUND_DURATION).seconds
+                val currentRoundTime = numberOfTicks % ROUND_DURATION
+
+                val timeSpentAtCurrentScreen = when (state.currentScreen) {
+                    CurrentScreen.Welcome -> 0.seconds
+                    CurrentScreen.TakeABreath -> currentRoundTime
+                    CurrentScreen.HoldYourBreath ->
+                        currentRoundTime
+                            .minus(CurrentScreen.TakeABreath.durationTime)
+                    CurrentScreen.Exhale ->
+                        currentRoundTime
+                            .minus(CurrentScreen.TakeABreath.durationTime)
+                            .minus(CurrentScreen.HoldYourBreath.durationTime)
+                }
 
                 val newScreen = when (state.currentScreen) {
                     CurrentScreen.Welcome -> CurrentScreen.TakeABreath
                     CurrentScreen.TakeABreath -> {
-                        if (currentRoundTime >= CurrentScreen.TakeABreath.durationTime) {
+                        if (timeSpentAtCurrentScreen >= CurrentScreen.TakeABreath.durationTime) {
                             CurrentScreen.HoldYourBreath
                         } else {
                             CurrentScreen.TakeABreath
                         }
                     }
                     CurrentScreen.HoldYourBreath -> {
-                        val timeSpentAtCurrentScreen = currentRoundTime
-                            .minus(CurrentScreen.TakeABreath.durationTime)
-
                         if (timeSpentAtCurrentScreen >= CurrentScreen.HoldYourBreath.durationTime) {
                             CurrentScreen.Exhale
                         } else {
@@ -104,13 +114,13 @@ class TrainingPreparingScreenViewModel(
                         }
                     }
                 }
-                numberOfTicks to newScreen
-            }
-            .onEach { (numberOfTicks, newScreen) ->
-                val roundNumber = numberOfTicks / ROUND_DURATION + 1
+
+                val newProgress = 1.0 - timeSpentAtCurrentScreen / newScreen.durationTime
+                val roundNumber = (numberOfTicks / ROUND_DURATION).toInt() + 1
                 val newState = _screenState.value.copy(
                     currentScreen = newScreen,
-                    roundNumberString = ROUND_NUMBER_PLACEHOLDER.format(roundNumber)
+                    roundNumberString = ROUND_NUMBER_PLACEHOLDER.format(roundNumber),
+                    screenProgress = newProgress
                 )
                 _screenState.emit(newState)
             }
@@ -144,20 +154,27 @@ class TrainingPreparingScreenViewModel(
         }
     }
 
+    private operator fun Duration.rem(other: Duration): Duration {
+        return (this.inWholeMilliseconds % other.inWholeMilliseconds).milliseconds
+    }
+
     private companion object {
         val TAG: String = TrainingPreparingScreenViewModel::class.java.simpleName
 
         const val NUMBER_OF_ROUNDS = 7
         const val ROUND_NUMBER_PLACEHOLDER = "%s/${NUMBER_OF_ROUNDS}"
 
-        val DEFAULT_PERIOD = 1.seconds
+        val DEFAULT_PERIOD = 10.milliseconds
         val ROUND_DURATION = CurrentScreen.entries
-            .sumOf { it.durationTime.inWholeSeconds }
-            .toInt()
+            .map { it.durationTime }
+            .reduce { acc: Duration, duration: Duration ->
+                acc + duration
+            }
 
         val defaultState = TrainingPreparingScreenState(
             currentScreen = CurrentScreen.Welcome,
-            roundNumberString = ROUND_NUMBER_PLACEHOLDER.format("1")
+            roundNumberString = ROUND_NUMBER_PLACEHOLDER.format("1"),
+            screenProgress = 0.0,
         )
     }
 }
