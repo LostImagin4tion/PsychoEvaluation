@@ -55,7 +55,7 @@ fun ClocksGameScreenContent(
     Spacer(modifier = Modifier.height(30.dp))
 
     TitleText(
-        text = state.gameTime,
+        text = state.gameDurationString,
         modifier = Modifier.align(Alignment.CenterHorizontally),
     )
 

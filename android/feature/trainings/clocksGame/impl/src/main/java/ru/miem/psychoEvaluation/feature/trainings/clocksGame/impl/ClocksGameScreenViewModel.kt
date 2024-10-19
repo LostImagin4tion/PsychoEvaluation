@@ -19,21 +19,28 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ActionButtonClickFailed
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ActionButtonClickSuccessful
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ArrowJumped
-import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameEnded
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameLoading
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameState
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.HideIndicatorAndBrokenHeart
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.UiAction
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.time.Duration
@@ -48,13 +55,17 @@ class ClocksGameScreenViewModel(
 ) : ViewModel() {
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
+    private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
     private val _clocksGameState = MutableStateFlow<ClocksGameState>(defaultLoadingState)
     private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
+    private val allStress = mutableListOf<Int>()
     private var currentAction: UiAction? = null
     private var isActionButtonClicked = false
+
+    private val mutex = Mutex()
 
     val clocksGameState: StateFlow<ClocksGameState> = _clocksGameState
     val stressData: StateFlow<Int> = _stressData
@@ -134,7 +145,14 @@ class ClocksGameScreenViewModel(
 
     private fun startGame() {
         viewModelScope.launch {
-            _clocksGameState.emit(defaultInProgressState)
+            mutex.withLock {
+                allStress.clear()
+            }
+            _clocksGameState.emit(
+                defaultInProgressState.copy(
+                    gameDate = Calendar.getInstance().time
+                )
+            )
         }
 
         viewModelScope.launch {
@@ -159,7 +177,7 @@ class ClocksGameScreenViewModel(
 
                             val state = _clocksGameState.value
 
-                            if (state is ClocksGameEnded) {
+                            if (state is ClocksGameStatisticsState) {
                                 currentAction = null
                                 isActionButtonClicked = false
                                 this@coroutineScope.cancel()
@@ -169,7 +187,8 @@ class ClocksGameScreenViewModel(
                                 ?.let {
                                     val newState = it.copy(
                                         clocksTime = it.clocksTime + clocksTimeDelta,
-                                        gameTime = createTimeString(gameTime),
+                                        gameDuration = gameTime,
+                                        gameDurationString = createTimeString(gameTime),
                                     )
 
                                     emit(newState)
@@ -255,8 +274,9 @@ class ClocksGameScreenViewModel(
                             startTimerForShowingBrokenHeartAndIndicatorButton()
 
                             if (newHeartsNumber == 0) {
-                                val gameEndedState = failedState.toGameEndedState()
+                                val gameEndedState = failedState.toGameStatisticsState()
                                 delay(defaultPeriodForHidingIndicatorAndBrokenHeart)
+                                sendClocksGameStatistics(gameEndedState)
                                 emit(gameEndedState)
                             }
                         }
@@ -319,6 +339,31 @@ class ClocksGameScreenViewModel(
         }
     }
 
+    private fun sendClocksGameStatistics(state: ClocksGameStatisticsState) {
+        val gsrBreathing = when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
+            SensorDeviceType.Unknown -> emptyList()
+        }
+
+        viewModelScope.launch {
+            val allStressCopy = buildList {
+                mutex.withLock {
+                    addAll(allStress)
+                }
+            }
+
+            statisticsInteractor.sendClocksGameStatistics(
+                gsrBreathing = gsrBreathing,
+                gsrGame = allStressCopy,
+                duration = state.gameDuration.inWholeSeconds.toInt(),
+                date = state.gameDate.formatted(),
+                level = 2,
+                score = state.score
+            )
+        }
+    }
+
     private fun tickerFlow(period: Duration) = flow {
         while (true) {
             emit(period)
@@ -326,7 +371,7 @@ class ClocksGameScreenViewModel(
         }
     }.cancellable()
 
-    private suspend fun ClocksGameInProgress.toGameEndedState(): ClocksGameEnded {
+    private suspend fun ClocksGameInProgress.toGameStatisticsState(): ClocksGameStatisticsState {
         return withContext(Dispatchers.Default) {
             val averageReactionTime = createTimeString(
                 duration = reactionTimings
@@ -342,9 +387,12 @@ class ClocksGameScreenViewModel(
                 ?.reduce { accumulated, value -> accumulated - value }
                 ?: 0
 
-            ClocksGameEnded(
-                gameTime = gameTime,
+            ClocksGameStatisticsState(
+                gameDate = gameDate,
+                gameDuration = gameDuration,
+                gameDurationString = gameDurationString,
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
+                score = successfulReactionCount,
                 averageReactionTimeString = averageReactionTime,
                 vigilanceDelta = vigilanceDelta,
                 concentrationDelta = concentrationDelta
@@ -364,7 +412,16 @@ class ClocksGameScreenViewModel(
         }
     }
 
+    private fun Date.formatted(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(this)
+    }
+
     private suspend fun emitNewData(data: Int) {
+        mutex.withLock {
+            allStress.add(data)
+        }
+
         _clocksGameState.run {
             val state = value as? ClocksGameInProgress
 
@@ -393,7 +450,9 @@ class ClocksGameScreenViewModel(
         )
         val defaultInProgressState = ClocksGameInProgress(
             clocksTime = 0.seconds,
-            gameTime = "00:00",
+            gameDate = Calendar.getInstance().time,
+            gameDuration = 0.seconds,
+            gameDurationString = "00:00",
             heartsNumber = 3,
             jumpCount = 0,
             successfulReactionCount = 0,
