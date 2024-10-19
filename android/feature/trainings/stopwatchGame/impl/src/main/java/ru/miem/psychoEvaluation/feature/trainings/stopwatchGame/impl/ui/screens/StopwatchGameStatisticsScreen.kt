@@ -104,7 +104,7 @@ fun StopwatchGameStatisticsScreen(
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
-    TitleText(text = state.gameTime)
+    TitleText(text = state.gameDurationString)
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 

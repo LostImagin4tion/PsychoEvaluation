@@ -19,9 +19,12 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -34,6 +37,11 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.Stopw
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.UiAction
+import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import kotlin.random.Random
 import kotlin.random.nextInt
 import kotlin.time.Duration
@@ -47,13 +55,17 @@ class StopwatchGameScreenViewModel(
 ) : ViewModel() {
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
+    private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
     private val _stopwatchGameState = MutableStateFlow<StopwatchGameState>(defaultLoadingState)
     private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
+    private val allStress = mutableListOf<Int>()
     private var currentAction: UiAction? = null
     private var isActionButtonClicked = false
+
+    private val mutex = Mutex()
 
     val stopwatchGameState: StateFlow<StopwatchGameState> = _stopwatchGameState
     val stressData: StateFlow<Int> = _stressData
@@ -61,7 +73,9 @@ class StopwatchGameScreenViewModel(
 
     fun subscribeForSettingsChanges() {
         settingsInteractor.getCurrentSensorDeviceType()
-            .onEach { _sensorDeviceType.emit(it) }
+            .onEach {
+                _sensorDeviceType.emit(it)
+            }
             .launchIn(viewModelScope)
     }
 
@@ -92,6 +106,7 @@ class StopwatchGameScreenViewModel(
     }
 
     fun disconnect() {
+        Timber.tag("HELLO disconnect")
         when (_sensorDeviceType.value) {
             SensorDeviceType.Usb -> usbDeviceInteractor.disconnect()
             SensorDeviceType.Bluetooth -> bleDeviceInteractor.disconnect()
@@ -133,10 +148,14 @@ class StopwatchGameScreenViewModel(
 
     private fun startGame() {
         viewModelScope.launch {
-            _stopwatchGameState.emit(defaultInProgressState)
-        }
-
-        viewModelScope.launch {
+            mutex.withLock {
+                allStress.clear()
+            }
+            _stopwatchGameState.emit(
+                defaultInProgressState.copy(
+                    gameDate = Calendar.getInstance().time,
+                )
+            )
             var timeForArrowJump = Random.Default.nextInt(8..16).seconds
 
             coroutineScope {
@@ -168,7 +187,8 @@ class StopwatchGameScreenViewModel(
                                 ?.let {
                                     val newState = it.copy(
                                         stopwatchTime = it.stopwatchTime + stopwatchTimeDelta,
-                                        gameTime = createTimeString(gameTime),
+                                        gameDuration = gameTime,
+                                        gameDurationString = createTimeString(gameTime),
                                     )
 
                                     emit(newState)
@@ -254,8 +274,9 @@ class StopwatchGameScreenViewModel(
                             startTimerForShowingBrokenHeartAndIndicatorButton()
 
                             if (newHeartsNumber == 0) {
-                                val gameEndedState = failedState.toGameEndedState()
+                                val gameEndedState = failedState.toGameStatisticsState()
                                 delay(defaultPeriodForHidingIndicatorAndBrokenHeart)
+                                sendStopwatchGameStatistics(gameEndedState)
                                 emit(gameEndedState)
                             }
                         }
@@ -317,6 +338,31 @@ class StopwatchGameScreenViewModel(
         }
     }
 
+    private suspend fun sendStopwatchGameStatistics(state: StopwatchGameStatisticsState) {
+        val gsrBreathing = when (_sensorDeviceType.value) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
+            SensorDeviceType.Unknown -> emptyList()
+        }
+
+        viewModelScope.launch {
+            val allStressCopy = buildList {
+                mutex.withLock {
+                    addAll(allStress)
+                }
+            }
+
+            statisticsInteractor.sendClocksGameStatistics(
+                gsrBreathing = gsrBreathing,
+                gsrGame = allStressCopy,
+                duration = state.gameDuration.inWholeSeconds.toInt(),
+                date = state.gameDate.formatted(),
+                level = 1,
+                score = state.score
+            )
+        }
+    }
+
     private fun tickerFlow(period: Duration) = flow {
         while (true) {
             emit(period)
@@ -324,7 +370,7 @@ class StopwatchGameScreenViewModel(
         }
     }.cancellable()
 
-    private suspend fun StopwatchGameInProgressState.toGameEndedState(): StopwatchGameStatisticsState {
+    private suspend fun StopwatchGameInProgressState.toGameStatisticsState(): StopwatchGameStatisticsState {
         return withContext(Dispatchers.Default) {
             val averageReactionTime = createTimeString(
                 duration = reactionTimings
@@ -341,8 +387,11 @@ class StopwatchGameScreenViewModel(
                 ?: 0
 
             StopwatchGameStatisticsState(
-                gameTime = gameTime,
+                gameDate = gameDate,
+                gameDuration = gameDuration,
+                gameDurationString = gameDurationString,
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
+                score = successfulReactionCount,
                 averageReactionTimeString = averageReactionTime,
                 vigilanceDelta = vigilanceDelta,
                 concentrationDelta = concentrationDelta
@@ -362,7 +411,16 @@ class StopwatchGameScreenViewModel(
         }
     }
 
+    private fun Date.formatted(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(this)
+    }
+
     private suspend fun emitNewData(data: Int) {
+        mutex.withLock {
+            allStress.add(data)
+        }
+
         _stopwatchGameState.run {
             val state = value as? StopwatchGameInProgressState
 
@@ -391,7 +449,9 @@ class StopwatchGameScreenViewModel(
         )
         val defaultInProgressState = StopwatchGameInProgressState(
             stopwatchTime = 0.seconds,
-            gameTime = "00:00",
+            gameDate = Calendar.getInstance().time,
+            gameDuration = 0.seconds,
+            gameDurationString = "00:00",
             heartsNumber = 3,
             jumpCount = 0,
             successfulReactionCount = 0,
