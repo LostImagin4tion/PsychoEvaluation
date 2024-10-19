@@ -15,6 +15,7 @@ interface DebugTrainingScreen {
         bleDeviceInteractor: BluetoothDeviceInteractor,
         trainingScreenArgs: TrainingScreenArgs,
         navigateToRoute: (route: String) -> Unit,
+        navigateBack: () -> Unit,
         showMessage: (String) -> Unit
     )
 }

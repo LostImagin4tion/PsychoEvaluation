@@ -4,12 +4,14 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -23,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import ru.miem.psychoEvaluation.common.designSystem.buttons.BackButton
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
@@ -45,6 +48,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
         bleDeviceInteractor: BluetoothDeviceInteractor,
         bluetoothDeviceManagerScreenArgs: BluetoothDeviceManagerScreenArgs,
         navigateToRoute: (route: String) -> Unit,
+        navigateBack: () -> Unit,
         showMessage: (String) -> Unit,
     ) {
         val context = LocalContext.current
@@ -77,18 +81,17 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                     }
                 }
             },
+            onBackButtonClick = navigateBack,
             navigateToNextScreen = {
-                val nextScreenRoute = bluetoothDeviceManagerScreenArgs.nextScreenRoute
-
-                val route = when (nextScreenRoute) {
+                val route = when (val routeArg = bluetoothDeviceManagerScreenArgs.nextScreenRoute) {
                     Routes.stopwatchGame,
                     Routes.clocksGame,
                     -> Routes.generalTrainingRoute.format(
-                        nextScreenRoute,
+                        routeArg,
                         connectedDevice?.hardwareAddress,
                     )
                     else -> Routes.trainingPreparing.format(
-                        nextScreenRoute,
+                        routeArg,
                         connectedDevice?.hardwareAddress
                     )
                 }
@@ -101,6 +104,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
     private fun BluetoothDeviceManagerScreenContent(
         devices: ImmutableList<BluetoothDeviceState>,
         isAnyDeviceConnected: Boolean,
+        onBackButtonClick: () -> Unit,
         onDeviceTapped: (device: BluetoothDeviceState) -> Unit,
         navigateToNextScreen: () -> Unit,
     ) = Column(
@@ -109,10 +113,19 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
     ) {
         Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-        TitleText(
-            textRes = R.string.device_manager_header,
-            isLarge = false
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            BackButton(onClick = onBackButtonClick)
+
+            Spacer(modifier = Modifier.width(Dimensions.commonPadding))
+
+            TitleText(
+                textRes = R.string.device_manager_header,
+                isLarge = false
+            )
+        }
 
         Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
 

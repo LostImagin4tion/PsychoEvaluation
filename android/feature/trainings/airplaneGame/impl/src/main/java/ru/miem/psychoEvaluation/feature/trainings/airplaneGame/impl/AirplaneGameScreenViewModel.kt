@@ -40,7 +40,7 @@ class AirplaneGameScreenViewModel(
 
     private val gameScreenStateMutex = Mutex()
     private val _stressData = MutableStateFlow(defaultSensorData)
-    private val _gameScreenState = MutableStateFlow<AirplaneGameState>(stubGameInProgressState)
+    private val _gameScreenState = MutableStateFlow<AirplaneGameState>(defaultGameSettingsState)
 
     val stressData: StateFlow<SensorData> = _stressData
     val gameScreenState: StateFlow<AirplaneGameState> = _gameScreenState
@@ -259,10 +259,6 @@ class AirplaneGameScreenViewModel(
         val defaultGameSettingsState = AirplaneGameSettingsState(
             sensorDeviceType = SensorDeviceType.Unknown,
             maxGameTime = defaultMaxGameTime,
-        )
-        val stubGameInProgressState = AirplaneGameInProgressState(
-            sensorDeviceType = SensorDeviceType.Unknown,
-            maxGameTime = 30.seconds
         )
     }
 }

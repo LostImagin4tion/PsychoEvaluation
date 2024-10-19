@@ -6,6 +6,7 @@ import kotlin.time.Duration.Companion.seconds
 data class TrainingPreparingScreenState(
     val currentScreen: CurrentScreen,
     val roundNumberString: String,
+    val screenProgress: Double,
 )
 
 enum class CurrentScreen(val durationTime: Duration) {

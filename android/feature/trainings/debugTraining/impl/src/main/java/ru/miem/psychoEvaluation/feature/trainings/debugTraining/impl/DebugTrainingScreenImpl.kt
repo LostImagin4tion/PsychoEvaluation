@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import ru.miem.psychoEvaluation.common.designSystem.buttons.BackButton
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
@@ -38,6 +38,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         bleDeviceInteractor: BluetoothDeviceInteractor,
         trainingScreenArgs: TrainingScreenArgs,
         navigateToRoute: (route: String) -> Unit,
+        navigateBack: () -> Unit,
         showMessage: (String) -> Unit
     ) {
         val context = LocalContext.current
@@ -94,16 +95,19 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
 
         DebugTrainingScreenContent(
             modelProducer = viewModel.chartModelProducer,
+            onBackButtonClick = navigateBack,
         )
     }
 
     @Composable
     private fun DebugTrainingScreenContent(
         modelProducer: CartesianChartModelProducer,
+        onBackButtonClick: () -> Unit,
     ) = Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.screenPaddings()
     ) {
+        BackButton(onClick = onBackButtonClick)
+
         SingleLineChart(
             modelProducer = modelProducer,
             modifier = Modifier.fillMaxSize()

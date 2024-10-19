@@ -30,6 +30,7 @@ import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.R
 @Composable
 fun BoxScope.HoldYourBreathScreen(
     roundNumber: String,
+    progress: Double,
 ) = Column(
     verticalArrangement = Arrangement.Top,
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,9 +71,10 @@ fun BoxScope.HoldYourBreathScreen(
     Spacer(modifier = Modifier.height(30.dp))
 
     CircularProgressIndicator(
+        progress = { progress.toFloat() },
         color = MaterialTheme.colorScheme.primary,
-        strokeWidth = 6.dp,
+        strokeWidth = 4.dp,
         strokeCap = StrokeCap.Round,
-        modifier = Modifier.size(40.dp),
+        modifier = Modifier.size(56.dp),
     )
 }

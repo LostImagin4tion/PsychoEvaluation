@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.miem.psychoEvaluation.common.designSystem.buttons.BackButton
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
@@ -25,7 +26,6 @@ import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingP
 import ru.miem.psychoEvaluation.feature.trainingPreparing.api.TrainingPreparingScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.state.TrainingPreparingScreenState
-import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.buttons.BackButton
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.decorations.CircleBackgroundDecoration
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.ExhaleScreen
 import ru.miem.psychoEvaluation.feature.trainingPreparing.impl.ui.screens.HoldYourBreathScreen
@@ -124,9 +124,18 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             CurrentScreen.Welcome -> WelcomeScreen(
                 onContinueButtonClick = onContinueButtonClick,
             )
-            CurrentScreen.TakeABreath -> TakeABreathScreen(screenState.roundNumberString)
-            CurrentScreen.HoldYourBreath -> HoldYourBreathScreen(screenState.roundNumberString)
-            CurrentScreen.Exhale -> ExhaleScreen(screenState.roundNumberString)
+            CurrentScreen.TakeABreath -> TakeABreathScreen(
+                roundNumber = screenState.roundNumberString,
+                progress = screenState.screenProgress,
+            )
+            CurrentScreen.HoldYourBreath -> HoldYourBreathScreen(
+                roundNumber = screenState.roundNumberString,
+                progress = screenState.screenProgress,
+            )
+            CurrentScreen.Exhale -> ExhaleScreen(
+                roundNumber = screenState.roundNumberString,
+                progress = screenState.screenProgress,
+            )
         }
     }
 

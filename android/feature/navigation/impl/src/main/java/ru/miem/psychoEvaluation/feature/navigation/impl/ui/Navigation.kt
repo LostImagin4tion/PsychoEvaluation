@@ -145,7 +145,7 @@ fun NavigationContent(
         NavHost(
             navController = navController,
             startDestination = remember {
-                Routes.authorization
+                Routes.settings
             }
         ) {
             composable(Routes.authorization) {
@@ -164,13 +164,13 @@ fun NavigationContent(
                 )
             }
 
-            composable(Routes.userProfile) {
-                setupSystemBarColors()
-                userProfileScreen.UserProfileScreen(
-                    navigateToRoute = navigateToRoute,
-                    showMessage = showMessage
-                )
-            }
+//            composable(Routes.userProfile) {
+//                setupSystemBarColors()
+//                userProfileScreen.UserProfileScreen(
+//                    navigateToRoute = navigateToRoute,
+//                    showMessage = showMessage
+//                )
+//            }
 
             composable(Routes.settings) {
                 setupSystemBarColors()
@@ -205,6 +205,7 @@ fun NavigationContent(
                             ),
                     ),
                     navigateToRoute = navigateToRoute,
+                    navigateBack = navController::popBackStack,
                     showMessage = showMessage,
                 )
             }
@@ -244,6 +245,7 @@ fun NavigationContent(
                             ?.getString(TrainingRouteArgs.bleDeviceHardwareAddress)
                     ),
                     navigateToRoute = navigateToRoute,
+                    navigateBack = navController::popBackStack,
                     showMessage = showMessage
                 )
             }
