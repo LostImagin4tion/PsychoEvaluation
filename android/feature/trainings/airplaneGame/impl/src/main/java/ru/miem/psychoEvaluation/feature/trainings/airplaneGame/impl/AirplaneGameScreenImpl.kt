@@ -104,6 +104,7 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                     state = state,
                     onGameEnded = {
                             gameTime,
+                            gameDate,
                             timeInCorridor,
                             timeUpperCorridor,
                             timeLowerCorridor,
@@ -111,11 +112,15 @@ class AirplaneGameScreenImpl @Inject constructor() : AirplaneGameScreen {
                         ->
                         viewModel.finishGame(
                             gameTime,
+                            gameDate,
                             timeInCorridor,
                             timeUpperCorridor,
                             timeLowerCorridor,
                             numberOfFlightsOutsideCorridor,
                         )
+                    },
+                    onStartButtonClick = {
+                        viewModel.startGame()
                     },
                     onSettingsButtonClick = {
                         viewModel.changeScreen(CurrentScreen.AirplaneGameSettings)

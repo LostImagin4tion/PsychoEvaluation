@@ -8,5 +8,5 @@ enum class AuthorizationResponseType {
     Authorized,
     NoRefreshToken,
     RefreshTokenExpired,
-    WrongCredentials
+    WrongCredentials,
 }

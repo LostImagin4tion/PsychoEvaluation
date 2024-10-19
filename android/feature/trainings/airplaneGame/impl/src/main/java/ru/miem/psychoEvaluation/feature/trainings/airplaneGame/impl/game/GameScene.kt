@@ -27,7 +27,8 @@ class GameScene(
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
     private val maxGameTime: Duration,
-    private val onGameEnded: (Duration, Duration, Duration, Duration, Int) -> Unit,
+    private val onGameEnded: (Duration, Date, Duration, Duration, Duration, Int) -> Unit,
+    private val onStartButtonClick: () -> Unit,
     private val onSettingsButtonClick: () -> Unit,
     private val onStatisticsButtonClick: (Duration, Duration, Duration, Duration, Int) -> Unit,
     private val onExitButtonClick: () -> Unit,
@@ -48,12 +49,15 @@ class GameScene(
     override suspend fun SContainer.sceneMain() {
 //        var totalGameTime = 0.seconds
         var currentGameTime = 0.seconds
+        var currentGameDate = Calendar.getInstance().time
 
         gameWorld = gameWorld(
             screenWidth,
             screenHeight,
             onStartButtonClick = {
+                onStartButtonClick()
                 currentGameTime = 0.seconds
+                currentGameDate = Calendar.getInstance().time
                 setupFileInputStream(context)
                 previousData = null
             },
@@ -93,6 +97,7 @@ class GameScene(
 //                totalGameTime = 0.seconds
                 onGameEnded(
                     currentGameTime,
+                    currentGameDate,
                     timeInCorridor,
                     timeUpperCorridor,
                     timeLowerCorridor,

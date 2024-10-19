@@ -8,6 +8,7 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.models.BluetoothDeviceData
 
 interface BluetoothDeviceInteractor {
+    val gsrBreathing: List<Int>
     val devicesFlow: Flow<BluetoothDevice>
 
     suspend fun findDataBorders(onCompleted: () -> Unit = {})

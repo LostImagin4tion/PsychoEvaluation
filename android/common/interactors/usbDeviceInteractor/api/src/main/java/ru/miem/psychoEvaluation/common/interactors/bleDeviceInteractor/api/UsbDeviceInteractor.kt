@@ -5,6 +5,8 @@ import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.model
 
 interface UsbDeviceInteractor {
 
+    val gsrBreathing: List<Int>
+
     suspend fun findDataBorders(
         usbManager: UsbManager,
         onCompleted: () -> Unit = {},

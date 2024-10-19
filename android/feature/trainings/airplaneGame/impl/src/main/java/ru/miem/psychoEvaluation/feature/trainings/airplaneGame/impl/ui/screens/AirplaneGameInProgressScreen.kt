@@ -23,6 +23,7 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.GameMod
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.AirplaneGameInProgressState
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import timber.log.Timber
+import java.util.Date
 import kotlin.time.Duration
 
 @Composable
@@ -31,7 +32,8 @@ fun AirplaneGameInProgressScreen(
     dataFlow: StateFlow<SensorData>,
     modelProducer: CartesianChartModelProducer,
     state: AirplaneGameInProgressState,
-    onGameEnded: (Duration, Duration, Duration, Duration, Int) -> Unit,
+    onGameEnded: (Duration, Date, Duration, Duration, Duration, Int) -> Unit,
+    onStartButtonClick: () -> Unit,
     onSettingsButtonClick: () -> Unit,
     onStatisticsButtonClick: (Duration, Duration, Duration, Duration, Int) -> Unit,
     onExitButtonClick: () -> Unit,
@@ -59,6 +61,7 @@ fun AirplaneGameInProgressScreen(
                         dataFlow = dataFlow,
                         maxGameTime = state.maxGameTime,
                         onGameEnded = onGameEnded,
+                        onStartButtonClick = onStartButtonClick,
                         onSettingsButtonClick = onSettingsButtonClick,
                         onStatisticsButtonClick = onStatisticsButtonClick,
                         onExitButtonClick = onExitButtonClick,

@@ -16,6 +16,8 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
     private val usbDeviceRepository by diApi(UsbDeviceRepositoryDiApi::usbDeviceRepository)
     private val airplaneGameDataAnalysis by diApi(DataAnalysisDiApi::dataAnalysis)
 
+    override var gsrBreathing: List<Int> = emptyList()
+
     private var dataBorders: Borders? = null
 
     override suspend fun findDataBorders(
@@ -31,6 +33,7 @@ class UsbDeviceInteractorImpl @Inject constructor() : UsbDeviceInteractor {
 
             dataBorders = preparationData.toList()
                 .let {
+                    gsrBreathing = it
                     airplaneGameDataAnalysis.findDataBorders(it)
                 }
                 .also {

@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.multiplatform.core
 
+import io.ktor.client.request.headers
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
@@ -10,6 +11,9 @@ import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.SafeHttpClientFactory
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.di.HttpClientFactoryDiApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.models.successOrNull
+import ru.miem.psychoEvaluation.multiplatform.core.models.SendAirplaneGameStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.SendClocksGameStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.SendStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsResponse
 import javax.inject.Inject
@@ -23,8 +27,8 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
     override suspend fun commonStatistics(
         request: StatisticsRequest
     ): StatisticsResponse? {
-        val url = URLBuilder(STATISTICS_BASE_URL)
-            .appendPathSegments(COMMON_STATISTICS_ENDPOINT)
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(CommonStatisticsEndpoint)
             .buildString()
 
         return safeHttpClientFactory.get()
@@ -36,8 +40,56 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
             .successOrNull()
     }
 
+    override suspend fun sendAirplaneStatistics(
+        request: SendAirplaneGameStatisticsRequest,
+        token: String,
+    ): Boolean {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(SendAirplaneStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<SendStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Post
+                contentType(ContentType.Application.Json)
+                setBody(request)
+
+                headers {
+                    append(AuthorizationTokenHeader, token)
+                }
+            }
+            .successOrNull()
+            .let { it != null }
+    }
+
+    override suspend fun sendClocksStatistics(
+        request: SendClocksGameStatisticsRequest,
+        token: String,
+    ): Boolean {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(SendClocksStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<SendStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Post
+                contentType(ContentType.Application.Json)
+                setBody(request)
+
+                headers {
+                    append(AuthorizationTokenHeader, token)
+                }
+            }
+            .successOrNull()
+            .let { it != null }
+    }
+
     private companion object {
-        const val STATISTICS_BASE_URL = "http://gsr.miem2.vmnet.top/api/v1"
-        const val COMMON_STATISTICS_ENDPOINT = "games/dates"
+        const val StatisticsBaseUrl = "http://gsr.miem2.vmnet.top/api/v1"
+        const val CommonStatisticsEndpoint = "games/dates"
+        const val SendAirplaneStatisticsEndpoint = "games/airplane"
+        const val SendClocksStatisticsEndpoint = "games/clock"
+
+        const val AuthorizationTokenHeader = "Authorization-token"
     }
 }
