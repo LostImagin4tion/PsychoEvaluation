@@ -55,25 +55,27 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
         val stopwatchGameState by viewModel.stopwatchGameState.collectAsStateWithLifecycle()
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
-        when (sensorDeviceType) {
-            SensorDeviceType.Usb -> {
-                viewModel.connectToUsbDevice(usbManager = usbManager)
-            }
-            SensorDeviceType.Bluetooth -> {
-                val activity = context.findActivity()
-                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
-
-                require(activity != null && deviceHardwareAddress != null) {
-                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+        LaunchedEffect(sensorDeviceType) {
+            when (sensorDeviceType) {
+                SensorDeviceType.Usb -> {
+                    viewModel.connectToUsbDevice(usbManager = usbManager)
                 }
+                SensorDeviceType.Bluetooth -> {
+                    val activity = context.findActivity()
+                    val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
 
-                viewModel.retrieveDataFromBluetoothDevice(
-                    activity = activity,
-                    bluetoothAdapter = bluetoothManager.adapter,
-                    bleDeviceHardwareAddress = deviceHardwareAddress,
-                )
+                    require(activity != null && deviceHardwareAddress != null) {
+                        "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+                    }
+
+                    viewModel.retrieveDataFromBluetoothDevice(
+                        activity = activity,
+                        bluetoothAdapter = bluetoothManager.adapter,
+                        bleDeviceHardwareAddress = deviceHardwareAddress,
+                    )
+                }
+                SensorDeviceType.Unknown -> {}
             }
-            SensorDeviceType.Unknown -> {}
         }
 
         LaunchedEffect(Unit) {
