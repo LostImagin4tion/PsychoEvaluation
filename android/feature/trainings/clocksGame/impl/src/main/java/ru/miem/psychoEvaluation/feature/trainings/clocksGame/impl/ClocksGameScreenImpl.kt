@@ -21,9 +21,9 @@ import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models
 import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.navigation.api.data.screenArgs.TrainingScreenArgs
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.api.ClocksGameScreen
-import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameEnded
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameInProgress
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameLoading
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameLoaderScreen
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameScreenContent
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.ui.screens.ClocksGameStatisticsScreen
@@ -55,25 +55,27 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
         val clocksGameState by viewModel.clocksGameState.collectAsStateWithLifecycle()
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
-        when (sensorDeviceType) {
-            SensorDeviceType.Usb -> {
-                viewModel.connectToUsbDevice(usbManager = usbManager)
-            }
-            SensorDeviceType.Bluetooth -> {
-                val activity = context.findActivity()
-                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
-
-                require(activity != null && deviceHardwareAddress != null) {
-                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+        LaunchedEffect(sensorDeviceType) {
+            when (sensorDeviceType) {
+                SensorDeviceType.Usb -> {
+                    viewModel.connectToUsbDevice(usbManager = usbManager)
                 }
+                SensorDeviceType.Bluetooth -> {
+                    val activity = context.findActivity()
+                    val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
 
-                viewModel.retrieveDataFromBluetoothDevice(
-                    activity = activity,
-                    bluetoothAdapter = bluetoothManager.adapter,
-                    bleDeviceHardwareAddress = deviceHardwareAddress,
-                )
+                    require(activity != null && deviceHardwareAddress != null) {
+                        "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+                    }
+
+                    viewModel.retrieveDataFromBluetoothDevice(
+                        activity = activity,
+                        bluetoothAdapter = bluetoothManager.adapter,
+                        bleDeviceHardwareAddress = deviceHardwareAddress,
+                    )
+                }
+                SensorDeviceType.Unknown -> {}
             }
-            SensorDeviceType.Unknown -> {}
         }
 
         LaunchedEffect(Unit) {
@@ -101,7 +103,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
                     navigateToTrainingList = { navigateToRoute(Routes.trainingsList) },
                     onActionButtonClick = viewModel::clickActionButton
                 )
-                is ClocksGameEnded -> ClocksGameStatisticsScreen(
+                is ClocksGameStatisticsState -> ClocksGameStatisticsScreen(
                     state = state,
                     restartGame = { viewModel.restartGame() },
                     navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }

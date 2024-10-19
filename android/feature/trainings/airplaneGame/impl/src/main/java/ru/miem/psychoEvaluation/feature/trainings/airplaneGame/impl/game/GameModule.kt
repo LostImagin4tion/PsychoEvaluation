@@ -8,6 +8,7 @@ import com.soywiz.korma.geom.ScaleMode
 import com.soywiz.korma.geom.SizeInt
 import kotlinx.coroutines.flow.StateFlow
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
+import java.util.Date
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 
@@ -17,7 +18,8 @@ class GameModule(
     private val context: Context,
     private val dataFlow: StateFlow<SensorData>,
     private val maxGameTime: Duration,
-    private val onGameEnded: (Duration, Duration, Duration, Duration, Int) -> Unit,
+    private val onGameEnded: (Duration, Date, Duration, Duration, Duration, Int) -> Unit,
+    private val onStartButtonClick: () -> Unit,
     private val onSettingsButtonClick: () -> Unit,
     private val onStatisticsButtonClick: (Duration, Duration, Duration, Duration, Int) -> Unit,
     private val onExitButtonClick: () -> Unit,
@@ -40,6 +42,7 @@ class GameModule(
                 dataFlow = dataFlow,
                 maxGameTime = maxGameTime,
                 onGameEnded = onGameEnded,
+                onStartButtonClick = onStartButtonClick,
                 onSettingsButtonClick = onSettingsButtonClick,
                 onStatisticsButtonClick = onStatisticsButtonClick,
                 onExitButtonClick = onExitButtonClick,

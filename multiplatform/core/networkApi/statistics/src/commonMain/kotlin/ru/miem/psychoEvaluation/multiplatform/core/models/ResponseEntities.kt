@@ -7,3 +7,8 @@ import kotlinx.serialization.Serializable
 data class StatisticsResponse(
     @SerialName("valueScheme") var valueScheme: Map<String, Map<String, Int>>
 )
+
+@Serializable
+data class SendStatisticsResponse(
+    @SerialName("id") val id: Int,
+)

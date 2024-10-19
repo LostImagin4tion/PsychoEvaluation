@@ -16,6 +16,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -26,6 +27,9 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.Airpla
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.CurrentScreen
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.SensorData
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSensorData
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -37,6 +41,7 @@ class AirplaneGameScreenViewModel(
 ) : ViewModel() {
 
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
+    private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
     private val gameScreenStateMutex = Mutex()
     private val _stressData = MutableStateFlow(defaultSensorData)
@@ -186,6 +191,10 @@ class AirplaneGameScreenViewModel(
         }
     }
 
+    fun startGame() {
+        allStress.clear()
+    }
+
     fun restartGame() {
         viewModelScope.launch {
             _gameScreenState.run {
@@ -201,11 +210,27 @@ class AirplaneGameScreenViewModel(
 
     fun finishGame(
         gameTime: Duration,
+        gameDate: Date,
         timeInCorridor: Duration,
         timeUpperCorridor: Duration,
         timeLowerCorridor: Duration,
         numberOfFlightsOutsideCorridor: Int
     ) {
+        val gsrBreathing = when (_gameScreenState.value.sensorDeviceType) {
+            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
+            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
+            SensorDeviceType.Unknown -> emptyList()
+        }
+        val allStressCopy = buildList { addAll(allStress) }
+
+        viewModelScope.launch {
+            statisticsInteractor.sendAirplaneGameStatistics(
+                gsrBreathing = gsrBreathing,
+                gsrGame = allStressCopy,
+                duration = gameTime.inWholeSeconds.toInt(),
+                date = gameDate.formatted()
+            )
+        }
     }
 
     private fun AirplaneGameInProgressState.toGameStatisticsState(
@@ -249,6 +274,11 @@ class AirplaneGameScreenViewModel(
             minutes >= 10 && seconds < 10 -> "$minutes:0$seconds"
             else -> "0$minutes:0$seconds"
         }
+    }
+
+    private fun Date.formatted(): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        return formatter.format(this)
     }
 
     private companion object {

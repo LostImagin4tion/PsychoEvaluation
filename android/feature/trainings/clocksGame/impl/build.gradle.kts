@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":android:common:interactors:usbDeviceInteractor:api"))
     implementation(project(":android:common:interactors:bleDeviceInteractor:api"))
     implementation(project(":android:common:interactors:settingsInteractor:api"))
+    implementation(project(":android:common:interactors:networkApi:statistics:api"))
 
     // ==== Feature layer ====
 

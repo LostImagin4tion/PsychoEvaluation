@@ -25,12 +25,12 @@ import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.R
-import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameEnded
+import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameStatisticsState
 
 @Composable
 @Suppress("MagicNumber")
 fun ClocksGameStatisticsScreen(
-    state: ClocksGameEnded,
+    state: ClocksGameStatisticsState,
     restartGame: () -> Unit,
     navigateToTrainingListScreen: () -> Unit,
 ) = Column(
@@ -104,7 +104,7 @@ fun ClocksGameStatisticsScreen(
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
-    TitleText(text = state.gameTime)
+    TitleText(text = state.gameDurationString)
 
     Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 

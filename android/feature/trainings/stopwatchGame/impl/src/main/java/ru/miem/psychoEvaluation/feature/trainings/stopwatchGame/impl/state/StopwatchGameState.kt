@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state
 
+import java.util.Date
 import kotlin.time.Duration
 
 sealed interface StopwatchGameState
@@ -11,7 +12,9 @@ data class StopwatchGameLoadingState(
 
 data class StopwatchGameInProgressState(
     val stopwatchTime: Duration,
-    val gameTime: String,
+    val gameDate: Date,
+    val gameDuration: Duration,
+    val gameDurationString: String,
     val heartsNumber: Int,
     val jumpCount: Int,
     val successfulReactionCount: Int,
@@ -28,8 +31,11 @@ data class StopwatchGameInProgressState(
 }
 
 data class StopwatchGameStatisticsState(
-    val gameTime: String,
+    val gameDate: Date,
+    val gameDuration: Duration,
+    val gameDurationString: String,
     val successPercent: Float,
+    val score: Int,
     val averageReactionTimeString: String, // Millis
     val vigilanceDelta: Long,
     val concentrationDelta: Int,

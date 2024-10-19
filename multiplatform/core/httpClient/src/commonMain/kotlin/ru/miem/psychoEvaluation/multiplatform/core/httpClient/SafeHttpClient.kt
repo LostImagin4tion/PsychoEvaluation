@@ -47,15 +47,14 @@ class SafeHttpClient internal constructor(baseHttpClient: HttpClient) {
                 } catch (throwable: Throwable) {
                     Logger.e(
                         throwable,
-                        "Failed retrieving data from response " +
-                            "with exception $throwable ${throwable.message}"
+                        "Failed retrieving data from response with exception $throwable"
                     )
                     NetworkResponse.Error(httpInfo)
                 }
             } catch (throwable: Throwable) {
                 Logger.e(
                     throwable,
-                    "Failed http request with exception $throwable ${throwable.message}"
+                    "Failed http request with exception $throwable"
                 )
                 NetworkResponse.Error()
             }

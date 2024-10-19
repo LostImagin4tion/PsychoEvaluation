@@ -59,6 +59,7 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
     private var dataBorders: Borders? = null
 
+    override var gsrBreathing: List<Int> = emptyList()
     override val devicesFlow: Flow<BluetoothDevice> = createScanCallbackFlow()
 
     override suspend fun findDataBorders(onCompleted: () -> Unit) {
@@ -69,6 +70,7 @@ class BluetoothDeviceInteractorImpl @Inject constructor() : BluetoothDeviceInter
 
             dataBorders = preparationData.toList()
                 .let {
+                    gsrBreathing = it
                     airplaneGameDataAnalysis.findDataBorders(it)
                 }
                 .also {
