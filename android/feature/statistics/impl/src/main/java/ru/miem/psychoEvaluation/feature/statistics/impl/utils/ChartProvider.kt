@@ -11,42 +11,38 @@ import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.ExtraStore
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartClock
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartConcentration
-import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class ChartProvider(private val chart: ChartUpdate) : ColumnCartesianLayer.ColumnProvider {
+class ChartProvider(private val chart: ChartUpdate, data: Pair<Map<String, Int>?, Map<String, Int>?>) :
+    ColumnCartesianLayer.ColumnProvider {
     private var lineComponent = LineComponent(color = Color.Black.toArgb())
-
+    private val airplaneData = data.first
+    private val clockData = data.second
     override fun getColumn(
         entry: ColumnCartesianLayerModel.Entry,
         seriesIndex: Int,
         extraStore: ExtraStore
     ): LineComponent {
         val x = entry.x.toInt()
-        val gameValues = getGamesValues(extraStore[chart.labelListKey][x])
-        val concentrationGames = gameValues.get(1)
-        val allGames = gameValues[0]
-        val percent = allGames.let { concentrationGames.div(it.toFloat()).toFloat() }
-//        if (percent!=null){lc = LineComponent(color=Color.Black.toArgb(), thicknessDp = 10f,
-//        shape=Shapes.roundedCornerShape(40, 40, 0, 0), dynamicShader = DynamicShaders.verticalGradient(
-//            arrayOf(psychoChartConcentration, psychoChartClock), floatArrayOf(percent, percent+0.01f)))
-//        }
+        val currentDate = extraStore[chart.labelListKey][x]?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+
+        val airplaneValue = airplaneData?.get(currentDate.toString()) ?: 0
+        val clockValue = clockData?.get(currentDate.toString()) ?: 0
+
+        val percent = if (airplaneValue + clockValue != 0) {
+            airplaneValue.toFloat() / (airplaneValue + clockValue).toFloat()
+        } else {
+            0f // Обработка деления на ноль
+        }
         lineComponent = LineComponent(
             color = Color.Black.toArgb(), thicknessDp = THICKNESS,
             shape = Shapes.roundedCornerShape(ROUND_PERCENT, ROUND_PERCENT, 0, 0),
             dynamicShader = DynamicShaders.verticalGradient(
                 arrayOf(psychoChartConcentration, psychoChartClock),
-                floatArrayOf(CHART_COLOR_HEIGHT_CONCENTRATION, CHART_COLOR_HEIGHT_VIGILANCE)
+                floatArrayOf(percent, percent + MINIMUM_PROCENT)
             )
         )
         return lineComponent
-    }
-
-    private fun getGamesValues(data: LocalDate?): Array<Int> {
-        return if (data != null) {
-            arrayOf(data.dayOfMonth, (RANDOM_VAL_1..RANDOM_VAL_2).random())
-        } else {
-            arrayOf(DATES_IN_MONTH, (RANDOM_VAL_1..RANDOM_VAL_2).random())
-        }
     }
 
     override fun getWidestSeriesColumn(seriesIndex: Int, extraStore: ExtraStore): LineComponent {
@@ -56,10 +52,6 @@ class ChartProvider(private val chart: ChartUpdate) : ColumnCartesianLayer.Colum
     companion object {
         private const val ROUND_PERCENT = 40
         private const val THICKNESS = 10f
-        private const val CHART_COLOR_HEIGHT_CONCENTRATION = 0.6f
-        private const val CHART_COLOR_HEIGHT_VIGILANCE = 0.61f
-        private const val RANDOM_VAL_1 = 1
-        private const val RANDOM_VAL_2 = 12
-        private const val DATES_IN_MONTH = 30
+        private const val MINIMUM_PROCENT = 0.01f
     }
 }

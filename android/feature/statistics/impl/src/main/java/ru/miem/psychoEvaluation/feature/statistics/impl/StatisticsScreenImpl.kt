@@ -61,12 +61,14 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCardData
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartProvider
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartUpdate
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import javax.inject.Inject
 
 class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     private val labelListKey = ExtraStore.Key<Map<Int, LocalDate>>()
     private var cardsList: MutableList<StatisticsCardData?> = mutableListOf(null)
+    private var data: Pair<Map<String, Int>?, Map<String, Int>?> = Pair(null, null)
 
     @Composable
     override fun StatisticsScreen(
@@ -75,6 +77,8 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     ) {
         val context = LocalContext.current
         val viewModel: StatisticsScreenViewModel = viewModel()
+
+        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         val statisticsState = viewModel.statisticsState.collectAsState()
 
@@ -91,7 +95,8 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
 
         LaunchedEffect(Unit) {
             cardsList = viewModel.cardUpdate.onUpdateCards(mutableStateOf(null), mutableStateOf(null))
-            chart.onUpdateChart(null, null, chart)
+            data = viewModel.onAcceptClick(mutableStateOf(Date()), mutableStateOf(null))
+            chart.onUpdateChart(mutableStateOf(Date()), null, data, chart)
         }
 
         StatisticsScreenContent(
@@ -169,8 +174,8 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                     onClick = {
                         snackScope.launch {
                             cardsList = viewModel.cardUpdate.onUpdateCards(startDate, endDate)
-                            viewModel.onAcceptClick(startDate, endDate)
-                            chart.onUpdateChart(startDate, endDate, chart)
+                            data = viewModel.onAcceptClick(startDate, endDate)
+                            chart.onUpdateChart(startDate, endDate, data, chart)
                         }
                     },
                     enabled = (startDate.value != null)
@@ -180,7 +185,7 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
             CartesianChartHost(
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        columnProvider = ChartProvider(chart),
+                        columnProvider = ChartProvider(chart, data),
                         dataLabel = TextComponent.build()
                     ),
                     startAxis = rememberStartAxis(),

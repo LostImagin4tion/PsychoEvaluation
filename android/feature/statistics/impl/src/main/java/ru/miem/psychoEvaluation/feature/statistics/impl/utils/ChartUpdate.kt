@@ -1,5 +1,6 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl.utils
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
@@ -41,43 +42,65 @@ class ChartUpdate(
     private fun getDatesValuesList(
         data1: LocalDate?,
         data2: LocalDate?,
-        datesList: MutableMap<LocalDate, Int>
+        datesList: MutableMap<LocalDate, Int>,
+        airplaneData: Map<String, Int>?,
+        clockData: Map<String, Int>?
     ): MutableMap<LocalDate, Int> {
         var addedDate: LocalDate
         if (data1 != null && data2 == null) {
             addedDate = LocalDate.parse(data1.toString())
-            getValue(addedDate).let { it1 -> datesList.put(addedDate, it1) }
+            getValue(
+                addedDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                airplaneData, clockData
+            )
+                .let { it1 -> datesList.put(addedDate, it1) }
         } else if (data1 != null && data2 != null) {
             for (i in data1..data2 step 1) {
                 addedDate = LocalDate.parse(i.toString())
-                getValue(addedDate).let { datesList.put(addedDate, it) }
+                getValue(
+                    addedDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                    airplaneData, clockData
+                ).let {
+                    datesList.put(addedDate, it)
+                }
             }
         }
         return datesList
     }
 
-    suspend fun onUpdateChart(data1: MutableState<Date?>?, data2: MutableState<Date?>?, chart: ChartUpdate) {
+    suspend fun onUpdateChart(
+        data1: MutableState<Date?>?,
+        data2: MutableState<Date?>?,
+        gamesData: Pair<Map<String, Int>?, Map<String, Int>?>,
+        chart: ChartUpdate
+    ) {
         var datesList = mutableMapOf<LocalDate, Int>()
+        val (airplaneData, clockData) = gamesData
         var date: String? = ""
         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         if (data1 == null && data2 == null) {
             date = LocalDateTime.now().format(format)
-            datesList = getDatesValuesList(LocalDate.parse(date.toString()), null, datesList)
+            datesList = getDatesValuesList(LocalDate.parse(date.toString()), null, datesList, airplaneData, clockData)
             chart.update(datesList)
         } else if (data1 != null && data2?.value == null) {
             val date1 = LocalDate.parse(parsedDate(data1))
-            datesList = getDatesValuesList(date1, null, datesList)
+            Log.d("DATE", date1.toString())
+            datesList = getDatesValuesList(date1, null, datesList, airplaneData, clockData)
             chart.update(datesList)
         } else if (data1 != null && data2 != null) {
             val date1 = LocalDate.parse(parsedDate(data1))
             val date2 = LocalDate.parse(parsedDate(data2))
-            datesList = getDatesValuesList(date1, date2, datesList)
+            Log.d("DATE", date1.toString())
+            datesList = getDatesValuesList(date1, date2, datesList, airplaneData, clockData)
             chart.update(datesList)
         }
     }
-    fun getValue(data: LocalDate): Int {
-        return data.dayOfMonth
+    fun getValue(data: String, airplaneData: Map<String, Int>?, clockData: Map<String, Int>?): Int {
+        val airplaneValue = airplaneData?.get(data) ?: 0
+        val clockValue = clockData?.get(data) ?: 0
+
+        return airplaneValue + clockValue
     }
 
     private fun parsedDate(notParsedDate: MutableState<Date?>): String? {

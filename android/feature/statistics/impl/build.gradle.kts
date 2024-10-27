@@ -12,6 +12,8 @@ dependencies {
 
     Dependencies.Calendar.allDeps.forEach { implementation(it) }
 
+    implementation(project(":multiplatform:core:networkApi:statistics"))
+
     // ==== Common layer ====
 
     implementation(project(":android:common:designSystem"))

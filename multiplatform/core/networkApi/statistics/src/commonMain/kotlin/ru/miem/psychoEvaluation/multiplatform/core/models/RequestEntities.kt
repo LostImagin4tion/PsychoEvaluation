@@ -36,3 +36,20 @@ data class SendClocksGameStatisticsRequest(
     @SerialName("reaction_speed") val reactionSpeed: List<Long>,
 )
 
+@Serializable
+data class DetailedStatisticsRequest(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("x_date") val xDate: String
+)
+
+@Serializable
+data class DetailedAirplaneStatisticsRequest(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("x_level") val xLevel: String
+)
+
+@Serializable
+data class DetailedClockStatisticsRequest(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("x_level") val xLevel: String
+)
