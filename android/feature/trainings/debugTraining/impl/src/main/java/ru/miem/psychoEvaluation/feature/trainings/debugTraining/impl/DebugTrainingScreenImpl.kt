@@ -90,6 +90,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         DisposableEffect(viewModel) {
             onDispose {
                 viewModel.disconnect()
+                viewModel.closeStream()
             }
         }
 

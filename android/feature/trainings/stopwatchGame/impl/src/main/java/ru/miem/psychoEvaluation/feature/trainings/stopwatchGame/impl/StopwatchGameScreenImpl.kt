@@ -80,7 +80,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
-            viewModel.startTimerBeforeStart()
+            viewModel.startTimerBeforeStart(context)
         }
 
         BackHandler {
@@ -92,6 +92,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
         DisposableEffect(viewModel) {
             onDispose {
                 viewModel.disconnect()
+                viewModel.closeStream()
             }
         }
 
@@ -105,7 +106,7 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
                 )
                 is StopwatchGameStatisticsState -> StopwatchGameStatisticsScreen(
                     state = state,
-                    restartGame = { viewModel.restartGame() },
+                    restartGame = { viewModel.restartGame(context) },
                     navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
                 )
             }

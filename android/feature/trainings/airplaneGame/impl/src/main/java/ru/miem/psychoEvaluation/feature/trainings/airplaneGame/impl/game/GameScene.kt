@@ -6,6 +6,7 @@ import com.soywiz.korge.scene.Scene
 import com.soywiz.korge.view.SContainer
 import com.soywiz.korge.view.addUpdater
 import kotlinx.coroutines.flow.StateFlow
+import ru.miem.psychoEvaluation.common.designSystem.utils.toString
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.GameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.entities.gameWorld
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
@@ -14,10 +15,8 @@ import timber.log.Timber
 import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -154,15 +153,12 @@ class GameScene(
             closeStream()
 
             val datetime = Calendar.getInstance().time.toString("yyyy-MM-dd_HH:mm:ss")
-            val filename = "$datetime-psycho.txt"
+            val filename = "airplane-psycho-$datetime.txt"
 
             val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
             fileOutputWriter = file.bufferedWriter()
 
-            Timber.tag(TAG).i(
-                "Created new file ${file.absolutePath}, " +
-                    "all files: ${file.parentFile?.listFiles()?.map { it.name }}"
-            )
+            Timber.tag(TAG).i("Created new file ${file.absolutePath}")
         } catch (e: IOException) {
             Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
         }
@@ -175,11 +171,6 @@ class GameScene(
             Timber.tag(TAG).i("Closed file output writer")
         }
         fileOutputWriter = null
-    }
-
-    private fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
-        val formatter = SimpleDateFormat(format, locale)
-        return formatter.format(this)
     }
 
     private companion object {
