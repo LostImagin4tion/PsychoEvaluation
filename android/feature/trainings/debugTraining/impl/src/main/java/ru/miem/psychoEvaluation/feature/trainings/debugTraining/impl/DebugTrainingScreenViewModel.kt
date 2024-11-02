@@ -25,7 +25,9 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.IOException
 import java.util.Calendar
+import kotlin.math.roundToInt
 
+@Suppress("MagicNumber")
 class DebugTrainingScreenViewModel(
     private val usbDeviceInteractor: UsbDeviceInteractor,
     private val bleDeviceInteractor: BluetoothDeviceInteractor,
@@ -34,9 +36,11 @@ class DebugTrainingScreenViewModel(
     private val settingsInteractor by diApi(SettingsInteractorDiApi::settingsInteractor)
 
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
+    private val _minY = MutableStateFlow(0)
     private var fileOutputWriter: BufferedWriter? = null
 
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
+    val minY: StateFlow<Int> = _minY
 
     val chartModelProducer = CartesianChartModelProducer.build()
 
@@ -55,6 +59,12 @@ class DebugTrainingScreenViewModel(
                 chartModelProducer.runTransaction {
                     lineSeries { series(usbDeviceRawData) }
                 }
+                _minY.emit(
+                    usbDeviceRawData.average()
+                        .roundToInt()
+                        .minus(200)
+                        .coerceAtLeast(0)
+                )
             }
         }
     }
@@ -81,6 +91,12 @@ class DebugTrainingScreenViewModel(
                 chartModelProducer.runTransaction {
                     lineSeries { series(bleDeviceData) }
                 }
+                _minY.emit(
+                    bleDeviceData.average()
+                        .roundToInt()
+                        .minus(200)
+                        .coerceAtLeast(0)
+                )
             }
         }
     }

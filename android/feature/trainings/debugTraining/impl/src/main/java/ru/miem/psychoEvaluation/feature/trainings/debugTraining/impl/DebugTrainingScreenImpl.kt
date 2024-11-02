@@ -6,7 +6,9 @@ import android.content.pm.ActivityInfo
 import android.hardware.usb.UsbManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +22,7 @@ import ru.miem.psychoEvaluation.common.designSystem.buttons.BackButton
 import ru.miem.psychoEvaluation.common.designSystem.charts.SingleLineChart
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.system.ForceDeviceOrientation
+import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.utils.findActivity
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
@@ -55,6 +58,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         )
 
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
+        val minY by viewModel.minY.collectAsStateWithLifecycle()
 
         when (sensorDeviceType) {
             SensorDeviceType.Usb -> {
@@ -96,6 +100,7 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
 
         DebugTrainingScreenContent(
             modelProducer = viewModel.chartModelProducer,
+            minY = minY,
             onBackButtonClick = navigateBack,
         )
     }
@@ -103,14 +108,20 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
     @Composable
     private fun DebugTrainingScreenContent(
         modelProducer: CartesianChartModelProducer,
+        minY: Int,
         onBackButtonClick: () -> Unit,
     ) = Column(
         modifier = Modifier.screenPaddings()
     ) {
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+
         BackButton(onClick = onBackButtonClick)
+
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
         SingleLineChart(
             modelProducer = modelProducer,
+            minY = minY,
             modifier = Modifier.fillMaxSize()
         )
     }
