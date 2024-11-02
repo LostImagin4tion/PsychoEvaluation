@@ -46,6 +46,7 @@ import ru.miem.psychoEvaluation.common.designSystem.state.StateHolder
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.textfields.LoginTextField
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
 import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.FullScreenLoadingResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
@@ -171,7 +172,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
                 .align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(ru.miem.psychoEvaluation.common.designSystem.R.drawable.ic_back),
+                painter = painterResource(CommonDrawables.ic_back),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

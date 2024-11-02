@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.miem.psychoEvaluation.common.designSystem.R
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
 import ru.miem.psychoEvaluation.common.designSystem.utils.drawRing
 
 @Composable
@@ -23,7 +23,7 @@ fun BackButton(
     onClick: () -> Unit = {},
 ) {
     Icon(
-        painter = painterResource(R.drawable.arrow_back),
+        painter = painterResource(CommonDrawables.arrow_back),
         contentDescription = null,
         tint = color,
         modifier = modifier

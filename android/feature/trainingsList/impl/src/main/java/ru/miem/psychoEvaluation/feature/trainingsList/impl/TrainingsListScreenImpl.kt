@@ -30,6 +30,8 @@ import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionInte
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonStrings
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
@@ -48,7 +50,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         showMessage: (String) -> Unit
     ) {
         val unknownDeviceAlertText =
-            stringResource(ru.miem.psychoEvaluation.common.designSystem.R.string.unknown_device_alert)
+            stringResource(CommonStrings.unknown_device_alert)
 
         val viewModel: TrainingsListScreenViewModel = viewModel(
             factory = viewModelFactory {
@@ -255,7 +257,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             SystemDialog(
                 headerText = stringResource(R.string.dialog_header_text),
                 descriptionText = stringResource(R.string.dialog_description_text),
-                iconRes = ru.miem.psychoEvaluation.common.designSystem.R.drawable.bluetooth_icon,
+                iconRes = CommonDrawables.bluetooth_icon,
                 onConfirm = {
                     hideBluetoothRequestDialog()
                     tryRequestingBluetoothPermission = true
