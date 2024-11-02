@@ -13,7 +13,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,8 +61,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             }
         )
 
-        var canShowBluetoothRequestDialog by remember { mutableStateOf(false) }
-        var tappedTraining: String? by remember { mutableStateOf(null) }
+        var canShowBluetoothRequestDialog by rememberSaveable { mutableStateOf(false) }
+        var tappedTraining: String? by rememberSaveable { mutableStateOf(null) }
 
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
@@ -210,7 +210,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
-        var isDeviceAccessGranted by remember {
+        var isDeviceAccessGranted by rememberSaveable {
             mutableStateOf(viewModel.isUsbDeviceAccessGranted(usbManager))
         }
 
@@ -250,8 +250,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         hideBluetoothRequestDialog: () -> Unit = {},
         navigateToBluetoothDeviceManager: () -> Unit,
     ) {
-        var isBluetoothAccessGranted by remember { mutableStateOf(false) }
-        var tryRequestingBluetoothPermission by remember { mutableStateOf(false) }
+        var isBluetoothAccessGranted by rememberSaveable { mutableStateOf(false) }
+        var tryRequestingBluetoothPermission by rememberSaveable { mutableStateOf(false) }
 
         if (shouldShowBluetoothRequestDialog) {
             SystemDialog(

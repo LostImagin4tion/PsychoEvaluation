@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -135,10 +134,10 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
             pop()
         }
 
-        var isEmailInputError by remember { mutableStateOf(false) }
-        var isPasswordInputError by remember { mutableStateOf(false) }
-        var isUserAgreementAccepted by remember { mutableStateOf(false) }
-        var isPrivacyPolicyAccepted by remember { mutableStateOf(false) }
+        var isEmailInputError by rememberSaveable { mutableStateOf(false) }
+        var isPasswordInputError by rememberSaveable { mutableStateOf(false) }
+        var isUserAgreementAccepted by rememberSaveable { mutableStateOf(false) }
+        var isPrivacyPolicyAccepted by rememberSaveable { mutableStateOf(false) }
 
         val invalidDataMessage = stringResource(R.string.registration_invalid_data_alert)
 
