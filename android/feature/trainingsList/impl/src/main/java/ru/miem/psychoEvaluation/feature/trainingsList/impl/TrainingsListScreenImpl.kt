@@ -90,6 +90,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 hideBluetoothRequestDialog = { canShowBluetoothRequestDialog = false },
                 navigateToNextScreenWithUsbDevice = {
                     val route = when (training) {
+                        Routes.debugTraining,
                         Routes.stopwatchGame,
                         Routes.clocksGame,
                         -> Routes.generalTrainingRoute.format(training, null)

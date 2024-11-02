@@ -84,6 +84,7 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             onBackButtonClick = navigateBack,
             navigateToNextScreen = {
                 val route = when (val routeArg = bluetoothDeviceManagerScreenArgs.nextScreenRoute) {
+                    Routes.debugTraining,
                     Routes.stopwatchGame,
                     Routes.clocksGame,
                     -> Routes.generalTrainingRoute.format(
