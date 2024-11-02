@@ -37,6 +37,7 @@ data class ClocksGameStatisticsState(
     val successPercent: Float,
     val score: Int,
     val averageReactionTimeString: String, // Millis
+    val reactionTimings: List<Long>,
     val vigilanceDelta: Long,
     val concentrationDelta: Int,
 ) : ClocksGameState

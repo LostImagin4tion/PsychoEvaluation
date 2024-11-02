@@ -27,7 +27,7 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
     override suspend fun commonStatistics(
         request: StatisticsRequest
     ): StatisticsResponse? {
-        val url = URLBuilder(StatisticsBaseUrl)
+        val url = URLBuilder(StatisticsBaseUrlV1)
             .appendPathSegments(CommonStatisticsEndpoint)
             .buildString()
 
@@ -44,7 +44,7 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
         request: SendAirplaneGameStatisticsRequest,
         token: String,
     ): Boolean {
-        val url = URLBuilder(StatisticsBaseUrl)
+        val url = URLBuilder(StatisticsBaseUrlV2)
             .appendPathSegments(SendAirplaneStatisticsEndpoint)
             .buildString()
 
@@ -66,7 +66,7 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
         request: SendClocksGameStatisticsRequest,
         token: String,
     ): Boolean {
-        val url = URLBuilder(StatisticsBaseUrl)
+        val url = URLBuilder(StatisticsBaseUrlV2)
             .appendPathSegments(SendClocksStatisticsEndpoint)
             .buildString()
 
@@ -85,7 +85,9 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
     }
 
     private companion object {
-        const val StatisticsBaseUrl = "http://gsr.miem2.vmnet.top/api/v1"
+        const val StatisticsBaseUrlV1 = "http://gsr.miem2.vmnet.top/api/v1"
+        const val StatisticsBaseUrlV2 = "http://gsr.miem2.vmnet.top/api/v2"
+
         const val CommonStatisticsEndpoint = "games/dates"
         const val SendAirplaneStatisticsEndpoint = "games/airplane"
         const val SendClocksStatisticsEndpoint = "games/clock"

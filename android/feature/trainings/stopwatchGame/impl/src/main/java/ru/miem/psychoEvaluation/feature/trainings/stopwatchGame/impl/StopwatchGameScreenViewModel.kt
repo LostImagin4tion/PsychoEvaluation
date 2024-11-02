@@ -28,6 +28,7 @@ import ru.miem.psychoEvaluation.common.designSystem.utils.toString
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -355,12 +356,6 @@ class StopwatchGameScreenViewModel(
     }
 
     private suspend fun sendStopwatchGameStatistics(state: StopwatchGameStatisticsState) {
-        val gsrBreathing = when (_sensorDeviceType.value) {
-            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
-            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
-            SensorDeviceType.Unknown -> emptyList()
-        }
-
         viewModelScope.launch {
             val allStressCopy = buildList {
                 mutex.withLock {
@@ -368,14 +363,16 @@ class StopwatchGameScreenViewModel(
                 }
             }
 
-            statisticsInteractor.sendClocksGameStatistics(
-                gsrBreathing = gsrBreathing,
+            val data = SendClocksGameStatisticsData(
                 gsrGame = allStressCopy,
-                duration = state.gameDuration.inWholeSeconds.toInt(),
+                gameDuration = state.gameDuration.inWholeMilliseconds,
+                gameLevel = 1,
                 date = state.gameDate.formatted(),
-                level = 1,
-                score = state.score
+                gameScore = state.score,
+                reactionSpeed = state.reactionTimings
             )
+
+            statisticsInteractor.sendClocksGameStatistics(data)
         }
     }
 
@@ -409,6 +406,7 @@ class StopwatchGameScreenViewModel(
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
                 score = successfulReactionCount,
                 averageReactionTimeString = averageReactionTime,
+                reactionTimings = reactionTimings,
                 vigilanceDelta = vigilanceDelta,
                 concentrationDelta = concentrationDelta
             )
