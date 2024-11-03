@@ -6,6 +6,8 @@ import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.mod
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsAirplaneStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsClockStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendStatisticsResponseType
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsResponseType
@@ -19,6 +21,8 @@ import ru.miem.psychoEvaluation.multiplatform.core.models.AirplaneData
 import ru.miem.psychoEvaluation.multiplatform.core.models.ClockData
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendAirplaneGameStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendClocksGameStatisticsRequest
@@ -50,7 +54,6 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
     ): StatisticsState {
         val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
             .takeIf { it.isNotBlank() }
-//        Log.d("ACCESS_TOKEN", apiAccessToken.toString())
         val requestEntity = StatisticsRequest(apiAccessToken.toString(), startDate, endDate)
         return requestEntity.let {
             statisticsRepository.commonStatistics(it)
@@ -60,7 +63,6 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                 ?.run {
                     commonStatisticsAirplane = airplane
                     commonStatisticsClock = clock
-                    StatisticsState(StatisticsResponseType.StatisticAvailable)
 
                     StatisticsState(
                         state = StatisticsResponseType.StatisticAvailable,
@@ -122,7 +124,6 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                 ?.run {
                     detailedStatisticsAirplane = airplane
                     detailedStatisticsClock = clock
-                    StatisticsState(StatisticsResponseType.StatisticAvailable)
 
                     DetailedStatisticsState(
                         state = StatisticsResponseType.StatisticAvailable,
@@ -134,21 +135,21 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
             ?: DetailedStatisticsState(StatisticsResponseType.Error)
     }
 
-    override suspend fun detailedAirplaneStatistics(
+    override suspend fun detailedForLevelsAirplaneStatistics(
         xLevel: String
-    ): DetailedAirplaneStatisticsState {
+    ): DetailedForLevelsAirplaneStatisticsState {
         val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
             .takeIf { it.isNotBlank() }
-        val requestEntity = DetailedAirplaneStatisticsRequest(apiAccessToken.toString(), xLevel)
+        val requestEntity = DetailedForLevelsAirplaneStatisticsRequest(apiAccessToken.toString(), xLevel)
         return requestEntity.let {
-            statisticsRepository.detailedAirplaneStatistics(it)
+            statisticsRepository.detailedForLevelsAirplaneStatistics(it)
                 .also {
-                    Timber.tag(TAG).d("Got detailed airplane statistics response $it")
+                    Timber.tag(TAG).d("Got detailed for levels airplane statistics response $it")
                 }
                 ?.run {
                     StatisticsState(StatisticsResponseType.StatisticAvailable)
 
-                    DetailedAirplaneStatisticsState(
+                    DetailedForLevelsAirplaneStatisticsState(
                         state = StatisticsResponseType.StatisticAvailable,
                         meanGsrBreathing = meanGsrBreathing,
                         meanGsrGame = meanGsrGame,
@@ -157,30 +158,102 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                     )
                 }
         }
-            ?: DetailedAirplaneStatisticsState(StatisticsResponseType.Error)
+            ?: DetailedForLevelsAirplaneStatisticsState(StatisticsResponseType.Error)
     }
 
-    override suspend fun detailedClockStatistics(
+    override suspend fun detailedForLevelsClockStatistics(
         xLevel: String
-    ): DetailedClockStatisticsState {
+    ): DetailedForLevelsClockStatisticsState {
         val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
             .takeIf { it.isNotBlank() }
-        val requestEntity = DetailedClockStatisticsRequest(apiAccessToken.toString(), xLevel)
+        val requestEntity = DetailedForLevelsClockStatisticsRequest(apiAccessToken.toString(), xLevel)
         return requestEntity.let {
-            statisticsRepository.detailedClockStatistics(it)
+            statisticsRepository.detailedForLevelsClockStatistics(it)
                 .also {
-                    Timber.tag(TAG).d("Got detailed clock statistics response $it")
+                    Timber.tag(TAG).d("Got detailed for levels clock statistics response $it")
                 }
                 ?.run {
                     StatisticsState(StatisticsResponseType.StatisticAvailable)
 
-                    DetailedClockStatisticsState(
+                    DetailedForLevelsClockStatisticsState(
                         state = StatisticsResponseType.StatisticAvailable,
                         meanGsrBreathing = meanGsrBreathing,
                         meanGsrGame = meanGsrGame,
                         meanDuration = meanDuration,
                         meanScore = meanScore,
                         gamesAmount = gamesAmount
+                    )
+                }
+        }
+            ?: DetailedForLevelsClockStatisticsState(StatisticsResponseType.Error)
+    }
+
+    override suspend fun detailedAirplaneStatistics(
+        gameId: String
+    ): DetailedAirplaneStatisticsState {
+        val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
+            .takeIf { it.isNotBlank() }
+        val requestEntity = DetailedAirplaneStatisticsRequest(apiAccessToken.toString(), gameId)
+        return requestEntity.let {
+            statisticsRepository.detailedAirplaneStatistics(it)
+                .also {
+                    Timber.tag(TAG).d("Got detailed airplane statistics response $it")
+                }
+                ?.run {
+                    DetailedAirplaneStatisticsState(StatisticsResponseType.StatisticAvailable)
+
+                    DetailedAirplaneStatisticsState(
+                        state = StatisticsResponseType.StatisticAvailable,
+                        duration = duration,
+                        meanGsrBreathing = meanGsrBreathing,
+                        meanGsrGame = meanGsrGame,
+                        gsr = gsr,
+                        gameId = gameId.toInt(),
+                        level = level,
+                        date = date,
+                        gsrUpperLimit = gsrUpperLimit,
+                        gsrLowerLimit = gsrLowerLimit,
+                        timePercentInLimits = timePercentInLimits,
+                        timeInLimits = timeInLimits,
+                        timeAboveUpperLimit = timeAboveUpperLimit,
+                        timeUnderLowerLimit = timeUnderLowerLimit,
+                        amountOfCrossingLimits = amountOfCrossingLimits
+                    )
+                }
+        }
+            ?: DetailedAirplaneStatisticsState(StatisticsResponseType.Error)
+    }
+
+    override suspend fun detailedClockStatistics(
+        gameId: String
+    ): DetailedClockStatisticsState {
+        val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
+            .takeIf { it.isNotBlank() }
+        val requestEntity = DetailedClockStatisticsRequest(apiAccessToken.toString(), gameId)
+        return requestEntity.let {
+            statisticsRepository.detailedClockStatistics(it)
+                .also {
+                    Timber.tag(TAG).d("Got detailed clock statistics response $it")
+                }
+                ?.run {
+                    DetailedClockStatisticsState(StatisticsResponseType.StatisticAvailable)
+
+                    DetailedClockStatisticsState(
+                        state = StatisticsResponseType.StatisticAvailable,
+                        duration = duration,
+                        meanGsrBreathing = meanGsrBreathing,
+                        meanGsrGame = meanGsrGame,
+                        gsr = gsr,
+                        gameId = gameId.toInt(),
+                        level = level,
+                        date = date,
+                        gsrUpperLimit = gsrUpperLimit,
+                        gsrLowerLimit = gsrLowerLimit,
+                        timePercentInLimits = timePercentInLimits,
+                        timeInLimits = timeInLimits,
+                        timeAboveUpperLimit = timeAboveUpperLimit,
+                        timeUnderLowerLimit = timeUnderLowerLimit,
+                        amountOfCrossingLimits = amountOfCrossingLimits
                     )
                 }
         }

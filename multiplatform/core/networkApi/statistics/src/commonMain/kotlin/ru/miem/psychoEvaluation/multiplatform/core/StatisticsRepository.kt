@@ -4,6 +4,10 @@ import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatis
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendAirplaneGameStatisticsRequest
@@ -15,6 +19,12 @@ interface StatisticsRepository {
     suspend fun commonStatistics(request: StatisticsRequest): StatisticsResponse?
 
     suspend fun detailedStatistics(request: DetailedStatisticsRequest): DetailedStatisticsResponse?
+
+    suspend fun detailedForLevelsAirplaneStatistics(
+        request: DetailedForLevelsAirplaneStatisticsRequest
+    ): DetailedForLevelsAirplaneStatisticsResponse?
+
+    suspend fun detailedForLevelsClockStatistics(request: DetailedForLevelsClockStatisticsRequest): DetailedForLevelsClockStatisticsResponse?
 
     suspend fun detailedAirplaneStatistics(
         request: DetailedAirplaneStatisticsRequest

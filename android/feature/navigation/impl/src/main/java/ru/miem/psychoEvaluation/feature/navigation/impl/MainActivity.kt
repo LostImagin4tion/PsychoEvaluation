@@ -5,12 +5,18 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -47,45 +53,48 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavHostController
 
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             navController = rememberNavController()
+
             val snackbarHostState = remember { SnackbarHostState() }
 
             PsychoEvaluationTheme {
                 SetupSystemBarsColors()
 
-                Scaffold(
-                    snackbarHost = {
-                        SnackbarHost(
-                            hostState = snackbarHostState,
-                            modifier = Modifier.navigationBarsPadding()
-                        ) { data ->
-                            Snackbar(
-                                containerColor = MaterialTheme.colorScheme.inverseSurface,
-                                contentColor = MaterialTheme.colorScheme.inverseOnSurface,
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                BodyText(
-                                    text = data.visuals.message,
-                                    color = Color.Black
-                                )
+                    Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(
+                                hostState = snackbarHostState,
+                                modifier = Modifier.navigationBarsPadding()
+                            ) { data ->
+                                Snackbar(
+                                    containerColor = MaterialTheme.colorScheme.inverseSurface,
+                                    contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+                                    shape = MaterialTheme.shapes.small
+                                ) {
+                                    BodyText(
+                                        text = data.visuals.message,
+                                        color = Color.Black
+                                    )
+                                }
                             }
+                        },
+                        bottomBar = { NavigationBar() },
+                        content = {
+                            Navigation(
+                                snackbarHostState = snackbarHostState,
+                                paddingValues = it,
+                                navController = navController,
+                                setupSystemBarColors = { SetupSystemBarsColors() },
+                            )
                         }
-                    },
-                    bottomBar = { NavigationBar() },
-                    content = {
-                        Navigation(
-                            snackbarHostState = snackbarHostState,
-                            paddingValues = it,
-                            navController = navController,
-                            setupSystemBarColors = { SetupSystemBarsColors() }
-                        )
-                    }
-                )
+                    )
+
             }
         }
     }

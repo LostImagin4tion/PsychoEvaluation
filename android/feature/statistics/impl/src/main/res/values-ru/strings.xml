@@ -9,4 +9,7 @@
     <string name="trainings_title">Тренировки: </string>
     <string name="concentration_title">Концентрация: </string>
     <string name="alertness_title">Бдительность: </string>
+
+    <string name="training_duration">Длительность: </string>
+    <string name="training_time_start">Время начала: </string>
 </resources>

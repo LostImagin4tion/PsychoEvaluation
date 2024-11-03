@@ -9,4 +9,6 @@
     <string name="trainings_title">Trainings: </string>
     <string name="concentration_title">Concentration: </string>
     <string name="alertness_title">Vigilance: </string>
+    <string name="training_duration">Duration: </string>
+    <string name="training_time_start">Start time: </string>
 </resources>

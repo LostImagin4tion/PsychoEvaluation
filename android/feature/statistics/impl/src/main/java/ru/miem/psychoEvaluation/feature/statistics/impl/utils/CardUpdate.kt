@@ -1,73 +1,89 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl.utils
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsResponseType
 import ru.miem.psychoEvaluation.feature.statistics.impl.StatisticsScreenViewModel
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCardData
+import ru.miem.psychoEvaluation.multiplatform.core.models.AirplaneData
+import ru.miem.psychoEvaluation.multiplatform.core.models.ClockData
 import timber.log.Timber
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import kotlin.reflect.KSuspendFunction1
 
 class CardUpdate(
-    private val detailedStatistics: suspend (String) -> DetailedStatisticsState,
-    private val detailedAirplaneStatistics: suspend (String) -> DetailedAirplaneStatisticsState,
-    private val detailedClockStatistics: suspend (String) -> DetailedClockStatisticsState
+    private val detailedStatistics: KSuspendFunction1<String, DetailedStatisticsState?>
 ) {
 
     operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
 
-    suspend fun onUpdateCards(
+     suspend fun onUpdateCards(
         data1: MutableState<Date?>,
         data2: MutableState<Date?>
     ): MutableList<StatisticsCardData?> {
-        val cardsList: MutableList<StatisticsCardData?> = mutableListOf(null)
+        val cardsList: MutableList<StatisticsCardData?> = mutableListOf()
         if (data2.value != null && data1.value != null) {
             val date1 = data1.value?.getParsedDate("yyyy-MM-dd")
             val date2 = data2.value?.getParsedDate("yyyy-MM-dd")
             for (i in LocalDate.parse(date1)..LocalDate.parse(date2) step 1) {
                 val dateString = i.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
-                val detailedStats = detailedStatistics(dateString)
+                val detailedStats = detailedStatistics(dateString) ?: DetailedStatisticsState(StatisticsResponseType.StatisticAvailable, mutableListOf<AirplaneData>(), mutableListOf<ClockData>())
 
-                val airplaneIds = detailedStats.detailedAirplaneData?.map { it.level }
-                val clockIds = detailedStats.detailedClockData?.map { it.level }
+                val airplaneIds = detailedStats?.detailedAirplaneData?.map { it.id }
+                val clockIds = detailedStats?.detailedClockData?.map { it.id }
 
                 Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
                 Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
-                getInfo(cardsList, i, airplaneIds, clockIds)
+                if (detailedStats != null) {
+                    getInfo(cardsList, i, airplaneIds, clockIds, detailedStats)
+                }
             }
         } else if (data1.value == null) {
             val dateString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
-            val detailedStats = detailedStatistics(dateString)
+            val detailedStats = detailedStatistics(dateString) ?: DetailedStatisticsState(StatisticsResponseType.StatisticAvailable, mutableListOf<AirplaneData>(), mutableListOf<ClockData>())
 
-            val airplaneIds = detailedStats.detailedAirplaneData?.map { it.level }
-            val clockIds = detailedStats.detailedClockData?.map { it.level }
+            val airplaneIds = detailedStats?.detailedAirplaneData?.map { it.id }
+            val clockIds = detailedStats?.detailedClockData?.map { it.id }
 
             Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
             Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
-            getInfo(cardsList, LocalDateTime.now().toLocalDate(), airplaneIds, clockIds)
+            if (detailedStats != null) {
+                getInfo(
+                    cardsList,
+                    LocalDateTime.now().toLocalDate(),
+                    airplaneIds,
+                    clockIds,
+                    detailedStats
+                )
+            }
         } else {
             val date1 = data1.value!!.getParsedDate("d MMMM")
 
             val dateString = data1.value!!.getParsedDate("yyyy.MM.dd")
 
-            val detailedStats = detailedStatistics(dateString)
+            val detailedStats = detailedStatistics(dateString) ?: DetailedStatisticsState(StatisticsResponseType.StatisticAvailable, mutableListOf<AirplaneData>(), mutableListOf<ClockData>())
 
-            val airplaneIds = detailedStats.detailedAirplaneData?.map { it.level }
-            val clockIds = detailedStats.detailedClockData?.map { it.level }
+            val dateString1 = data1.value!!.getParsedDate("yyyy-MM-dd")
+
+            val airplaneIds = detailedStats?.detailedAirplaneData?.map { it.id }
+            val clockIds = detailedStats?.detailedClockData?.map { it.id }
 
             Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
             Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
-            getInfo(cardsList, LocalDate.parse(dateString), airplaneIds, clockIds)
+            if (detailedStats != null) {
+                getInfo(cardsList, LocalDate.parse(dateString1), airplaneIds, clockIds, detailedStats)
+            }
+
         }
         return cardsList
     }
@@ -83,38 +99,60 @@ class CardUpdate(
         }
     }
 
-    private suspend fun getInfo(
+    private fun getInfo(
         cardsList: MutableList<StatisticsCardData?>,
         date: LocalDate,
         airplaneIds: List<Int>?,
-        clockIds: List<Int>?
+        clockIds: List<Int>?,
+        detailedStats: DetailedStatisticsState
     ) {
-        var totalAirplaneMeanDuration = 0f
+        val totalAirplaneDurations: MutableList<Triple<String, String, Int>> = mutableListOf()
+
+        Log.d("STATS", detailedStats.toString())
+
         if (airplaneIds != null) {
             for (airplaneId in airplaneIds) {
-                val airplaneStats = detailedAirplaneStatistics(airplaneId.toString())
-                totalAirplaneMeanDuration += airplaneStats.meanDuration ?: 0f
+                val meanDuration = detailedStats.detailedAirplaneData
+                    ?.find { it.id == airplaneId }
+                    ?.duration?.toFloat() ?: 0f
+
+                val trainingStart = detailedStats.detailedAirplaneData
+                    ?.find { it.id == airplaneId }
+                    ?.date
+                    ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")) }
+                    ?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "Неизвестно"
+
+                totalAirplaneDurations.add(Triple(trainingStart, formatSecondsToMinutes(meanDuration), airplaneId))
             }
         }
 
-        var totalClockMeanDuration = 0f
+        val totalClockDurations: MutableList<Triple<String, String, Int>> = mutableListOf()
+
         if (clockIds != null) {
             for (clockId in clockIds) {
-                val clockStats = detailedClockStatistics(clockId.toString())
-                totalClockMeanDuration += clockStats.meanDuration ?: 0f
+                val meanDuration = detailedStats.detailedClockData
+                    ?.find { it.id == clockId }
+                    ?.duration?.toFloat() ?: 0f
+
+                // Извлекаем время начала тренировки в формате чч:мм
+                val trainingStart = detailedStats.detailedClockData
+                    ?.find { it.id == clockId }
+                    ?.date
+                    ?.let { LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")) }
+                    ?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "Неизвестно"
+
+
+                // Добавляем в список пару с началом тренировки и продолжительностью
+                totalClockDurations.add(Triple(trainingStart, formatSecondsToMinutes(meanDuration), clockId))
             }
         }
 
         val totalGames = (airplaneIds?.size ?: 0) + (clockIds?.size ?: 0)
 
-        val airplaneDuration = formatSecondsToMinutes(totalAirplaneMeanDuration)
-
-        val clockDuration = formatSecondsToMinutes(totalClockMeanDuration)
-
         cardsList.add(
             StatisticsCardData(
                 date.format(DateTimeFormatter.ofPattern("d MMMM")),
-                totalGames, airplaneDuration, clockDuration
+                totalGames, totalAirplaneDurations, totalClockDurations
             )
         )
     }

@@ -43,13 +43,25 @@ data class DetailedStatisticsRequest(
 )
 
 @Serializable
-data class DetailedAirplaneStatisticsRequest(
+data class DetailedForLevelsAirplaneStatisticsRequest(
     @SerialName("access_token") val accessToken: String,
     @SerialName("x_level") val xLevel: String
 )
 
 @Serializable
-data class DetailedClockStatisticsRequest(
+data class DetailedForLevelsClockStatisticsRequest(
     @SerialName("access_token") val accessToken: String,
     @SerialName("x_level") val xLevel: String
+)
+
+@Serializable
+data class DetailedAirplaneStatisticsRequest(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("game_id") val gameId: String
+)
+
+@Serializable
+data class DetailedClockStatisticsRequest(
+    @SerialName("access_token") val accessToken: String,
+    @SerialName("game_id") val gameId: String
 )

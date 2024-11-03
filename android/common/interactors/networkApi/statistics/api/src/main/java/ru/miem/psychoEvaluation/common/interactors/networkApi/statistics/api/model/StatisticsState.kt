@@ -15,7 +15,7 @@ data class DetailedStatisticsState(
     val detailedClockData: List<ClockData>? = null
 )
 
-data class DetailedAirplaneStatisticsState(
+data class DetailedForLevelsAirplaneStatisticsState(
     val state: StatisticsResponseType,
     val meanGsrBreathing: Float? = null,
     val meanGsrGame: Float? = null,
@@ -23,7 +23,7 @@ data class DetailedAirplaneStatisticsState(
     val gamesAmount: Float? = null
 )
 
-data class DetailedClockStatisticsState(
+data class DetailedForLevelsClockStatisticsState(
     val state: StatisticsResponseType,
     val meanGsrBreathing: Float? = null,
     val meanGsrGame: Float? = null,
@@ -32,7 +32,44 @@ data class DetailedClockStatisticsState(
     val gamesAmount: Float? = null
 )
 
+data class DetailedAirplaneStatisticsState(
+    val state: StatisticsResponseType,
+    val duration: Int? = null,
+    val meanGsrBreathing: Float? = null,
+    val meanGsrGame: Float? = null,
+    val gsr: List<Int>? = null,
+    val gameId: Int? = null,
+    val level: Int? = null,
+    val date: String? = null,
+    val gsrUpperLimit: Float? = null,
+    val gsrLowerLimit: Float? = null,
+    val timePercentInLimits: Int? = null,
+    val timeInLimits: Int? = null,
+    val timeAboveUpperLimit: Int? = null,
+    val timeUnderLowerLimit: Int? = null,
+    val amountOfCrossingLimits: Int? = null
+)
+
+data class DetailedClockStatisticsState(
+    val state: StatisticsResponseType,
+    val duration: Int? = null,
+    val meanGsrBreathing: Float? = null,
+    val meanGsrGame: Float? = null,
+    val gsr: List<Int>? = null,
+    val gameId: Int? = null,
+    val level: Int? = null,
+    val date: String? = null,
+    val gsrUpperLimit: Float? = null,
+    val gsrLowerLimit: Float? = null,
+    val timePercentInLimits: Int? = null,
+    val timeInLimits: Int? = null,
+    val timeAboveUpperLimit: Int? = null,
+    val timeUnderLowerLimit: Int? = null,
+    val amountOfCrossingLimits: Int? = null
+)
+
 enum class StatisticsResponseType {
     StatisticAvailable,
-    Error
+    Error,
+    LoadungResult
 }

@@ -76,6 +76,7 @@ class ChartUpdate(
     ) {
         var datesList = mutableMapOf<LocalDate, Int>()
         val (airplaneData, clockData) = gamesData
+        Log.d("gamesData", gamesData.toString())
         var date: String? = ""
         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 

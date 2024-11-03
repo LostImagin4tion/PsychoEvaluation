@@ -3,6 +3,7 @@ package ru.miem.psychoEvaluation.feature.statistics.impl.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,8 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.R
 
 @Composable
 fun StatisticsCard(
-    statisticsData: StatisticsCardData
+    statisticsData: StatisticsCardData,
+    onRowClick: (Int) -> Unit
 ) {
     val shape = remember { RoundedCornerShape(10.dp) }
 
@@ -44,11 +46,6 @@ fun StatisticsCard(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clip(shape)
-//            .clickable(
-//                onClick = statisticsData.onClick,
-//                interactionSource = remember { MutableInteractionSource() },
-//                indication = rememberRipple()
-//            )
             .shadow(
                 elevation = 5.dp,
                 shape = shape,
@@ -76,46 +73,70 @@ fun StatisticsCard(
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            Row() {
-                Image(
-                    painter = painterResource(R.drawable.concentration_game),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+            statisticsData.concentrationTrainingsValue.forEach { trainingValue ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(60.dp)
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .border(2.dp, psychoChartConcentration, CircleShape)
-                )
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth()
+                        .clickable { onRowClick(trainingValue.third) }
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.concentration_game),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, psychoChartConcentration, CircleShape)
+                    )
 
-                Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+                    Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
 
-                Column {
-                    LabelText(textRes = R.string.concentration_title)
-                    BodyText(statisticsData.concentrationTimeRes)
+                    Column {
+                        LabelText(textRes = R.string.concentration_title)
+                        Row{
+                            BodyText(trainingValue.second)
+                            Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+                            BodyText("("+trainingValue.first+")")
+                        }
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            Row() {
-                Image(
-                    painter = painterResource(R.drawable.clock_game),
-                    contentDescription = null,
-                    contentScale = ContentScale.Inside,
+            statisticsData.clockTrainingsValue?.forEach { trainingValue ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .size(60.dp)
-                        .background(psychoPrimaryContainerLight, CircleShape)
-                        .fillMaxSize()
-                        .clip(CircleShape)
-                        .border(2.dp, psychoChartClock, CircleShape)
-                )
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth()
+                        .clickable { onRowClick(trainingValue.third) }
 
-                Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.clock_game),
+                        contentDescription = null,
+                        contentScale = ContentScale.Inside,
+                        modifier = Modifier
+                            .size(60.dp)
+                            .background(psychoPrimaryContainerLight, CircleShape)
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                            .border(2.dp, psychoChartClock, CircleShape)
+                    )
 
-                Column {
-                    LabelText(textRes = R.string.alertness_title)
-                    BodyText(statisticsData.clockTimeRes)
+                    Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+
+                    Column {
+                        LabelText(textRes = R.string.alertness_title)
+                        Row{
+                            BodyText(trainingValue.second)
+                            Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+                            BodyText("("+trainingValue.first+")")
+                        }
+                    }
                 }
             }
         }
@@ -125,10 +146,10 @@ fun StatisticsCard(
 }
 
 @Composable
-fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>) {
+fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>, onRowClick: (Int) -> Unit) {
     for (i in cardsList) {
         if (i != null) {
-            StatisticsCard(statisticsData = i)
+            StatisticsCard(statisticsData = i, onRowClick)
         }
     }
 }

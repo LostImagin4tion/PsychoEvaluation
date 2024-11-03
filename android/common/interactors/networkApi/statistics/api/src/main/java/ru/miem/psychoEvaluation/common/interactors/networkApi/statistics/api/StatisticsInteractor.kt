@@ -4,6 +4,8 @@ import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.mod
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsAirplaneStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsClockStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendStatisticsResponseType
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsState
@@ -29,11 +31,19 @@ interface StatisticsInteractor {
         xDate: String
     ): DetailedStatisticsState
 
-    suspend fun detailedAirplaneStatistics(
+    suspend fun detailedForLevelsAirplaneStatistics(
         xLevel: String
+    ): DetailedForLevelsAirplaneStatisticsState
+
+    suspend fun detailedForLevelsClockStatistics(
+        xLevel: String
+    ): DetailedForLevelsClockStatisticsState
+
+    suspend fun detailedAirplaneStatistics(
+        gameId: String
     ): DetailedAirplaneStatisticsState
 
     suspend fun detailedClockStatistics(
-        xLevel: String
+        gameId: String
     ): DetailedClockStatisticsState
 }

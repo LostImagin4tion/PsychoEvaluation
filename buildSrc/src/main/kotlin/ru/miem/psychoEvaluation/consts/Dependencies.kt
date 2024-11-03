@@ -67,10 +67,11 @@ object Dependencies {
         }
 
         object Material {
-            private const val MATERIAL = "androidx.compose.material3:material3"
+            private const val MATERIAL = "androidx.compose.material3:material3:1.1.0"
             private const val MATERIAL_ICONS = "androidx.compose.material:material-icons-extended"
+            private const val MATERIALX = "androidx.compose.material:material"
 
-            val allMaterialDeps = listOf(MATERIAL, MATERIAL_ICONS)
+            val allMaterialDeps = listOf(MATERIAL, MATERIALX, MATERIAL_ICONS)
         }
 
         object Lifecycle {
