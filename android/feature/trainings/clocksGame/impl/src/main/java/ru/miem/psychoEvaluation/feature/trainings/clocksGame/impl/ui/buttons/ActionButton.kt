@@ -37,7 +37,7 @@ fun ActionButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
         ),
-        contentPadding = PaddingValues(vertical = 36.dp),
+        contentPadding = PaddingValues(vertical = 30.dp),
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
     ) {

@@ -93,9 +93,11 @@ class DebugTrainingScreenViewModel(
                 }
                 _minY.emit(
                     bleDeviceData.average()
-                        .roundToInt()
-                        .minus(200)
-                        .coerceAtLeast(0)
+                        .takeIf { !it.isNaN() }
+                        ?.roundToInt()
+                        ?.minus(200)
+                        ?.coerceAtLeast(0)
+                        ?: 0
                 )
             }
         }

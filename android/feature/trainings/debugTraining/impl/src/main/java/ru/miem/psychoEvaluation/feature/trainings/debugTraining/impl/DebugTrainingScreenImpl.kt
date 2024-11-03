@@ -60,25 +60,29 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
         val minY by viewModel.minY.collectAsStateWithLifecycle()
 
-        when (sensorDeviceType) {
-            SensorDeviceType.Usb -> {
-                viewModel.connectToUsbDevice(usbManager = usbManager)
-            }
-            SensorDeviceType.Bluetooth -> {
-                val activity = context.findActivity()
-                val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
-
-                require(activity != null && deviceHardwareAddress != null) {
-                    "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+        LaunchedEffect(sensorDeviceType) {
+            when (sensorDeviceType) {
+                SensorDeviceType.Usb -> {
+                    viewModel.connectToUsbDevice(usbManager = usbManager)
                 }
 
-                viewModel.retrieveDataFromBluetoothDevice(
-                    activity = activity,
-                    bluetoothAdapter = bluetoothManager.adapter,
-                    bleDeviceHardwareAddress = deviceHardwareAddress,
-                )
+                SensorDeviceType.Bluetooth -> {
+                    val activity = context.findActivity()
+                    val deviceHardwareAddress = trainingScreenArgs.bleDeviceHardwareAddress
+
+                    require(activity != null && deviceHardwareAddress != null) {
+                        "Activity $activity and deviceHardwareAddress $deviceHardwareAddress cant be null"
+                    }
+
+                    viewModel.retrieveDataFromBluetoothDevice(
+                        activity = activity,
+                        bluetoothAdapter = bluetoothManager.adapter,
+                        bleDeviceHardwareAddress = deviceHardwareAddress,
+                    )
+                }
+
+                SensorDeviceType.Unknown -> {}
             }
-            SensorDeviceType.Unknown -> {}
         }
 
         LaunchedEffect(Unit) {

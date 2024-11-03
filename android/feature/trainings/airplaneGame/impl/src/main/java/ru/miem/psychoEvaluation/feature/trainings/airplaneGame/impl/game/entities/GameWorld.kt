@@ -4,6 +4,7 @@ import com.soywiz.klock.TimeSpan
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.addTo
 import com.soywiz.korge.view.xy
+import com.soywiz.korim.color.RGBA
 import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.ui.text.gameOverText
@@ -71,10 +72,19 @@ class GameWorld(
     private val gameTimeText = gameTimeText(x = width - 50.dpd, y = 16.dpd)
     private val gameOverText = gameOverText(x = midPointX, y = 80.dpd)
 
-    private val upperGsrBorder = gsrBorderView(width = width, height = 1.dpd).apply {
+    private val upperGsrBorder = gsrBorderView(
+        width = width,
+        height = 1.dpd,
+        color = RGBA(0, 0, 0, 255),
+    ).apply {
         xy(0.0, this@GameWorld.height * 0.1)
     }
-    private val lowerGsrBorder = gsrBorderView(width = width, height = 1.dpd).apply {
+
+    private val lowerGsrBorder = gsrBorderView(
+        width = width,
+        height = 1.dpd,
+        color = RGBA(255, 255, 255, 255),
+    ).apply {
         xy(0.0, this@GameWorld.height * 0.9)
     }
 
@@ -90,7 +100,7 @@ class GameWorld(
             }
         }
     ).apply {
-        xy(midPointX - 120.dpd, midPointY + 85.dpd)
+        xy(midPointX, midPointY)
     }
 
     private val statisticsButton = imageButton(
@@ -106,7 +116,7 @@ class GameWorld(
             )
         }
     ).apply {
-        xy(midPointX, midPointY + 85.dpd)
+        xy(midPointX, midPointY + 50.dpd)
     }
 
     private val settingsButton = imageButton(
@@ -115,7 +125,7 @@ class GameWorld(
         height = 34.dpd,
         onClick = { onSettingsButtonClick() }
     ).apply {
-        xy(midPointX + 120.dpd, midPointY + 85.dpd)
+        xy(midPointX, midPointY + 100.dpd)
     }
 
 //    private val exitButton = imageButton(

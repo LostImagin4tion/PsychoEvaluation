@@ -433,8 +433,9 @@ class ClocksGameScreenViewModel(
     }
 
     private suspend fun emitNewData(data: Int) {
+        fileOutputWriter?.write("$data\n")
+
         mutex.withLock {
-            fileOutputWriter?.write("$data\n")
             allStress.add(data)
         }
 

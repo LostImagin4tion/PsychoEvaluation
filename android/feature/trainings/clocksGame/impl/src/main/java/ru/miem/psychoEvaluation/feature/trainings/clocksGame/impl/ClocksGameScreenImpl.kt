@@ -91,8 +91,8 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
 
         DisposableEffect(viewModel) {
             onDispose {
-                viewModel.disconnect()
                 viewModel.closeStream()
+                viewModel.disconnect()
             }
         }
 

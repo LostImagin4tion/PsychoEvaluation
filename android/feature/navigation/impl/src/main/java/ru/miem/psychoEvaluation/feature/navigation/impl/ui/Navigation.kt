@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
@@ -117,10 +116,10 @@ fun NavigationContent(
     clocksGameScreen: ClocksGameScreen,
     statisticsScreen: StatisticsScreen,
 ) {
-    val usbDeviceInteractor by rememberSaveable {
+    val usbDeviceInteractor by remember {
         diApi(UsbDeviceInteractorDiApi::usbDeviceInteractor)
     }
-    val bleDeviceInteractor by rememberSaveable {
+    val bleDeviceInteractor by remember {
         diApi(BluetoothDeviceInteractorDiApi::bluetoothDeviceInteractor)
     }
 

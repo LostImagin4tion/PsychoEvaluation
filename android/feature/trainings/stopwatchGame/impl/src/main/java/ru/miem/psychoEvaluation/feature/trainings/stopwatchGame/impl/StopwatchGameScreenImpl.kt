@@ -91,8 +91,8 @@ class StopwatchGameScreenImpl @Inject constructor() : StopwatchGameScreen {
 
         DisposableEffect(viewModel) {
             onDispose {
-                viewModel.disconnect()
                 viewModel.closeStream()
+                viewModel.disconnect()
             }
         }
 

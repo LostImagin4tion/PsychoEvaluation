@@ -113,14 +113,16 @@ class MainActivity : AppCompatActivity() {
                 else -> MaterialTheme.colorScheme.background.toArgb()
             }
 
-            val isLightStatusBar = !isSystemInDarkTheme()
+            val isLightTheme = !isSystemInDarkTheme()
 
             SideEffect {
                 currentWindow.statusBarColor = color
                 currentWindow.navigationBarColor = bottomBarColor
 
-                WindowCompat.getInsetsController(currentWindow, view)
-                    .isAppearanceLightStatusBars = isLightStatusBar
+                WindowCompat.getInsetsController(currentWindow, view).apply {
+                    isAppearanceLightStatusBars = isLightTheme
+                    isAppearanceLightNavigationBars = isLightTheme
+                }
             }
         }
     }

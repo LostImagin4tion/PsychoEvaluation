@@ -431,6 +431,8 @@ class StopwatchGameScreenViewModel(
     }
 
     private suspend fun emitNewData(data: Int) {
+        fileOutputWriter?.write("$data\n")
+
         mutex.withLock {
             allStress.add(data)
         }
