@@ -46,12 +46,12 @@ class DataAnalysisImpl @Inject constructor() : DataAnalysis {
 
     private fun findBorders(slope: Double, meanValue: Double): Borders {
         return when {
-            slope > -1 && slope < 1 -> Borders(
+            slope > -1e-6 && slope < 1e-6 -> Borders(
                 method = "Границы в рамках +-10%, прямой тренд",
                 upperLimit = meanValue * 1.1,
                 lowerLimit = meanValue * 0.9,
             )
-            slope < 0 -> Borders(
+            slope <= -1e-6 -> Borders(
                 method = "Границы в рамках +13% и -7%, убывающий тренд",
                 upperLimit = meanValue * 1.13,
                 lowerLimit = meanValue * 0.93
