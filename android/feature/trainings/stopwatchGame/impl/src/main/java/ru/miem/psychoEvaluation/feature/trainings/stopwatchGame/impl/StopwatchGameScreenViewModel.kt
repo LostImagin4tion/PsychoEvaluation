@@ -2,7 +2,9 @@ package ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.hardware.usb.UsbManager
+import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +24,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import ru.miem.psychoEvaluation.common.designSystem.utils.toString
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -38,6 +42,9 @@ import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.Stopw
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.StopwatchGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.stopwatchGame.impl.state.UiAction
 import timber.log.Timber
+import java.io.BufferedWriter
+import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -58,17 +65,17 @@ class StopwatchGameScreenViewModel(
     private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
     private val _stopwatchGameState = MutableStateFlow<StopwatchGameState>(defaultLoadingState)
-    private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     private val allStress = mutableListOf<Int>()
     private var currentAction: UiAction? = null
     private var isActionButtonClicked = false
 
+    private var fileOutputWriter: BufferedWriter? = null
+
     private val mutex = Mutex()
 
     val stopwatchGameState: StateFlow<StopwatchGameState> = _stopwatchGameState
-    val stressData: StateFlow<Int> = _stressData
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
 
     fun subscribeForSettingsChanges() {
@@ -114,7 +121,7 @@ class StopwatchGameScreenViewModel(
         }
     }
 
-    fun startTimerBeforeStart() {
+    fun startTimerBeforeStart(context: Context) {
         viewModelScope.launch {
             coroutineScope {
                 tickerFlow(defaultLoadingPeriod)
@@ -138,7 +145,7 @@ class StopwatchGameScreenViewModel(
                     .catch {
                         delay(100.milliseconds)
                         _stopwatchGameState.emit(defaultInProgressState)
-                        startGame()
+                        startGame(context)
                         this@coroutineScope.cancel()
                     }
                     .launchIn(this@coroutineScope)
@@ -146,7 +153,8 @@ class StopwatchGameScreenViewModel(
         }
     }
 
-    private fun startGame() {
+    private fun startGame(context: Context) {
+        setupFileInputStream(context)
         viewModelScope.launch {
             mutex.withLock {
                 allStress.clear()
@@ -208,11 +216,20 @@ class StopwatchGameScreenViewModel(
         }
     }
 
-    fun restartGame() {
+    fun restartGame(context: Context) {
         viewModelScope.launch {
             _stopwatchGameState.emit(defaultLoadingState)
         }
-        startTimerBeforeStart()
+        startTimerBeforeStart(context)
+    }
+
+    fun closeStream() {
+        fileOutputWriter?.let {
+            it.flush()
+            it.close()
+            Timber.tag(TAG).i("Closed file output writer")
+        }
+        fileOutputWriter = null
     }
 
     private fun dispatchAction(action: UiAction) {
@@ -339,12 +356,6 @@ class StopwatchGameScreenViewModel(
     }
 
     private suspend fun sendStopwatchGameStatistics(state: StopwatchGameStatisticsState) {
-        val gsrBreathing = when (_sensorDeviceType.value) {
-            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
-            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
-            SensorDeviceType.Unknown -> emptyList()
-        }
-
         viewModelScope.launch {
             val allStressCopy = buildList {
                 mutex.withLock {
@@ -352,14 +363,16 @@ class StopwatchGameScreenViewModel(
                 }
             }
 
-            statisticsInteractor.sendClocksGameStatistics(
-                gsrBreathing = gsrBreathing,
+            val data = SendClocksGameStatisticsData(
                 gsrGame = allStressCopy,
-                duration = state.gameDuration.inWholeSeconds.toInt(),
+                gameDuration = state.gameDuration.inWholeMilliseconds,
+                gameLevel = 1,
                 date = state.gameDate.formatted(),
-                level = 1,
-                score = state.score
+                gameScore = state.score,
+                reactionSpeed = state.reactionTimings
             )
+
+            statisticsInteractor.sendClocksGameStatistics(data)
         }
     }
 
@@ -393,6 +406,7 @@ class StopwatchGameScreenViewModel(
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
                 score = successfulReactionCount,
                 averageReactionTimeString = averageReactionTime,
+                reactionTimings = reactionTimings,
                 vigilanceDelta = vigilanceDelta,
                 concentrationDelta = concentrationDelta
             )
@@ -417,6 +431,8 @@ class StopwatchGameScreenViewModel(
     }
 
     private suspend fun emitNewData(data: Int) {
+        fileOutputWriter?.write("$data\n")
+
         mutex.withLock {
             allStress.add(data)
         }
@@ -430,6 +446,22 @@ class StopwatchGameScreenViewModel(
                 )
                 _stopwatchGameState.emit(newState)
             }
+        }
+    }
+
+    private fun setupFileInputStream(context: Context) {
+        try {
+            closeStream()
+
+            val datetime = Calendar.getInstance().time.toString("yyyy-MM-dd_HH:mm:ss")
+            val filename = "stopwatch-psycho-$datetime.txt"
+
+            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
+            fileOutputWriter = file.bufferedWriter()
+
+            Timber.tag(TAG).i("Created new file ${file.absolutePath}")
+        } catch (e: IOException) {
+            Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
         }
     }
 

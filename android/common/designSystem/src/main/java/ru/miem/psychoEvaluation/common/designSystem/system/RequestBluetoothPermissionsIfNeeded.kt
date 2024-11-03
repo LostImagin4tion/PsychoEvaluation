@@ -6,12 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.shouldShowRationale
-import ru.miem.psychoEvaluation.common.designSystem.R
 import ru.miem.psychoEvaluation.common.designSystem.dialogs.SystemDialog
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonStrings
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -38,9 +36,9 @@ fun RequestBluetoothPermissionsIfNeeded(
     }
     else if (permissionsToRequest.shouldShowRationale) {
         SystemDialog(
-            headerText = stringResource(R.string.request_bluetooth_permission_rationale_header_text),
-            descriptionText = stringResource(R.string.request_bluetooth_permission_rationale_description_text),
-            iconRes = R.drawable.bluetooth_icon,
+            headerText = stringResource(CommonStrings.request_bluetooth_permission_rationale_header_text),
+            descriptionText = stringResource(CommonStrings.request_bluetooth_permission_rationale_description_text),
+            iconRes = CommonDrawables.bluetooth_icon,
             onConfirm = {
                 permissionsToRequest.launchMultiplePermissionRequest()
             }

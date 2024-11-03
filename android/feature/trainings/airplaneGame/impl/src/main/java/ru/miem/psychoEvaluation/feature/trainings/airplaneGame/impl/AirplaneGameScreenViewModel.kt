@@ -17,6 +17,7 @@ import kotlinx.coroutines.sync.withLock
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendAirplaneGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -30,9 +31,9 @@ import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.model.toSens
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 @Suppress("MagicNumber")
 class AirplaneGameScreenViewModel(
@@ -223,13 +224,28 @@ class AirplaneGameScreenViewModel(
         }
         val allStressCopy = buildList { addAll(allStress) }
 
+        val gsrUpperLimit = timeUpperCorridor.inWholeMilliseconds / gameTime.inWholeMilliseconds.toFloat()
+        val gsrLowerLimit = timeLowerCorridor.inWholeMilliseconds / gameTime.inWholeMilliseconds.toFloat()
+
+        val timePercentInLimits = ((timeInCorridor.inWholeMilliseconds / gameTime.inWholeMilliseconds.toFloat()) * 100)
+            .roundToInt()
+
         viewModelScope.launch {
-            statisticsInteractor.sendAirplaneGameStatistics(
+            val data = SendAirplaneGameStatisticsData(
                 gsrBreathing = gsrBreathing,
                 gsrGame = allStressCopy,
-                duration = gameTime.inWholeSeconds.toInt(),
-                date = gameDate.formatted()
+                gameDuration = gameTime.inWholeMilliseconds,
+                date = gameDate.formatted(),
+                gsrUpperLimit = gsrUpperLimit,
+                gsrLowerLimit = gsrLowerLimit,
+                timePercentInLimits = timePercentInLimits,
+                timeInLimits = timeInCorridor.inWholeMilliseconds,
+                timeAboveUpperLimit = timeUpperCorridor.inWholeMilliseconds,
+                timeUnderLowerLimit = timeLowerCorridor.inWholeMilliseconds,
+                amountOfCrossingLimits = numberOfFlightsOutsideCorridor,
             )
+
+            statisticsInteractor.sendAirplaneGameStatistics(data)
         }
     }
 

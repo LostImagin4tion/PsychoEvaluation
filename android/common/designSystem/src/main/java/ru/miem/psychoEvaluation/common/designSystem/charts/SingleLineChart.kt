@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
@@ -18,6 +19,7 @@ import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
@@ -29,6 +31,7 @@ import com.patrykandpatrick.vico.core.scroll.Scroll
 @Composable
 fun SingleLineChart(
     modelProducer: CartesianChartModelProducer,
+    minY: Int = 0,
     chartMarker: Marker? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -36,14 +39,19 @@ fun SingleLineChart(
     val linesSpecs = listOf(
         rememberLineSpec(
             shader = DynamicShaders.color(Color(lineColorInt)),
+            backgroundShader = null,
             point = ShapeComponent(shape = Shapes.pillShape, color = lineColorInt),
-            pointSize = 8.dp
+            pointSize = 5.dp
         ),
     )
 
     val chartLayers = arrayOf(
         rememberLineCartesianLayer(
-            lines = linesSpecs
+            lines = linesSpecs,
+            spacing = 4.dp,
+            axisValueOverrider = AxisValueOverrider.fixed(
+                minY = minY.toFloat()
+            )
         ),
     )
 
@@ -52,7 +60,8 @@ fun SingleLineChart(
             *chartLayers,
             startAxis = rememberStartAxis(
                 label = rememberAxisLabelComponent(
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textSize = 10.sp,
                 ),
                 axis = rememberAxisLineComponent(
                     color = MaterialTheme.colorScheme.onPrimary
@@ -64,7 +73,8 @@ fun SingleLineChart(
             ),
             bottomAxis = rememberBottomAxis(
                 label = rememberAxisLabelComponent(
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textSize = 0.sp,
                 ),
                 axis = rememberAxisLineComponent(
                     color = MaterialTheme.colorScheme.onPrimary
@@ -72,6 +82,7 @@ fun SingleLineChart(
                 tick = rememberAxisTickComponent(
                     color = MaterialTheme.colorScheme.onPrimary, brush = null
                 ),
+                guideline = null,
             )
         ),
         scrollState = rememberVicoScrollState(

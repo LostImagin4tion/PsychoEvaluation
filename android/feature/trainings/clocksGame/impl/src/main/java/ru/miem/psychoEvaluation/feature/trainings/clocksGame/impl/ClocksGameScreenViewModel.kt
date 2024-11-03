@@ -2,7 +2,9 @@ package ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.hardware.usb.UsbManager
+import android.os.Environment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +24,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import ru.miem.psychoEvaluation.common.designSystem.utils.toString
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.di.SettingsInteractorDiApi
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -37,6 +41,10 @@ import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGa
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.ClocksGameStatisticsState
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.HideIndicatorAndBrokenHeart
 import ru.miem.psychoEvaluation.feature.trainings.clocksGame.impl.state.UiAction
+import timber.log.Timber
+import java.io.BufferedWriter
+import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -58,17 +66,17 @@ class ClocksGameScreenViewModel(
     private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
     private val _clocksGameState = MutableStateFlow<ClocksGameState>(defaultLoadingState)
-    private val _stressData = MutableStateFlow(0)
     private val _sensorDeviceType = MutableStateFlow(SensorDeviceType.Unknown)
 
     private val allStress = mutableListOf<Int>()
     private var currentAction: UiAction? = null
     private var isActionButtonClicked = false
 
+    private var fileOutputWriter: BufferedWriter? = null
+
     private val mutex = Mutex()
 
     val clocksGameState: StateFlow<ClocksGameState> = _clocksGameState
-    val stressData: StateFlow<Int> = _stressData
     val sensorDeviceType: StateFlow<SensorDeviceType> = _sensorDeviceType
 
     fun subscribeForSettingsChanges() {
@@ -111,7 +119,7 @@ class ClocksGameScreenViewModel(
         }
     }
 
-    fun startTimerBeforeStart() {
+    fun startTimerBeforeStart(context: Context) {
         viewModelScope.launch {
             coroutineScope {
                 tickerFlow(defaultLoadingPeriod)
@@ -135,7 +143,7 @@ class ClocksGameScreenViewModel(
                     .catch {
                         delay(100.milliseconds)
                         _clocksGameState.emit(defaultInProgressState)
-                        startGame()
+                        startGame(context)
                         this@coroutineScope.cancel()
                     }
                     .launchIn(this@coroutineScope)
@@ -143,7 +151,8 @@ class ClocksGameScreenViewModel(
         }
     }
 
-    private fun startGame() {
+    private fun startGame(context: Context) {
+        setupFileInputStream(context)
         viewModelScope.launch {
             mutex.withLock {
                 allStress.clear()
@@ -208,11 +217,20 @@ class ClocksGameScreenViewModel(
         }
     }
 
-    fun restartGame() {
+    fun restartGame(context: Context) {
         viewModelScope.launch {
             _clocksGameState.emit(defaultLoadingState)
         }
-        startTimerBeforeStart()
+        startTimerBeforeStart(context)
+    }
+
+    fun closeStream() {
+        fileOutputWriter?.let {
+            it.flush()
+            it.close()
+            Timber.tag(TAG).i("Closed file output writer")
+        }
+        fileOutputWriter = null
     }
 
     private fun dispatchAction(action: UiAction) {
@@ -340,12 +358,6 @@ class ClocksGameScreenViewModel(
     }
 
     private fun sendClocksGameStatistics(state: ClocksGameStatisticsState) {
-        val gsrBreathing = when (_sensorDeviceType.value) {
-            SensorDeviceType.Usb -> usbDeviceInteractor.gsrBreathing
-            SensorDeviceType.Bluetooth -> bleDeviceInteractor.gsrBreathing
-            SensorDeviceType.Unknown -> emptyList()
-        }
-
         viewModelScope.launch {
             val allStressCopy = buildList {
                 mutex.withLock {
@@ -353,14 +365,16 @@ class ClocksGameScreenViewModel(
                 }
             }
 
-            statisticsInteractor.sendClocksGameStatistics(
-                gsrBreathing = gsrBreathing,
+            val data = SendClocksGameStatisticsData(
                 gsrGame = allStressCopy,
-                duration = state.gameDuration.inWholeSeconds.toInt(),
+                gameDuration = state.gameDuration.inWholeMilliseconds,
+                gameLevel = 2,
                 date = state.gameDate.formatted(),
-                level = 2,
-                score = state.score
+                gameScore = state.score,
+                reactionSpeed = state.reactionTimings
             )
+
+            statisticsInteractor.sendClocksGameStatistics(data)
         }
     }
 
@@ -394,6 +408,7 @@ class ClocksGameScreenViewModel(
                 successPercent = successfulReactionCount.toFloat() / jumpCount,
                 score = successfulReactionCount,
                 averageReactionTimeString = averageReactionTime,
+                reactionTimings = reactionTimings,
                 vigilanceDelta = vigilanceDelta,
                 concentrationDelta = concentrationDelta
             )
@@ -418,6 +433,8 @@ class ClocksGameScreenViewModel(
     }
 
     private suspend fun emitNewData(data: Int) {
+        fileOutputWriter?.write("$data\n")
+
         mutex.withLock {
             allStress.add(data)
         }
@@ -431,6 +448,22 @@ class ClocksGameScreenViewModel(
                 )
                 _clocksGameState.emit(newState)
             }
+        }
+    }
+
+    private fun setupFileInputStream(context: Context) {
+        try {
+            closeStream()
+
+            val datetime = Calendar.getInstance().time.toString("yyyy-MM-dd_HH:mm:ss")
+            val filename = "clocks-psycho-$datetime.txt"
+
+            val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), filename)
+            fileOutputWriter = file.bufferedWriter()
+
+            Timber.tag(TAG).i("Created new file ${file.absolutePath}")
+        } catch (e: IOException) {
+            Timber.tag(TAG).e("Got IO error while writing data to file: $e ${e.message}")
         }
     }
 

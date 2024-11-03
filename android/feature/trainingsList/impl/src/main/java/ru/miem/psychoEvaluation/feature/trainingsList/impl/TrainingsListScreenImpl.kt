@@ -13,7 +13,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +30,8 @@ import ru.miem.psychoEvaluation.common.designSystem.system.requestPermissionInte
 import ru.miem.psychoEvaluation.common.designSystem.system.requestUsbDeviceAccess
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonStrings
 import ru.miem.psychoEvaluation.common.designSystem.utils.viewModelFactory
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.BluetoothDeviceInteractor
 import ru.miem.psychoEvaluation.common.interactors.bleDeviceInteractor.api.UsbDeviceInteractor
@@ -48,7 +50,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         showMessage: (String) -> Unit
     ) {
         val unknownDeviceAlertText =
-            stringResource(ru.miem.psychoEvaluation.common.designSystem.R.string.unknown_device_alert)
+            stringResource(CommonStrings.unknown_device_alert)
 
         val viewModel: TrainingsListScreenViewModel = viewModel(
             factory = viewModelFactory {
@@ -59,8 +61,8 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
             }
         )
 
-        var canShowBluetoothRequestDialog by remember { mutableStateOf(false) }
-        var tappedTraining: String? by remember { mutableStateOf(null) }
+        var canShowBluetoothRequestDialog by rememberSaveable { mutableStateOf(false) }
+        var tappedTraining: String? by rememberSaveable { mutableStateOf(null) }
 
         val sensorDeviceType by viewModel.sensorDeviceType.collectAsStateWithLifecycle()
 
@@ -88,6 +90,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
                 hideBluetoothRequestDialog = { canShowBluetoothRequestDialog = false },
                 navigateToNextScreenWithUsbDevice = {
                     val route = when (training) {
+                        Routes.debugTraining,
                         Routes.stopwatchGame,
                         Routes.clocksGame,
                         -> Routes.generalTrainingRoute.format(training, null)
@@ -208,7 +211,7 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         val context = LocalContext.current
         val usbManager = context.getSystemService(Context.USB_SERVICE) as UsbManager
 
-        var isDeviceAccessGranted by remember {
+        var isDeviceAccessGranted by rememberSaveable {
             mutableStateOf(viewModel.isUsbDeviceAccessGranted(usbManager))
         }
 
@@ -248,14 +251,14 @@ class TrainingsListScreenImpl @Inject constructor() : TrainingsListScreen {
         hideBluetoothRequestDialog: () -> Unit = {},
         navigateToBluetoothDeviceManager: () -> Unit,
     ) {
-        var isBluetoothAccessGranted by remember { mutableStateOf(false) }
-        var tryRequestingBluetoothPermission by remember { mutableStateOf(false) }
+        var isBluetoothAccessGranted by rememberSaveable { mutableStateOf(false) }
+        var tryRequestingBluetoothPermission by rememberSaveable { mutableStateOf(false) }
 
         if (shouldShowBluetoothRequestDialog) {
             SystemDialog(
                 headerText = stringResource(R.string.dialog_header_text),
                 descriptionText = stringResource(R.string.dialog_description_text),
-                iconRes = ru.miem.psychoEvaluation.common.designSystem.R.drawable.bluetooth_icon,
+                iconRes = CommonDrawables.bluetooth_icon,
                 onConfirm = {
                     hideBluetoothRequestDialog()
                     tryRequestingBluetoothPermission = true

@@ -8,25 +8,20 @@ import com.soywiz.korim.color.RGBA
 fun Container.gsrBorderView(
     width: Double,
     height: Double,
-) = GsrBorderView(width, height).addTo(this)
+    color: RGBA,
+) = GsrBorderView(width, height, color).addTo(this)
 
 class GsrBorderView(
     width: Double,
     height: Double,
+    color: RGBA,
 ) : Container() {
 
     init {
         solidRect(
             width = width,
             height = height,
-            color = RGBA(COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_ALPHA),
+            color = color,
         )
-    }
-
-    private companion object {
-        const val COLOR_RED = 0
-        const val COLOR_GREEN = 0
-        const val COLOR_BLUE = 0
-        const val COLOR_ALPHA = 255
     }
 }

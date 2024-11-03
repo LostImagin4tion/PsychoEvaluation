@@ -80,7 +80,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
-            viewModel.startTimerBeforeStart()
+            viewModel.startTimerBeforeStart(context)
         }
 
         BackHandler {
@@ -91,6 +91,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
 
         DisposableEffect(viewModel) {
             onDispose {
+                viewModel.closeStream()
                 viewModel.disconnect()
             }
         }
@@ -105,7 +106,7 @@ class ClocksGameScreenImpl @Inject constructor() : ClocksGameScreen {
                 )
                 is ClocksGameStatisticsState -> ClocksGameStatisticsScreen(
                     state = state,
-                    restartGame = { viewModel.restartGame() },
+                    restartGame = { viewModel.restartGame(context) },
                     navigateToTrainingListScreen = { navigateToRoute(Routes.trainingsList) }
                 )
             }

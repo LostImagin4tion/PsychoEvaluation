@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -46,6 +45,7 @@ import ru.miem.psychoEvaluation.common.designSystem.state.StateHolder
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.textfields.LoginTextField
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
 import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.FullScreenLoadingResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
@@ -134,10 +134,10 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
             pop()
         }
 
-        var isEmailInputError by remember { mutableStateOf(false) }
-        var isPasswordInputError by remember { mutableStateOf(false) }
-        var isUserAgreementAccepted by remember { mutableStateOf(false) }
-        var isPrivacyPolicyAccepted by remember { mutableStateOf(false) }
+        var isEmailInputError by rememberSaveable { mutableStateOf(false) }
+        var isPasswordInputError by rememberSaveable { mutableStateOf(false) }
+        var isUserAgreementAccepted by rememberSaveable { mutableStateOf(false) }
+        var isPrivacyPolicyAccepted by rememberSaveable { mutableStateOf(false) }
 
         val invalidDataMessage = stringResource(R.string.registration_invalid_data_alert)
 
@@ -171,7 +171,7 @@ class RegistrationScreenImpl @Inject constructor() : RegistrationScreen {
                 .align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(ru.miem.psychoEvaluation.common.designSystem.R.drawable.ic_back),
+                painter = painterResource(CommonDrawables.ic_back),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

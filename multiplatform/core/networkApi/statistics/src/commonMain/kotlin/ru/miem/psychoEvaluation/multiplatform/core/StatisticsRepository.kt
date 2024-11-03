@@ -7,10 +7,12 @@ import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsResponse
 
 interface StatisticsRepository {
     suspend fun commonStatistics(request: StatisticsRequest): StatisticsResponse?
+
     suspend fun sendAirplaneStatistics(
         request: SendAirplaneGameStatisticsRequest,
         token: String,
     ): Boolean
+
     suspend fun sendClocksStatistics(
         request: SendClocksGameStatisticsRequest,
         token: String,

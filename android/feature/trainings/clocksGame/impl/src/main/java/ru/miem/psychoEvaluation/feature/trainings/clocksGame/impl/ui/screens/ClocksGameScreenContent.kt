@@ -66,7 +66,7 @@ fun ClocksGameScreenContent(
         modifier = Modifier.fillMaxWidth()
     )
 
-    Spacer(modifier = Modifier.height(40.dp))
+    Spacer(modifier = Modifier.height(32.dp))
 
     ActionButton(
         textRes = R.string.action_button_text,
@@ -74,7 +74,7 @@ fun ClocksGameScreenContent(
         onClick = onActionButtonClick
     )
 
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
     LabelText(
         textRes = R.string.bottom_description_text,

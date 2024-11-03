@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,9 +64,9 @@ fun AirplaneGameSettingsScreen(
         mutableStateOf(TextFieldValue("3"))
     }
 
-    var isUpperBoundInputError by remember { mutableStateOf(false) }
-    var isLowerBoundInputError by remember { mutableStateOf(false) }
-    var isTimeInGameInputError by remember { mutableStateOf(false) }
+    var isUpperBoundInputError by rememberSaveable { mutableStateOf(false) }
+    var isLowerBoundInputError by rememberSaveable { mutableStateOf(false) }
+    var isTimeInGameInputError by rememberSaveable { mutableStateOf(false) }
 
     ForceDeviceOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 

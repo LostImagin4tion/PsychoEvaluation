@@ -6,14 +6,14 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import ru.miem.psychoEvaluation.common.designSystem.R
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonFonts
 
 private val fonts = FontFamily(
-    Font(R.font.inter_regular),
-    Font(R.font.inter_bold, weight = FontWeight.Bold),
-    Font(R.font.inter_light, weight = FontWeight.Light),
-    Font(R.font.inter_thin, weight = FontWeight.Thin),
-    Font(R.font.inter_medium, weight = FontWeight.Medium),
+    Font(CommonFonts.inter_regular),
+    Font(CommonFonts.inter_bold, weight = FontWeight.Bold),
+    Font(CommonFonts.inter_light, weight = FontWeight.Light),
+    Font(CommonFonts.inter_thin, weight = FontWeight.Thin),
+    Font(CommonFonts.inter_medium, weight = FontWeight.Medium),
 )
 
 val Typography = Typography(

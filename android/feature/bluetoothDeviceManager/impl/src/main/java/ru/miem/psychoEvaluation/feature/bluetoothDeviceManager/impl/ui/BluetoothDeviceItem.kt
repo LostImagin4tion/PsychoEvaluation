@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.R
 import ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl.state.BluetoothDeviceConnectionStatus
 
@@ -47,7 +48,7 @@ fun BluetoothDeviceItem(
         .fillMaxWidth()
 ) {
     Icon(
-        painter = painterResource(ru.miem.psychoEvaluation.common.designSystem.R.drawable.bluetooth_icon),
+        painter = painterResource(CommonDrawables.bluetooth_icon),
         tint = MaterialTheme.colorScheme.onPrimary,
         contentDescription = null,
         modifier = Modifier.size(24.dp)

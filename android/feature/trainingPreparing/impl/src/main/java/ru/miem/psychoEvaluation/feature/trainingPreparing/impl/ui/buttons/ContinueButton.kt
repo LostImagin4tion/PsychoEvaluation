@@ -13,14 +13,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import ru.miem.psychoEvaluation.common.designSystem.R
+import ru.miem.psychoEvaluation.common.designSystem.utils.CommonDrawables
 
 @Composable
 fun ContinueButton(
     onClick: () -> Unit
 ) {
     Icon(
-        painter = painterResource(R.drawable.arrow_right),
+        painter = painterResource(CommonDrawables.arrow_right),
         contentDescription = null,
         tint = Color.White,
         modifier = Modifier
