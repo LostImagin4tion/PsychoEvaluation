@@ -1,12 +1,9 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,29 +11,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -46,13 +46,18 @@ import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.legend.rememberLegendItem
 import com.patrykandpatrick.vico.compose.legend.rememberVerticalLegend
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.playmoweb.multidatepicker.MultiDatePicker
 import com.playmoweb.multidatepicker.models.MultiDatePickerColors
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
@@ -64,173 +69,138 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartConcentrati
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartSelectedBackground
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartSelectedDayBackground
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryContainerLight
-import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
+import ru.miem.psychoEvaluation.common.designSystem.utils.optionalCast
 import ru.miem.psychoEvaluation.feature.statistics.api.StatisticsScreen
-import ru.miem.psychoEvaluation.feature.statistics.impl.ui.OnComposeCards
-import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCardData
+import ru.miem.psychoEvaluation.feature.statistics.impl.state.CommonStatisticsScreenState
+import ru.miem.psychoEvaluation.feature.statistics.impl.state.DetailedStatisticsScreenState
+import ru.miem.psychoEvaluation.feature.statistics.impl.ui.DetailedStatisticsSheet
+import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCards
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartProvider
-import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartUpdate
 import java.time.LocalDate
 import java.util.Date
 import javax.inject.Inject
-import androidx.compose.material3.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.miem.psychoEvaluation.common.designSystem.state.StateHolder
-import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
-import ru.miem.psychoEvaluation.common.designSystem.utils.SuccessResult
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
-import ru.miem.psychoEvaluation.feature.statistics.impl.ui.DetailedStatisticsSheet
 
 class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
-    private val labelListKey = ExtraStore.Key<Map<Int, LocalDate>>()
-    private var cardsList: MutableList<StatisticsCardData?> = mutableListOf(null)
 
-    @SuppressLint("CoroutineCreationDuringComposition")
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun StatisticsScreen(
         navigateToRoute: (route: String) -> Unit,
         showMessage: (String) -> Unit
     ) {
-        val context = LocalContext.current
         val viewModel: StatisticsScreenViewModel = viewModel()
 
-        val screenState = viewModel.screenState.collectAsStateWithLifecycle()
+        val commonStatisticsScreenState by viewModel.commonStatisticsScreenStateStateFlow.collectAsStateWithLifecycle()
+        val detailedStatisticsScreenState by viewModel.detailedStatisticsScreenState.collectAsStateWithLifecycle()
 
-        val modelProducer = remember { viewModel.chartModelProducer }
+        val startDate: MutableState<Date?> = remember { mutableStateOf(Date()) }
+        val endDate: MutableState<Date?> = remember { mutableStateOf(Date()) }
 
-        val chart = ChartUpdate(modelProducer, labelListKey)
+        var shouldShowBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-        var selectedTrainingValue by remember { mutableStateOf<Int?>(null) }
+        val sheetState = rememberModalBottomSheetState()
 
-        val sheetState = ModalBottomSheetState(
-            initialValue = ModalBottomSheetValue.Hidden
-        )
-        val coroutineScope = rememberCoroutineScope()
-
-        var result = viewModel.toStatResult<Unit>(screenState.value)
-
-        var sheetRes: Pair<DetailedAirplaneStatisticsState?, DetailedClockStatisticsState?>? = Pair(null,null)
-
-        var customSheetContent: Unit
-
-        when (result) {
-            is SuccessResult -> {
-                StatisticsScreenContent(
-                    showMessage = showMessage,
-                    viewModel = viewModel,
-                    chart = chart,
-                    onRowClick = { gameId, trainingType: String ->
-                        coroutineScope.launch {
-                            viewModel.onTrainingSelected(
-                                gameId.toString(),
-                                trainingType
-                            )
-                            sheetState.show()
-                        }
-                    },
-                    isStatisticsInProgress = false,
-                    cardsList = screenState.value.cardsList,
-                    data = Pair(
-                        screenState.value.statisticsState?.first?.airplaneData,
-                        screenState.value.statisticsState?.first?.clockData
-                    ),
-                )
-
-            }
-            is ErrorResult -> {
-                (result as? ErrorResult<Unit>)?.message?.let {
-                    showMessage(it.toString())
-                    viewModel.resetState()
-                    StatisticsScreenContent(
-                        showMessage = showMessage,
-                        viewModel = viewModel,
-                        chart = chart,
-                        onRowClick = { gameId, trainingType:String ->
-                            coroutineScope.launch {
-                                viewModel.onTrainingSelected(
-                                    gameId.toString(),
-                                    trainingType
-                                )
-                                sheetState.show()
-                            }
-                        },
-                        isStatisticsInProgress = false,
-                        cardsList = screenState.value.cardsList,
-                        data = Pair(screenState.value.statisticsState?.first?.airplaneData, screenState.value.statisticsState?.first?.clockData),
-                    )
-                }
-            }
-            else -> {
-                StatisticsScreenContent(
-                    showMessage = showMessage,
-                    viewModel = viewModel,
-                    chart = chart,
-                    onRowClick = { gameId, trainingType:String ->
-                        coroutineScope.launch {
-                        sheetRes = viewModel.onTrainingSelected(gameId.toString(), trainingType)}
-                    },
-                    isStatisticsInProgress = result is LoadingResult,
-                    cardsList = screenState.value.cardsList,
-                    data = Pair(screenState.value.statisticsState?.first?.airplaneData, screenState.value.statisticsState?.first?.clockData)
-                )
-            }
-        }
-
-        StateHolder(state = result) // Use the processed result
+        val bottomSheetCoroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
-            viewModel.loadStatisticsData(chart, mutableStateOf(Date()), mutableStateOf(Date()))
+            viewModel.requestCommonStatistics(
+                startDate.value ?: Date(),
+                endDate.value ?: Date(),
+            )
         }
 
-        ModalBottomSheetLayout(
-            sheetState = sheetState,
-            sheetContent = {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    DetailedStatisticsSheet(
-                        detailedStatistics = screenState.value.bottomSheetState)
+        LaunchedEffect(detailedStatisticsScreenState) {
+            when (detailedStatisticsScreenState) {
+                is DetailedStatisticsScreenState.Nothing -> {
+                    bottomSheetCoroutineScope
+                        .launch {
+                            sheetState.hide()
+                        }
+                        .invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                shouldShowBottomSheet = false
+                            }
+                        }
+                }
 
-                    Button(onClick = { coroutineScope.launch { sheetState.hide() } }) {
+                is DetailedStatisticsScreenState.Loading,
+                is DetailedStatisticsScreenState.Error,
+                is DetailedStatisticsScreenState.DetailedAirplaneData,
+                is DetailedStatisticsScreenState.DetailedClocksData -> {
+                    shouldShowBottomSheet = true
+                }
+            }
+        }
+
+        StatisticsScreenContent(
+            showMessage = showMessage,
+            startDate = startDate,
+            endDate = endDate,
+            screenState = commonStatisticsScreenState,
+            chartModelProducer = viewModel.chartModelProducer,
+            labelListKey = viewModel.labelListKey,
+            bottomAxisValueFormatter = viewModel.bottomAxisValueFormatter,
+            requestCommonStatistics = viewModel::requestCommonStatistics,
+            onRowClick = { gameId, trainingType: String ->
+                viewModel.onTrainingSelected(
+                    gameId.toString(),
+                    trainingType
+                )
+            },
+        )
+
+        if (shouldShowBottomSheet) {
+            ModalBottomSheet(
+                sheetState = sheetState,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                modifier = Modifier.fillMaxSize(),
+                onDismissRequest = {
+                    viewModel.resetDetailedStatisticsScreenState()
+                }
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    DetailedStatisticsSheet(
+                        detailedStatisticsScreenState = detailedStatisticsScreenState
+                    )
+
+                    Button(
+                        onClick = {
+                            viewModel.resetDetailedStatisticsScreenState()
+                        }
+                    ) {
                         Text("Close Sheet")
                     }
                 }
-            },
-            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
+            }
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun StatisticsScreenContent(
         showMessage: (String) -> Unit,
-        viewModel: StatisticsScreenViewModel,
-        chart: ChartUpdate,
+        startDate: MutableState<Date?>,
+        endDate: MutableState<Date?>,
+        screenState: CommonStatisticsScreenState,
+        chartModelProducer: CartesianChartModelProducer,
+        labelListKey: ExtraStore.Key<Map<Int, LocalDate>>,
+        bottomAxisValueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom>,
+        requestCommonStatistics: (Date, Date) -> Unit,
         onRowClick: (Int, String) -> Unit,
-        isStatisticsInProgress: Boolean,
-        cardsList: MutableList<StatisticsCardData?>,
-        data: Pair<Map<String, Int>?, Map<String, Int>?>,
     ) {
+        val successScreenState = screenState.optionalCast<CommonStatisticsScreenState.Success>()
+
         Box(
             modifier = Modifier.fillMaxSize()
-        )
-        {
+        ) {
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
                     .screenPaddings()
                     .verticalScroll(state = rememberScrollState())
-            )
-            {
-                val startDate: MutableState<Date?> = remember { mutableStateOf(null) }
-                val endDate: MutableState<Date?> = remember { mutableStateOf(null) }
-
-                // ===== UI SECTION =====
-
+            ) {
                 Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
                 TitleText(
@@ -240,9 +210,10 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
 
                 Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 1))
 
-                val snackScope = rememberCoroutineScope()
-
-                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top,
+                ) {
                     BodyText(textRes = R.string.title_dates_picker, isLarge = false)
 
                     MultiDatePicker(
@@ -258,16 +229,16 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                             selectedDayNumberColor = psychoPrimaryContainerLight,
                             weekDayColor = MaterialTheme.colorScheme.onPrimary,
                             selectedIndicatorColor = psychoChartSelectedDayBackground
-                        )
+                        ),
                     )
+
                     Row(
-                        modifier =
-                        Modifier
+                        modifier = Modifier
                             .fillMaxWidth()
                             .background(DatePickerDefaults.colors().containerColor)
                             .padding(start = 12.dp, end = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
+                        horizontalArrangement = Arrangement.End,
                     ) {
                         SimpleTextButton(
                             textRes = R.string.snackbar_dates_picker_dismiss,
@@ -275,33 +246,41 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                                 startDate.value = null
                                 endDate.value = null
                             },
-                            enabled = (startDate.value != null)
+                            enabled = startDate.value != null
                         )
+
                         SimpleTextButton(
                             textRes = R.string.snackbar_dates_picker_save,
                             onClick = {
-                                snackScope.launch {
-                                    viewModel.loadStatisticsData(chart, startDate, endDate)
-                                }
+                                requestCommonStatistics(
+                                    startDate.value ?: Date(),
+                                    endDate.value ?: Date(),
+                                )
                             },
-                            enabled = (startDate.value != null)
+                            enabled = startDate.value != null
                         )
                     }
 
                     CartesianChartHost(
-                        rememberCartesianChart(
+                        chart = rememberCartesianChart(
                             rememberColumnCartesianLayer(
-                                columnProvider = ChartProvider(chart,
-                                    data
+                                columnProvider = ChartProvider(
+                                    labelListKey = labelListKey,
+                                    airplaneData = successScreenState?.commonStatisticsState
+                                        ?.airplaneData
+                                        ?: persistentMapOf(),
+                                    clocksData = successScreenState?.commonStatisticsState
+                                        ?.clockData
+                                        ?: persistentMapOf(),
                                 ),
                                 dataLabel = TextComponent.build()
                             ),
                             startAxis = rememberStartAxis(),
                             bottomAxis = rememberBottomAxis(
-                                valueFormatter = chart.bottomAxisValueFormatter
+                                valueFormatter = bottomAxisValueFormatter
                             ),
                             legend = rememberVerticalLegend(
-                                listOf(
+                                items = listOf(
                                     rememberLegendItem(
                                         icon = ShapeComponent(
                                             shape = Shapes.roundedCornerShape(
@@ -331,53 +310,49 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                                         labelText = stringResource(id = R.string.alertness_title)
                                     )
                                 ),
-                                15.dp, 10.dp, 3.dp
+                                iconSize = 16.dp,
+                                iconPadding = 10.dp,
+                                spacing = 4.dp,
                             )
                         ),
-                        chart.modelProducer,
+                        modelProducer = chartModelProducer
                     )
 
                     Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
                 }
-                OnComposeCards(cardsList = cardsList, onRowClick = onRowClick)
 
-                val coroutineScope = rememberCoroutineScope()
+                StatisticsCards(
+                    cardsList = successScreenState?.cardsList ?: persistentListOf(),
+                    onRowClick = onRowClick,
+                )
             }
 
-            if (isStatisticsInProgress) {
+            if (screenState is CommonStatisticsScreenState.Loading) {
                 Box(
                     modifier = Modifier
-                        .height(100.dp)
-                        .align(Alignment.BottomCenter),
-                    contentAlignment = Alignment.TopCenter
-                ){
-                    Box(
-                        modifier = Modifier
-                            .width(75.dp)
-                            .height(75.dp)
-                            .align(Alignment.TopCenter)
-                            .background(
-                                color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
-                                shape = RoundedCornerShape(
-                                    topStart = 16.dp,
-                                    topEnd = 16.dp,
-                                    bottomEnd = 16.dp,
-                                    bottomStart = 16.dp
-                                )
+                        .size(75.dp)
+                        .align(Alignment.Center)
+                        .background(
+                            color = MaterialTheme.colorScheme.background.copy(alpha = 0.9f),
+                            shape = RoundedCornerShape(
+                                topStart = 16.dp,
+                                topEnd = 16.dp,
+                                bottomEnd = 16.dp,
+                                bottomStart = 16.dp
                             )
-                            ,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.primary,
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
         }
-        }
     }
+
     companion object {
         private const val HALF_PERCENT = 50
     }

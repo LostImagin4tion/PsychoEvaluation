@@ -193,6 +193,50 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
             .successOrNull()
     }
 
+    override suspend fun sendAirplaneStatistics(
+        request: SendAirplaneGameStatisticsRequest,
+        token: String,
+    ): Boolean {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(SendAirplaneStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<SendStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Post
+                contentType(ContentType.Application.Json)
+                setBody(request)
+
+                headers {
+                    append(AuthorizationTokenHeader, token)
+                }
+            }
+            .successOrNull()
+            .let { it != null }
+    }
+
+    override suspend fun sendClocksStatistics(
+        request: SendClocksGameStatisticsRequest,
+        token: String,
+    ): Boolean {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(SendClocksStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<SendStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Post
+                contentType(ContentType.Application.Json)
+                setBody(request)
+
+                headers {
+                    append(AuthorizationTokenHeader, token)
+                }
+            }
+            .successOrNull()
+            .let { it != null }
+    }
+
     private companion object {
         const val StatisticsBaseUrlV1 = "http://gsr.miem2.vmnet.top/api/v1"
         const val StatisticsBaseUrlV2 = "http://gsr.miem2.vmnet.top/api/v2"

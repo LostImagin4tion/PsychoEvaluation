@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +25,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
@@ -33,17 +33,32 @@ import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartClock
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartConcentration
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoPrimaryContainerLight
 import ru.miem.psychoEvaluation.feature.statistics.impl.R
+import ru.miem.psychoEvaluation.feature.statistics.impl.state.StatisticsCardData
 
 @Composable
-fun StatisticsCard(
+fun StatisticsCards(
+    cardsList: ImmutableList<StatisticsCardData>,
+    onRowClick: (Int, String) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        cardsList.forEach { card ->
+            StatisticsCard(statisticsData = card, onRowClick)
+
+            Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
+        }
+    }
+}
+
+@Composable
+private fun StatisticsCard(
     statisticsData: StatisticsCardData,
     onRowClick: (Int, String) -> Unit
 ) {
     val shape = remember { RoundedCornerShape(10.dp) }
 
-    Row(
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
         modifier = Modifier
             .clip(shape)
             .shadow(
@@ -58,28 +73,30 @@ fun StatisticsCard(
             .padding(Dimensions.commonPadding)
             .fillMaxWidth()
     ) {
-        Column() {
-            BodyText(statisticsData.dateRes, isLarge = true)
+        BodyText(statisticsData.date, isLarge = true)
 
-            Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            Row() {
-                BodyText(R.string.trainings_title)
+        Row {
+            BodyText(R.string.trainings_title)
 
-                Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
+            Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
 
-                BodyText(statisticsData.allValueRes.toString())
-            }
+            BodyText(statisticsData.totalGamesNumber.toString())
+        }
 
-            Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
+        Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            statisticsData.concentrationTrainingsValue.forEach { trainingValue ->
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            statisticsData.airplaneCardInfos.forEach { item ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .fillMaxWidth()
-                        .clickable { onRowClick(trainingValue.third, "concentration") }
+                        .clickable { onRowClick(item.trainingId, "airplane") }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.concentration_game),
@@ -95,10 +112,13 @@ fun StatisticsCard(
 
                     Column {
                         LabelText(textRes = R.string.concentration_title)
-                        Row{
-                            BodyText(trainingValue.second)
+
+                        Row {
+                            BodyText(item.trainingDuration)
+
                             Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
-                            BodyText("("+trainingValue.first+")")
+
+                            BodyText("(${item.trainingStart})")
                         }
                     }
                 }
@@ -106,13 +126,13 @@ fun StatisticsCard(
 
             Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
 
-            statisticsData.clockTrainingsValue?.forEach { trainingValue ->
+            statisticsData.clocksCardInfos.forEach { item ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .fillMaxWidth()
-                        .clickable { onRowClick(trainingValue.third, "clock") }
+                        .clickable { onRowClick(item.trainingId, "clocks") }
 
                 ) {
                     Image(
@@ -131,25 +151,17 @@ fun StatisticsCard(
 
                     Column {
                         LabelText(textRes = R.string.alertness_title)
-                        Row{
-                            BodyText(trainingValue.second)
+
+                        Row {
+                            BodyText(item.trainingDuration)
+
                             Spacer(modifier = Modifier.width(Dimensions.commonSpacing))
-                            BodyText("("+trainingValue.first+")")
+
+                            BodyText("(${item.trainingStart})")
                         }
                     }
                 }
             }
-        }
-    }
-
-    Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
-}
-
-@Composable
-fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>, onRowClick: (Int, String) -> Unit) {
-    for (i in cardsList) {
-        if (i != null) {
-            StatisticsCard(statisticsData = i, onRowClick)
         }
     }
 }

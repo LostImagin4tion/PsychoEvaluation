@@ -10,6 +10,7 @@ android {
 
 dependencies {
 
+    Dependencies.ImmutableCollections.allDeps.forEach { implementation(it) }
     Dependencies.Calendar.allDeps.forEach { implementation(it) }
 
     implementation(project(":multiplatform:core:networkApi:statistics"))

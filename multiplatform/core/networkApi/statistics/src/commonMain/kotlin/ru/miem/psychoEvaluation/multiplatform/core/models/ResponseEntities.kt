@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class StatisticsResponse(
-    @SerialName("airplane") val airplane: Map<String, Int>?,
-    @SerialName("clock") val clock: Map<String, Int>?
+    @SerialName("airplane") val airplaneStatistics: Map<String, Int>,
+    @SerialName("clock") val clockStatistics: Map<String, Int>,
 )
 
 @Serializable
@@ -16,8 +16,8 @@ data class SendStatisticsResponse(
 
 @Serializable
 data class DetailedStatisticsResponse(
-    @SerialName("airplane") val airplane: List<AirplaneData>,
-    @SerialName("clock") val clock: List<ClockData>
+    @SerialName("airplane") val airplaneStatistics: List<AirplaneData>,
+    @SerialName("clock") val clockStatistics: List<ClockData>
 )
 
 @Serializable
