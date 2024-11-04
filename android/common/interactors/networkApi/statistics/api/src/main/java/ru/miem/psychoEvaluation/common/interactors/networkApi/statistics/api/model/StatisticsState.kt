@@ -53,19 +53,15 @@ data class DetailedAirplaneStatisticsState(
 data class DetailedClockStatisticsState(
     val state: StatisticsResponseType,
     val duration: Int? = null,
-    val meanGsrBreathing: Float? = null,
     val meanGsrGame: Float? = null,
     val gsr: List<Int>? = null,
     val gameId: Int? = null,
     val level: Int? = null,
     val date: String? = null,
-    val gsrUpperLimit: Float? = null,
-    val gsrLowerLimit: Float? = null,
-    val timePercentInLimits: Int? = null,
-    val timeInLimits: Int? = null,
-    val timeAboveUpperLimit: Int? = null,
-    val timeUnderLowerLimit: Int? = null,
-    val amountOfCrossingLimits: Int? = null
+    val score: Int? = null,
+    val concentrationRate: String? = null,
+    val vigilanceRate: String? = null,
+    val meanReactionSpeed: Float? = null
 )
 
 enum class StatisticsResponseType {

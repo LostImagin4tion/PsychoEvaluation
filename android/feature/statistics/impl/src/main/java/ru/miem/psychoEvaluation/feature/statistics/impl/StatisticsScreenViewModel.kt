@@ -1,11 +1,15 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
 import android.util.Log
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -238,11 +242,10 @@ class StatisticsScreenViewModel : ViewModel() {
     }
 
     var resultDetailedAirplaneStatisticsState: DetailedAirplaneStatisticsState? = null
-    fun detailedAirplaneStatistics(
+    suspend fun detailedAirplaneStatistics(
         gameId: String
     ): DetailedAirplaneStatisticsState? {
-        viewModelScope.launch {
-            _statisticsState.emit(LoadingResult())
+//            _statisticsState.emit(LoadingResult())
             Timber.tag(TAG).d("Got new UI state ${ResultNames.loading}")
 
             resultDetailedAirplaneStatisticsState = statisticsInteractor.detailedAirplaneStatistics(gameId)
@@ -252,7 +255,7 @@ class StatisticsScreenViewModel : ViewModel() {
                 Timber.tag(TAG)
                     .d("Detailed Airplane Data: ${resultDetailedAirplaneStatisticsState!!.duration} ${resultDetailedAirplaneStatisticsState!!.gsrUpperLimit}")
             }
-        }
+            _statisticsState.emit(SuccessResult())
         return resultDetailedAirplaneStatisticsState
     }
 
@@ -281,19 +284,22 @@ class StatisticsScreenViewModel : ViewModel() {
         else -> LoadingResult()
     }
 
+    var resultDetailedClockStatisticsState: DetailedClockStatisticsState? = null
     suspend fun detailedClockStatistics(
         gameId: String
-    ): DetailedClockStatisticsState {
-        _statisticsState.emit(LoadingResult())
-        Timber.tag(TAG).d("Got new UI state ${ResultNames.loading}")
+    ): DetailedClockStatisticsState? {
+//            _statisticsState.emit(LoadingResult())
+            Timber.tag(TAG).d("Got new UI state ${ResultNames.loading}")
 
-        val resultState = statisticsInteractor.detailedClockStatistics(gameId)
+            val resultDetailedClockStatisticsState = statisticsInteractor.detailedClockStatistics(gameId)
 
-        // Обрабатываем и передаем данные из interactor в UI state
-        val uiState = resultState.toResult<Unit>().apply {
-            Timber.tag(TAG).d("Detailed Clock Data: ${resultState.duration} ${resultState.gsrUpperLimit}")
-        }
-        return resultState
+            // Обрабатываем и передаем данные из interactor в UI state
+            val uiState = resultDetailedClockStatisticsState.toResult<Unit>().apply {
+                Timber.tag(TAG)
+                    .d("Detailed Clock Data: ${resultDetailedClockStatisticsState.duration} ${resultDetailedClockStatisticsState.vigilanceRate}")
+            }
+            _statisticsState.emit(SuccessResult())
+        return resultDetailedClockStatisticsState
     }
 
     private fun <T> DetailedClockStatisticsState.toResult(): Result<T> = when (state) {
@@ -301,19 +307,15 @@ class StatisticsScreenViewModel : ViewModel() {
             SuccessResult(
                 data = mapOf(
                     "duration" to duration,
-                    "meanGsrBreathing" to meanGsrBreathing,
                     "meanGsrGame" to meanGsrGame,
+                    "meanReactionSpeed" to meanReactionSpeed,
                     "gsr" to gsr,
                     "gameId" to gameId,
                     "level" to level,
                     "date" to date,
-                    "gsrUpperLimit" to gsrUpperLimit,
-                    "gsrLowerLimit" to gsrLowerLimit,
-                    "timePercentInLimits" to timePercentInLimits,
-                    "timeInLimits" to timeInLimits,
-                    "timeAboveUpperLimit" to timeAboveUpperLimit,
-                    "timeUnderLowerLimit" to timeUnderLowerLimit,
-                    "amountOfCrossingLimits" to amountOfCrossingLimits
+                    "score" to score,
+                    "concentrationRate" to concentrationRate,
+                    "vigilanceRate" to vigilanceRate
                 ) as T
             )
         }
@@ -351,8 +353,6 @@ class StatisticsScreenViewModel : ViewModel() {
             Log.d("DATA", data.toString())
             Log.d("CARDS", cardsList.toString())
 
-
-                    // Создаем состояние StatisticsState с общими данными или состоянием ошибки
             val basicStatisticsState = when {
                 _statisticsState.value is SuccessResult-> {
                     StatisticsState(
@@ -375,30 +375,60 @@ class StatisticsScreenViewModel : ViewModel() {
         }
     }
 
-    // Функция для загрузки данных тренировки и отображения в bottomSheet при нажатии
-    fun onTrainingSelected(trainingId: String) {
-        viewModelScope.launch {
-            // Загружаем данные для выбранной тренировки
-            val airplaneStats = detailedAirplaneStatistics(trainingId)
-            val clockStats = detailedClockStatistics(trainingId)
 
-            // Обновляем bottomSheetState, если данные успешно получены
-            val bottomSheetData = if (airplaneStats != null && clockStats != null) {
-                Pair(airplaneStats, clockStats)
-            } else {
-                Pair(null, null) // Очищаем, если произошла ошибка
+
+    // Функция для загрузки данных тренировки и отображения в bottomSheet при нажатии
+    @OptIn(ExperimentalMaterialApi::class)
+    suspend fun onTrainingSelected(trainingId: String, trainingType: String): Pair<DetailedAirplaneStatisticsState?, DetailedClockStatisticsState?>? {
+        var bottomSheetData: Pair<DetailedAirplaneStatisticsState?, DetailedClockStatisticsState?>? = null
+            var airplaneStats: DetailedAirplaneStatisticsState? = null
+            var clockStats: DetailedClockStatisticsState? = null
+
+            if (trainingType == "concentration"){
+                airplaneStats = detailedAirplaneStatistics(trainingId)
+            }
+            else{
+                clockStats = detailedClockStatistics(trainingId)
+            }
+            var state: StatisticsResponseType = StatisticsResponseType.LoadungResult
+
+             when {
+                _statisticsState.value is SuccessResult -> {
+                    if (airplaneStats != null) {
+                        bottomSheetData = Pair(airplaneStats, null)
+                        state = StatisticsResponseType.StatisticAvailable
+                    } else if (clockStats != null) {
+                        bottomSheetData = Pair(null, clockStats) // Очищаем, если произошла ошибка
+                        state = StatisticsResponseType.StatisticAvailable
+                    } else {
+                        Pair(null, null)
+                        state = StatisticsResponseType.StatisticAvailable
+                    }
+                }
+                else -> {
+                    Pair(null, null)
+                    state = StatisticsResponseType.StatisticAvailable
+                }
             }
 
-            _screenState.emit(
-                _screenState.value.copy(bottomSheetState = bottomSheetData)
-            )
-        }
+            Log.d("SHIT", bottomSheetData.toString())
+
+            if (bottomSheetData != null) {
+                if(bottomSheetData!!.first!=null|| bottomSheetData!!.second!=null){
+                    _screenState.emit(
+                        _screenState.value.copy(
+                            bottomSheetState = bottomSheetData)
+                    )
+                }
+            }
+        return bottomSheetData
     }
 
      fun <T> toStatResult(it:StatisticsScreenState): Result<T> {
         val (statisticsState, detailedStatisticsState) = it.statisticsState ?: Pair(null, null)
         val (detailedAirplaneState, detailedClockState) = it.bottomSheetState ?: Pair(null, null)
          Timber.tag(TAG).d("Got new UI JJJ state ${it.state}")
+         Timber.tag(TAG).d("bottomSheetState ${it.bottomSheetState}")
         return when (it.state) {
             StatisticsResponseType.StatisticAvailable -> {
                 SuccessResult(

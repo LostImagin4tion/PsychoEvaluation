@@ -1,9 +1,12 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -77,12 +80,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.miem.psychoEvaluation.common.designSystem.state.StateHolder
 import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
 import ru.miem.psychoEvaluation.common.designSystem.utils.SuccessResult
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.DetailedStatisticsSheet
 
 class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     private val labelListKey = ExtraStore.Key<Map<Int, LocalDate>>()
     private var cardsList: MutableList<StatisticsCardData?> = mutableListOf(null)
 
+    @SuppressLint("CoroutineCreationDuringComposition")
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
     @Composable
     override fun StatisticsScreen(
@@ -105,24 +111,35 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
         )
         val coroutineScope = rememberCoroutineScope()
 
-        val result = viewModel.toStatResult<Unit>(screenState.value)
+        var result = viewModel.toStatResult<Unit>(screenState.value)
+
+        var sheetRes: Pair<DetailedAirplaneStatisticsState?, DetailedClockStatisticsState?>? = Pair(null,null)
+
+        var customSheetContent: Unit
 
         when (result) {
-            is SuccessResult -> { // Check if it's a SuccessResult
+            is SuccessResult -> {
                 StatisticsScreenContent(
                     showMessage = showMessage,
                     viewModel = viewModel,
                     chart = chart,
-                    onRowClick = { gameId ->
+                    onRowClick = { gameId, trainingType: String ->
                         coroutineScope.launch {
-                            viewModel.onTrainingSelected(gameId.toString())
+                            viewModel.onTrainingSelected(
+                                gameId.toString(),
+                                trainingType
+                            )
                             sheetState.show()
                         }
                     },
                     isStatisticsInProgress = false,
                     cardsList = screenState.value.cardsList,
-                    data = Pair(screenState.value.statisticsState?.first?.airplaneData, screenState.value.statisticsState?.first?.clockData) // Assuming cardsList is part of the screen state
+                    data = Pair(
+                        screenState.value.statisticsState?.first?.airplaneData,
+                        screenState.value.statisticsState?.first?.clockData
+                    ),
                 )
+
             }
             is ErrorResult -> {
                 (result as? ErrorResult<Unit>)?.message?.let {
@@ -132,15 +149,18 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         showMessage = showMessage,
                         viewModel = viewModel,
                         chart = chart,
-                        onRowClick = { gameId ->
+                        onRowClick = { gameId, trainingType:String ->
                             coroutineScope.launch {
-                                viewModel.onTrainingSelected(gameId.toString())
+                                viewModel.onTrainingSelected(
+                                    gameId.toString(),
+                                    trainingType
+                                )
                                 sheetState.show()
                             }
                         },
                         isStatisticsInProgress = false,
                         cardsList = screenState.value.cardsList,
-                        data = Pair(screenState.value.statisticsState?.first?.airplaneData, screenState.value.statisticsState?.first?.clockData) // Assuming cardsList is part of the screen state
+                        data = Pair(screenState.value.statisticsState?.first?.airplaneData, screenState.value.statisticsState?.first?.clockData),
                     )
                 }
             }
@@ -149,11 +169,9 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                     showMessage = showMessage,
                     viewModel = viewModel,
                     chart = chart,
-                    onRowClick = { gameId ->
+                    onRowClick = { gameId, trainingType:String ->
                         coroutineScope.launch {
-                            viewModel.onTrainingSelected(gameId.toString())
-                            sheetState.show()
-                        }
+                        sheetRes = viewModel.onTrainingSelected(gameId.toString(), trainingType)}
                     },
                     isStatisticsInProgress = result is LoadingResult,
                     cardsList = screenState.value.cardsList,
@@ -172,9 +190,9 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
             sheetState = sheetState,
             sheetContent = {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    selectedTrainingValue?.let { gameId ->
-                        DetailedStatisticsSheet(selectedGameId = gameId, detailedAirplaneStatistics = viewModel::detailedAirplaneStatistics)
-                    }
+                    DetailedStatisticsSheet(
+                        detailedStatistics = screenState.value.bottomSheetState)
+
                     Button(onClick = { coroutineScope.launch { sheetState.hide() } }) {
                         Text("Close Sheet")
                     }
@@ -183,20 +201,19 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
             sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
     @Composable
     private fun StatisticsScreenContent(
         showMessage: (String) -> Unit,
         viewModel: StatisticsScreenViewModel,
         chart: ChartUpdate,
-        onRowClick: (Int) -> Unit,
+        onRowClick: (Int, String) -> Unit,
         isStatisticsInProgress: Boolean,
         cardsList: MutableList<StatisticsCardData?>,
-        data: Pair<Map<String, Int>?, Map<String, Int>?>
+        data: Pair<Map<String, Int>?, Map<String, Int>?>,
     ) {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -323,6 +340,8 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                     Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
                 }
                 OnComposeCards(cardsList = cardsList, onRowClick = onRowClick)
+
+                val coroutineScope = rememberCoroutineScope()
             }
 
             if (isStatisticsInProgress) {

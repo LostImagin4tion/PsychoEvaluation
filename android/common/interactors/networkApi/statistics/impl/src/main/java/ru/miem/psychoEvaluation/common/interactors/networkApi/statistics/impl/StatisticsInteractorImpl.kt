@@ -241,19 +241,15 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                     DetailedClockStatisticsState(
                         state = StatisticsResponseType.StatisticAvailable,
                         duration = duration,
-                        meanGsrBreathing = meanGsrBreathing,
+                        meanReactionSpeed = meanReactionSpeed,
                         meanGsrGame = meanGsrGame,
                         gsr = gsr,
                         gameId = gameId.toInt(),
                         level = level,
                         date = date,
-                        gsrUpperLimit = gsrUpperLimit,
-                        gsrLowerLimit = gsrLowerLimit,
-                        timePercentInLimits = timePercentInLimits,
-                        timeInLimits = timeInLimits,
-                        timeAboveUpperLimit = timeAboveUpperLimit,
-                        timeUnderLowerLimit = timeUnderLowerLimit,
-                        amountOfCrossingLimits = amountOfCrossingLimits
+                        score = score,
+                        concentrationRate = concentrationRate,
+                        vigilanceRate = vigilanceRate
                     )
                 }
         }

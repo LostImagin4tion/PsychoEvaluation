@@ -1,5 +1,8 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl.ui
 
+import androidx.compose.material.ModalBottomSheetState
+import kotlinx.coroutines.CoroutineScope
+
 data class DetailedSheetAirplaneData(
     val duration: Int?,
     val meanGsrBreathing: Float?,
@@ -33,3 +36,4 @@ data class DetailedSheetClockData(
     val timeUnderLowerLimit: Int?,
     val amountOfCrossingLimits: Int?
 )
+

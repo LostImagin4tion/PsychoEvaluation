@@ -27,25 +27,54 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
 import ru.miem.psychoEvaluation.feature.statistics.impl.R
 import kotlin.reflect.KSuspendFunction1
 
 @Composable
 fun DetailedStatisticsSheet(
-    selectedGameId: Int,
-    detailedAirplaneStatistics: Function1<String, DetailedAirplaneStatisticsState?>
+    detailedStatistics: Pair<DetailedAirplaneStatisticsState?, DetailedClockStatisticsState?>?
 ) {
-    var data by remember { mutableStateOf<DetailedAirplaneStatisticsState?>(null) }
 
-// Запрос данных, когда выбран `selectedGameId` изменяется
-    LaunchedEffect(selectedGameId) {
-        withContext(Dispatchers.IO) {
-            // Выполняем запрос к серверу
-            val result = detailedAirplaneStatistics(selectedGameId.toString())
-            data = result // Обновляем состояние данных после завершения запроса
-        }
+    if(detailedStatistics?.first!=null){
+        AirplaneSheet(detailedStatistics.first)
+    }
+    else{
+        ClockSheet(detailedStatistics?.second)
     }
 
+}
+@Composable
+fun LineChartVico(
+    modifier: Modifier = Modifier,
+    data: List<Float>
+) {
+    val chartEntryModelProducer = remember { CartesianChartModelProducer.build() }
+
+
+    // Обновляем модель графика с новыми данными
+    LaunchedEffect(data) {
+        data.let {
+            chartEntryModelProducer.runTransaction {
+                lineSeries {
+                    // Используем преобразованные данные из списка
+                    series(y = it)
+                }
+            }
+        }
+    }
+    // Конфигурируем оси и график
+    CartesianChartHost(
+        rememberCartesianChart(
+            rememberLineCartesianLayer(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+        ),
+        chartEntryModelProducer
+    )
+}
+@Composable
+fun AirplaneSheet(data: DetailedAirplaneStatisticsState?){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -80,32 +109,40 @@ fun DetailedStatisticsSheet(
         }
     }
 }
+
 @Composable
-fun LineChartVico(
-    modifier: Modifier = Modifier,
-    data: List<Float>
-) {
-    val chartEntryModelProducer = remember { CartesianChartModelProducer.build() }
+fun ClockSheet(data: DetailedClockStatisticsState?){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        // Заголовок
+        BodyText(R.string.alertness_title, color = Color.Black, isLarge = true)
 
+        // График
+        LineChartVico(
+            modifier = Modifier
+                .fillMaxWidth(),
+            data = listOf(0.2f, 0.4f, 0.8f, 0.3f, 0.6f, 0.7f, 0.9f)
+        )
 
-    // Обновляем модель графика с новыми данными
-    LaunchedEffect(data) {
-        data.let {
-            chartEntryModelProducer.runTransaction {
-                lineSeries {
-                    // Используем преобразованные данные из списка
-                    series(y = it)
-                }
+        // Данные
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Длительность игры (сек)")
+                Text("Средняя скорость реакции")
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    "Склонность к потере бдительности"
+                )
+                Text("Снижение концентрации ✓"
+                )
             }
         }
     }
-    // Конфигурируем оси и график
-    CartesianChartHost(
-        rememberCartesianChart(
-            rememberLineCartesianLayer(),
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
-        ),
-        chartEntryModelProducer
-    )
 }

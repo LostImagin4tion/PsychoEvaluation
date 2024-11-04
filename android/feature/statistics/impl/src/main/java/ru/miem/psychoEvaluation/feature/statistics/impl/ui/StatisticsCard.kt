@@ -37,7 +37,7 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.R
 @Composable
 fun StatisticsCard(
     statisticsData: StatisticsCardData,
-    onRowClick: (Int) -> Unit
+    onRowClick: (Int, String) -> Unit
 ) {
     val shape = remember { RoundedCornerShape(10.dp) }
 
@@ -79,7 +79,7 @@ fun StatisticsCard(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .fillMaxWidth()
-                        .clickable { onRowClick(trainingValue.third) }
+                        .clickable { onRowClick(trainingValue.third, "concentration") }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.concentration_game),
@@ -112,7 +112,7 @@ fun StatisticsCard(
                     modifier = Modifier
                         .padding(vertical = 8.dp)
                         .fillMaxWidth()
-                        .clickable { onRowClick(trainingValue.third) }
+                        .clickable { onRowClick(trainingValue.third, "clock") }
 
                 ) {
                     Image(
@@ -146,7 +146,7 @@ fun StatisticsCard(
 }
 
 @Composable
-fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>, onRowClick: (Int) -> Unit) {
+fun OnComposeCards(cardsList: MutableList<StatisticsCardData?>, onRowClick: (Int, String) -> Unit) {
     for (i in cardsList) {
         if (i != null) {
             StatisticsCard(statisticsData = i, onRowClick)
