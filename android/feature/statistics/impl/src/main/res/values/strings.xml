@@ -11,4 +11,21 @@
     <string name="alertness_title">Vigilance: </string>
     <string name="training_duration">Duration: </string>
     <string name="training_time_start">Start time: </string>
+
+    <string name="no_data">No data</string>
+
+    <string name="gsr_value">GSR value </string>
+    <string name="game_durartion">Game duration (seconds)</string>
+    <string name="normal_gsr">Normal GSR</string>
+    <string name="bounds_value">Bounds parameters</string>
+    <string name="gsr_up_normal">KGR is above the norm</string>
+    <string name="gsr_under_normal">KGR is under the norm</string>
+    <string name="exit_normal">out of the norm (times)</string>
+    <string name="percent_limits">of the time from the entire game when the GSR is normal</string>
+
+    <string name="right_answers">right answers</string>
+    <string name="average_reaction_speed">average reaction speed</string>
+
+    <string name="close_sheet">Close</string>
+
 </resources>

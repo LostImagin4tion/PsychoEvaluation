@@ -12,4 +12,20 @@
 
     <string name="training_duration">Длительность: </string>
     <string name="training_time_start">Время начала: </string>
+
+    <string name="no_data">Нет данных</string>
+    <string name="gsr_value">Значение КГР </string>
+    <string name="game_durartion">Длительность игры (сек)</string>
+    <string name="normal_gsr">КГР в норме (сек) </string>
+    <string name="bounds_value">Параметры границ </string>
+    <string name="gsr_up_normal">КГР выше нормы (сек)</string>
+    <string name="gsr_under_normal">КГР ниже нормы (сек)</string>
+    <string name="exit_normal">Выход из нормы (раз)</string>
+    <string name="percent_limits">времени из всей игры, когда КГР в норме</string>
+
+    <string name="right_answers">правильных ответов</string>
+    <string name="average_reaction_speed">Средняя скорость реакции</string>
+
+    <string name="close_sheet">Закрыть</string>
+
 </resources>

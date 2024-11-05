@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.first
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.StatisticsInteractor
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendAirplaneGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.impl.model.toRequest
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.CommonStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState

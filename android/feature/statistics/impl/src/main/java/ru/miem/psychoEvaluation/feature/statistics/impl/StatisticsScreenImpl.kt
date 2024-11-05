@@ -1,6 +1,6 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
-import androidx.compose.foundation.background
+import androidx.compose .foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.BodyText
+import ru.miem.psychoEvaluation.common.designSystem.text.LabelText
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
 import ru.miem.psychoEvaluation.common.designSystem.theme.psychoChartClock
@@ -76,6 +77,7 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.state.DetailedStatistics
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.DetailedStatisticsSheet
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCards
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartProvider
+import timber.log.Timber
 import java.time.LocalDate
 import java.util.Date
 import javax.inject.Inject
@@ -165,13 +167,22 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         detailedStatisticsScreenState = detailedStatisticsScreenState
                     )
 
-                    Button(
-                        onClick = {
-                            viewModel.resetDetailedStatisticsScreenState()
+                    Spacer(modifier = Modifier.height(Dimensions.commonSpacing * 2))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        Button(
+                            onClick = {
+                                viewModel.resetDetailedStatisticsScreenState()
+                            }
+                        ) {
+                            Text(stringResource(R.string.close_sheet))
                         }
-                    ) {
-                        Text("Close Sheet")
                     }
+
+
                 }
             }
         }
@@ -208,7 +219,7 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                     isLarge = false,
                 )
 
-                Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 1))
+                Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -252,6 +263,7 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         SimpleTextButton(
                             textRes = R.string.snackbar_dates_picker_save,
                             onClick = {
+                                if (endDate.value == null){ endDate.value = startDate.value}
                                 requestCommonStatistics(
                                     startDate.value ?: Date(),
                                     endDate.value ?: Date(),
@@ -261,62 +273,76 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         )
                     }
 
-                    CartesianChartHost(
-                        chart = rememberCartesianChart(
-                            rememberColumnCartesianLayer(
-                                columnProvider = ChartProvider(
-                                    labelListKey = labelListKey,
-                                    airplaneData = successScreenState?.commonStatisticsState
-                                        ?.airplaneData
-                                        ?: persistentMapOf(),
-                                    clocksData = successScreenState?.commonStatisticsState
-                                        ?.clockData
-                                        ?: persistentMapOf(),
-                                ),
-                                dataLabel = TextComponent.build()
-                            ),
-                            startAxis = rememberStartAxis(),
-                            bottomAxis = rememberBottomAxis(
-                                valueFormatter = bottomAxisValueFormatter
-                            ),
-                            legend = rememberVerticalLegend(
-                                items = listOf(
-                                    rememberLegendItem(
-                                        icon = ShapeComponent(
-                                            shape = Shapes.roundedCornerShape(
-                                                HALF_PERCENT, HALF_PERCENT,
-                                                HALF_PERCENT, HALF_PERCENT
-                                            ),
-                                            dynamicShader = DynamicShaders.color(
-                                                psychoChartConcentration
-                                            )
-                                        ),
-                                        label = TextComponent.build {
-                                            color = MaterialTheme.colorScheme.onSurface.toArgb()
-                                        },
-                                        labelText = stringResource(id = R.string.concentration_title)
+                    if (successScreenState?.commonStatisticsState
+                            ?.airplaneData?.isNotEmpty() == true || successScreenState?.commonStatisticsState
+                            ?.clockData?.isNotEmpty() == true
+                    ) {
+                        CartesianChartHost(
+                            chart = rememberCartesianChart(
+                                rememberColumnCartesianLayer(
+                                    columnProvider = ChartProvider(
+                                        labelListKey = labelListKey,
+                                        airplaneData = successScreenState?.commonStatisticsState
+                                            ?.airplaneData
+                                            ?: persistentMapOf(),
+                                        clocksData = successScreenState?.commonStatisticsState
+                                            ?.clockData
+                                            ?: persistentMapOf(),
                                     ),
-                                    rememberLegendItem(
-                                        icon = ShapeComponent(
-                                            shape = Shapes.roundedCornerShape(
-                                                HALF_PERCENT, HALF_PERCENT,
-                                                HALF_PERCENT, HALF_PERCENT
-                                            ),
-                                            dynamicShader = DynamicShaders.color(psychoChartClock)
-                                        ),
-                                        label = TextComponent.build {
-                                            color = MaterialTheme.colorScheme.onSurface.toArgb()
-                                        },
-                                        labelText = stringResource(id = R.string.alertness_title)
-                                    )
+                                    dataLabel = TextComponent.build()
                                 ),
-                                iconSize = 16.dp,
-                                iconPadding = 10.dp,
-                                spacing = 4.dp,
-                            )
-                        ),
-                        modelProducer = chartModelProducer
-                    )
+                                startAxis = rememberStartAxis(),
+                                bottomAxis = rememberBottomAxis(
+                                    valueFormatter = bottomAxisValueFormatter
+                                ),
+                                legend = rememberVerticalLegend(
+                                    items = listOf(
+                                        rememberLegendItem(
+                                            icon = ShapeComponent(
+                                                shape = Shapes.roundedCornerShape(
+                                                    HALF_PERCENT, HALF_PERCENT,
+                                                    HALF_PERCENT, HALF_PERCENT
+                                                ),
+                                                dynamicShader = DynamicShaders.color(
+                                                    psychoChartConcentration
+                                                )
+                                            ),
+                                            label = TextComponent.build {
+                                                color = MaterialTheme.colorScheme.onSurface.toArgb()
+                                            },
+                                            labelText = stringResource(id = R.string.concentration_title)
+                                        ),
+                                        rememberLegendItem(
+                                            icon = ShapeComponent(
+                                                shape = Shapes.roundedCornerShape(
+                                                    HALF_PERCENT, HALF_PERCENT,
+                                                    HALF_PERCENT, HALF_PERCENT
+                                                ),
+                                                dynamicShader = DynamicShaders.color(
+                                                    psychoChartClock
+                                                )
+                                            ),
+                                            label = TextComponent.build {
+                                                color = MaterialTheme.colorScheme.onSurface.toArgb()
+                                            },
+                                            labelText = stringResource(id = R.string.alertness_title)
+                                        )
+                                    ),
+                                    iconSize = 16.dp,
+                                    iconPadding = 10.dp,
+                                    spacing = 4.dp,
+                                )
+                            ),
+                            modelProducer = chartModelProducer
+                        )
+                    }
+                    else{
+                        Box(
+                            modifier = Modifier,
+                            contentAlignment = Alignment.Center) {
+                            LabelText(R.string.no_data)
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(Dimensions.commonSpacing))
                 }
@@ -354,6 +380,6 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
     }
 
     companion object {
-        private const val HALF_PERCENT = 50
+        const val HALF_PERCENT = 50
     }
 }

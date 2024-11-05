@@ -16,89 +16,40 @@ class StatisticsCardsCreator(
     private val statisticsInteractor: StatisticsInteractor,
 ) {
     suspend fun createCards(
-        startDate: Date?,
-        endDate: Date?,
+        startDate: Date,
+        endDate: Date,
     ): ImmutableList<StatisticsCardData> {
-        val cardsList = when {
-            endDate != null && startDate != null -> {
-                val cardsList = mutableListOf<StatisticsCardData>()
+        val cardsList = run {
+            val cardsList = mutableListOf<StatisticsCardData>()
 
-                val startFormattedDate = startDate.getParsedDate("yyyy-MM-dd")
-                    .let { LocalDate.parse(it) }
+            val startFormattedDate = startDate.getParsedDate("yyyy-MM-dd")
+                .let { LocalDate.parse(it) }
 
-                val endFormattedDate = endDate.getParsedDate("yyyy-MM-dd")
-                    .let { LocalDate.parse(it) }
+            val endFormattedDate = endDate.getParsedDate("yyyy-MM-dd")
+                .let { LocalDate.parse(it) }
 
-                for (date in startFormattedDate..endFormattedDate step 1) {
-                    val dateString = date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+            for (date in startFormattedDate..endFormattedDate step 1) {
+                val dateString = date.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
-                    when (val detailedStats = detailedStatistics(dateString)) {
-                        is DetailedStatisticsState.Success -> {
-                            val airplaneIds = detailedStats.detailedAirplaneData.map { it.id }
-                            val clockIds = detailedStats.detailedClockData.map { it.id }
+                when (val detailedStats = detailedStatistics(dateString)) {
+                    is DetailedStatisticsState.Success -> {
+                        val airplaneIds = detailedStats.detailedAirplaneData.map { it.id }
+                        val clockIds = detailedStats.detailedClockData.map { it.id }
 
-                            Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
-                            Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
+                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
+                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
+                        if (airplaneIds.isNotEmpty() && clockIds.isNotEmpty()){
                             val card = getStatisticsCard(date, airplaneIds, clockIds, detailedStats)
-
                             cardsList.add(card)
                         }
-                        else -> {}
                     }
-                }
 
-                cardsList
-            }
-            startDate == null -> {
-                val dateString = LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-
-                when (val detailedStats = detailedStatistics(dateString)) {
-                    is DetailedStatisticsState.Success -> {
-                        val airplaneIds = detailedStats.detailedAirplaneData.map { it.id }
-                        val clockIds = detailedStats.detailedClockData.map { it.id }
-
-                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
-                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
-
-                        val card = getStatisticsCard(
-                            LocalDateTime.now().toLocalDate(),
-                            airplaneIds,
-                            clockIds,
-                            detailedStats
-                        )
-
-                        listOf(card)
-                    }
-                    else -> emptyList()
+                    else -> {}
                 }
             }
-            else -> {
-                val dateString = startDate.getParsedDate("yyyy.MM.dd")
 
-                when (val detailedStats = detailedStatistics(dateString)) {
-                    is DetailedStatisticsState.Success -> {
-                        val dateString1 = startDate.getParsedDate("yyyy-MM-dd")
-
-                        val airplaneIds = detailedStats.detailedAirplaneData.map { it.id }
-                        val clockIds = detailedStats.detailedClockData.map { it.id }
-
-                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
-                        Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
-
-                        val card = getStatisticsCard(
-                            LocalDate.parse(dateString1),
-                            airplaneIds,
-                            clockIds,
-                            detailedStats
-                        )
-
-                        listOf(card)
-                    }
-                    else -> emptyList()
-                }
-            }
+            cardsList
         }
 
         return cardsList.toImmutableList()
@@ -141,7 +92,7 @@ class StatisticsCardsCreator(
             airplaneCardInfos.add(
                 StatisticsCardData.CardTrainingInfo(
                     trainingStart = trainingStart,
-                    trainingDuration = formatSecondsToMinutes(meanDuration),
+                    trainingDuration = formatMillisecondsToMinutes(meanDuration),
                     trainingId = airplaneId,
                 )
             )
@@ -169,7 +120,7 @@ class StatisticsCardsCreator(
             clocksCardInfos.add(
                 StatisticsCardData.CardTrainingInfo(
                     trainingStart = trainingStart,
-                    trainingDuration = formatSecondsToMinutes(meanDuration),
+                    trainingDuration = formatMillisecondsToMinutes(meanDuration),
                     trainingId = clockId,
                 )
             )
@@ -185,15 +136,11 @@ class StatisticsCardsCreator(
         )
     }
 
-    private fun formatSecondsToMinutes(seconds: Int): String {
-        return if (seconds != 0) {
-            val minutes = seconds / SECONDS_IN_MINUTE
-            val remainingSeconds = seconds % SECONDS_IN_MINUTE
+    private fun formatMillisecondsToMinutes(seconds: Int): String {
+        val minutes = (seconds / 1000) / 60
+        val remainingSeconds = (seconds / 1000) % 60
 
-            "$minutes:$remainingSeconds"
-        } else {
-            "0:00"
-        }
+        return String.format("%02d:%02d", minutes, remainingSeconds)
     }
 
     companion object {
