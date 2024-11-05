@@ -161,7 +161,7 @@ class TrainingPreparingScreenViewModel(
     private companion object {
         val TAG: String = TrainingPreparingScreenViewModel::class.java.simpleName
 
-        const val NUMBER_OF_ROUNDS = 7
+        const val NUMBER_OF_ROUNDS = 1
         const val ROUND_NUMBER_PLACEHOLDER = "%s/${NUMBER_OF_ROUNDS}"
 
         val DEFAULT_PERIOD = 10.milliseconds

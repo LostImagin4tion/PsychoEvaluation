@@ -63,7 +63,12 @@ class DebugTrainingScreenImpl @Inject constructor() : DebugTrainingScreen {
         LaunchedEffect(sensorDeviceType) {
             when (sensorDeviceType) {
                 SensorDeviceType.Usb -> {
-                    viewModel.connectToUsbDevice(usbManager = usbManager)
+                    val activity = context.findActivity()
+
+                    require(activity != null) {
+                        "Activity $activity cant be null"
+                    }
+                    viewModel.connectToUsbDevice(activity = activity, usbManager = usbManager)
                 }
 
                 SensorDeviceType.Bluetooth -> {
