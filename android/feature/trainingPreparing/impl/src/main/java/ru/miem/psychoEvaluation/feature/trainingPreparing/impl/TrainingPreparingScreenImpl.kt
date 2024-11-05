@@ -11,6 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -55,12 +58,25 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             }
         )
 
+        var isTimerEnded by rememberSaveable { mutableStateOf(false) }
+
         val navigateBack = {
             navigateToRoute(Routes.trainingsList)
             viewModel.disconnect()
         }
 
         val screenState by viewModel.screenState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(isTimerEnded) {
+            if (isTimerEnded) {
+                val route = Routes.generalTrainingRoute
+                    .format(
+                        trainingPreparingScreenArgs.trainingRoute,
+                        trainingPreparingScreenArgs.bleDeviceHardwareAddress
+                    )
+                navigateToRoute(route)
+            }
+        }
 
         LaunchedEffect(Unit) {
             viewModel.subscribeForSettingsChanges()
@@ -82,14 +98,7 @@ class TrainingPreparingScreenImpl @Inject constructor() : TrainingPreparingScree
             onContinueButtonClick = {
                 viewModel.startCollectingAndNormalizingSensorData(
                     usbManager = usbManager,
-                    onTimerEnded = {
-                        val route = Routes.generalTrainingRoute
-                            .format(
-                                trainingPreparingScreenArgs.trainingRoute,
-                                trainingPreparingScreenArgs.bleDeviceHardwareAddress
-                            )
-                        navigateToRoute(route)
-                    }
+                    onTimerEnded = { isTimerEnded = true }
                 )
             }
         )
