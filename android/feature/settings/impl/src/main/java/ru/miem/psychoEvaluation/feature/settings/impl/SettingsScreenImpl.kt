@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,11 +20,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavOptionsBuilder
 import ru.miem.psychoEvaluation.common.designSystem.buttons.FilledTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
 import ru.miem.psychoEvaluation.common.designSystem.text.TitleText
 import ru.miem.psychoEvaluation.common.designSystem.theme.Dimensions
+import ru.miem.psychoEvaluation.common.designSystem.theme.psychoError
 import ru.miem.psychoEvaluation.common.interactors.settingsInteractor.api.models.SensorDeviceType
+import ru.miem.psychoEvaluation.feature.navigation.api.data.Routes
 import ru.miem.psychoEvaluation.feature.settings.api.SettingsScreen
 import ru.miem.psychoEvaluation.feature.settings.impl.ui.SensorDeviceTypeRadioButton
 import timber.log.Timber
@@ -34,6 +38,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
     @Composable
     override fun SettingsScreen(
         navigateToRoute: (route: String) -> Unit,
+        navigateToRouteWithOptions: (String, NavOptionsBuilder.() -> Unit) -> Unit,
         showMessage: (String) -> Unit
     ) {
         val viewModel: SettingsScreenViewModel = viewModel()
@@ -46,7 +51,14 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
 
         SettingsScreenContent(
             sensorDeviceType = sensorDeviceType,
-            changeSensorDeviceType = viewModel::changeSensorDeviceType
+            changeSensorDeviceType = viewModel::changeSensorDeviceType,
+            logout = {
+                viewModel.resetApiTokens {
+                    navigateToRouteWithOptions(Routes.authorization) {
+                        popUpTo(Routes.settings) { inclusive = true }
+                    }
+                }
+            }
         )
     }
 
@@ -54,6 +66,7 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
     private fun SettingsScreenContent(
         sensorDeviceType: SensorDeviceType,
         changeSensorDeviceType: (SensorDeviceType) -> Unit,
+        logout: () -> Unit,
     ) = Column(
         horizontalAlignment = Alignment.Start,
         modifier = Modifier.screenPaddings()
@@ -92,6 +105,23 @@ class SettingsScreenImpl @Inject constructor() : SettingsScreen {
                         .padding(horizontal = Dimensions.primaryHorizontalPadding),
                     onClick = {
                         createShareDataChooser(context)
+                    }
+                )
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(Dimensions.commonPadding))
+
+                FilledTextButton(
+                    textRes = R.string.logout_from_account,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = psychoError
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimensions.primaryHorizontalPadding),
+                    onClick = {
+                        logout()
                     }
                 )
             }

@@ -176,6 +176,7 @@ fun NavigationContent(
                 setupSystemBarColors()
                 settingsScreen.SettingsScreen(
                     navigateToRoute = navigateToRoute,
+                    navigateToRouteWithOptions = navigateToRouteWithOptions,
                     showMessage = showMessage,
                 )
             }

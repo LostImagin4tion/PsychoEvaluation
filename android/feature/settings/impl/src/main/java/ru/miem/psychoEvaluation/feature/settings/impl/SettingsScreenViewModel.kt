@@ -30,4 +30,12 @@ class SettingsScreenViewModel : ViewModel() {
             settingsInteractor.changeSensorDeviceType(sensorDeviceType)
         }
     }
+
+    fun resetApiTokens(callback: () -> Unit) {
+        viewModelScope
+            .launch {
+                settingsInteractor.resetApiTokens()
+            }
+            .invokeOnCompletion { callback() }
+    }
 }
