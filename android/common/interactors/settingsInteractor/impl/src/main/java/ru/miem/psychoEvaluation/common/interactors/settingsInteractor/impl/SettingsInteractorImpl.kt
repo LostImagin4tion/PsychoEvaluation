@@ -30,5 +30,4 @@ class SettingsInteractorImpl @Inject constructor() : SettingsInteractor {
                     ?: SensorDeviceType.Unknown
             }
     }
-
 }

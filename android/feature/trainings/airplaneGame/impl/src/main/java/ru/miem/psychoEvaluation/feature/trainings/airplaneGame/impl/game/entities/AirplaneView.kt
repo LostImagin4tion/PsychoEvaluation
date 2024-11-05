@@ -63,6 +63,10 @@ class AirplaneView(
             copy(y = y.coerceIn(positionRange))
         }
 
+        if ((position.y == maxPosition && velocity.y < 0) || (position.y == minPosition && velocity.y > 0)) {
+            velocity.y = 0.0
+        }
+
         if (acceleration.y > 0) {
             airplaneRotationDegrees -= airplaneRotationDegreesDelta
             airplaneRotationDegrees = maxOf(-airplaneMaximumRotationDegrees, airplaneRotationDegrees)
@@ -116,7 +120,7 @@ class AirplaneView(
         private val airplaneWidth = 182.dpd
         private val airplaneHeight = 59.dpd
 
-        private val airplaneVelocityMultiplier = (-4.28).dpd
+        private val airplaneVelocityMultiplier = (-2).dpd
 
         private val airplaneRotationDegreesDelta = (0.071).dpd
         private val airplaneMaximumRotationDegrees = (4.3).dpd
