@@ -206,7 +206,6 @@ fun NavigationContent(
                             ),
                     ),
                     navigateToRoute = navigateToRoute,
-                    navigateBack = navController::popBackStack,
                     showMessage = showMessage,
                 )
             }
