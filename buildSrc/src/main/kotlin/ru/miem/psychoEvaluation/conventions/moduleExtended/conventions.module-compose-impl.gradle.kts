@@ -1,4 +1,3 @@
-import gradle.kotlin.dsl.accessors._baee36425e0baa694975157087c92977.debugImplementation
 import ru.miem.psychoEvaluation.consts.CompileVersions
 import ru.miem.psychoEvaluation.consts.Dependencies
 

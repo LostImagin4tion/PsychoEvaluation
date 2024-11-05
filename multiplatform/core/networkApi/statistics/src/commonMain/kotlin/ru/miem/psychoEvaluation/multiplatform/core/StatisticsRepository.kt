@@ -1,5 +1,7 @@
 package ru.miem.psychoEvaluation.multiplatform.core
 
+import ru.miem.psychoEvaluation.multiplatform.core.models.AirplaneData
+import ru.miem.psychoEvaluation.multiplatform.core.models.ClockData
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsRequest
@@ -41,4 +43,5 @@ interface StatisticsRepository {
         request: SendClocksGameStatisticsRequest,
         token: String,
     ): Boolean
+
 }

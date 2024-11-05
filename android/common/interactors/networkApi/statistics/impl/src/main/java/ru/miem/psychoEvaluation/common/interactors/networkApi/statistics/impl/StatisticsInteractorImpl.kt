@@ -14,9 +14,6 @@ import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.mod
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsClockStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendStatisticsResponseType
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsResponseType
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.impl.model.toRequest
 import ru.miem.psychoEvaluation.core.dataStorage.api.DataStorageKeys
 import ru.miem.psychoEvaluation.core.dataStorage.api.di.DataStorageDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -26,8 +23,6 @@ import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatistic
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.SendAirplaneGameStatisticsRequest
-import ru.miem.psychoEvaluation.multiplatform.core.models.SendClocksGameStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.StatisticsRequest
 import timber.log.Timber
 import javax.inject.Inject
