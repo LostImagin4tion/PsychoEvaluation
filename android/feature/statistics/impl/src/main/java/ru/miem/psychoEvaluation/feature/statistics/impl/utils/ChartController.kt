@@ -47,7 +47,8 @@ class ChartController(
                 addedDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
                 commonStatisticsState
             )
-            if (numberOfTrainings != 0){
+
+            if (numberOfTrainings != 0) {
                 datesMap[addedDate] = numberOfTrainings
             }
         }

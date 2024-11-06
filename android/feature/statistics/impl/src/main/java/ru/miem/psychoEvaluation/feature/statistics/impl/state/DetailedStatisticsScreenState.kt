@@ -1,7 +1,7 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl.state
 
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClocksStatisticsState
 
 sealed interface DetailedStatisticsScreenState {
 
@@ -14,6 +14,6 @@ sealed interface DetailedStatisticsScreenState {
     ) : DetailedStatisticsScreenState
 
     data class DetailedClocksData(
-        val detailedClockStatisticsState: DetailedClockStatisticsState,
+        val detailedClocksStatisticsState: DetailedClocksStatisticsState,
     ) : DetailedStatisticsScreenState
 }

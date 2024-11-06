@@ -1,6 +1,6 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
-import androidx.compose .foundation.background
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -57,7 +59,6 @@ import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.playmoweb.multidatepicker.MultiDatePicker
 import com.playmoweb.multidatepicker.models.MultiDatePickerColors
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.coroutines.launch
 import ru.miem.psychoEvaluation.common.designSystem.buttons.SimpleTextButton
 import ru.miem.psychoEvaluation.common.designSystem.modifiers.screenPaddings
@@ -77,7 +78,6 @@ import ru.miem.psychoEvaluation.feature.statistics.impl.state.DetailedStatistics
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.DetailedStatisticsSheet
 import ru.miem.psychoEvaluation.feature.statistics.impl.ui.StatisticsCards
 import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartProvider
-import timber.log.Timber
 import java.time.LocalDate
 import java.util.Date
 import javax.inject.Inject
@@ -167,13 +167,17 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         detailedStatisticsScreenState = detailedStatisticsScreenState
                     )
 
-                    Spacer(modifier = Modifier.height(Dimensions.commonSpacing * 2))
+                    Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
-                    ){
+                    ) {
                         Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = Color.White,
+                            ),
                             onClick = {
                                 viewModel.resetDetailedStatisticsScreenState()
                             }
@@ -181,8 +185,6 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                             Text(stringResource(R.string.close_sheet))
                         }
                     }
-
-
                 }
             }
         }
@@ -201,7 +203,15 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
         requestCommonStatistics: (Date, Date) -> Unit,
         onRowClick: (Int, String) -> Unit,
     ) {
+        val roundedCornerShape = Shapes.roundedCornerShape(
+            topLeftPercent = HALF_PERCENT,
+            topRightPercent = HALF_PERCENT,
+            bottomRightPercent = HALF_PERCENT,
+            bottomLeftPercent = HALF_PERCENT,
+        )
+
         val successScreenState = screenState.optionalCast<CommonStatisticsScreenState.Success>()
+        val commonStatistics = successScreenState?.commonStatisticsState
 
         Box(
             modifier = Modifier.fillMaxSize()
@@ -263,7 +273,9 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         SimpleTextButton(
                             textRes = R.string.snackbar_dates_picker_save,
                             onClick = {
-                                if (endDate.value == null){ endDate.value = startDate.value}
+                                if (endDate.value == null) {
+                                    endDate.value = startDate.value
+                                }
                                 requestCommonStatistics(
                                     startDate.value ?: Date(),
                                     endDate.value ?: Date(),
@@ -273,21 +285,19 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                         )
                     }
 
-                    if (successScreenState?.commonStatisticsState
-                            ?.airplaneData?.isNotEmpty() == true || successScreenState?.commonStatisticsState
-                            ?.clockData?.isNotEmpty() == true
+                    if (
+                        commonStatistics?.airplaneData?.isNotEmpty() == true ||
+                        commonStatistics?.clockData?.isNotEmpty() == true
                     ) {
                         CartesianChartHost(
                             chart = rememberCartesianChart(
                                 rememberColumnCartesianLayer(
                                     columnProvider = ChartProvider(
                                         labelListKey = labelListKey,
-                                        airplaneData = successScreenState?.commonStatisticsState
-                                            ?.airplaneData
-                                            ?: persistentMapOf(),
-                                        clocksData = successScreenState?.commonStatisticsState
-                                            ?.clockData
-                                            ?: persistentMapOf(),
+                                        airplaneData = commonStatistics
+                                            .airplaneData,
+                                        clocksData = commonStatistics
+                                            .clockData,
                                     ),
                                     dataLabel = TextComponent.build()
                                 ),
@@ -299,10 +309,7 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                                     items = listOf(
                                         rememberLegendItem(
                                             icon = ShapeComponent(
-                                                shape = Shapes.roundedCornerShape(
-                                                    HALF_PERCENT, HALF_PERCENT,
-                                                    HALF_PERCENT, HALF_PERCENT
-                                                ),
+                                                shape = roundedCornerShape,
                                                 dynamicShader = DynamicShaders.color(
                                                     psychoChartConcentration
                                                 )
@@ -314,10 +321,7 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                                         ),
                                         rememberLegendItem(
                                             icon = ShapeComponent(
-                                                shape = Shapes.roundedCornerShape(
-                                                    HALF_PERCENT, HALF_PERCENT,
-                                                    HALF_PERCENT, HALF_PERCENT
-                                                ),
+                                                shape = roundedCornerShape,
                                                 dynamicShader = DynamicShaders.color(
                                                     psychoChartClock
                                                 )
@@ -335,13 +339,14 @@ class StatisticsScreenImpl @Inject constructor() : StatisticsScreen {
                             ),
                             modelProducer = chartModelProducer
                         )
-                    }
-                    else{
-                        Box(
-                            modifier = Modifier,
-                            contentAlignment = Alignment.Center) {
-                            LabelText(R.string.no_data)
-                        }
+                    } else {
+                        Spacer(modifier = Modifier.height(Dimensions.primaryVerticalPadding * 2))
+
+                        LabelText(
+                            textRes = R.string.no_data,
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            isLarge = true,
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(Dimensions.commonSpacing))

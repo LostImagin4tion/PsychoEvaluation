@@ -11,6 +11,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 class StatisticsCardsCreator(
     private val statisticsInteractor: StatisticsInteractor,
@@ -39,7 +40,7 @@ class StatisticsCardsCreator(
                         Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
                         Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
-                        if (airplaneIds.isNotEmpty() && clockIds.isNotEmpty()){
+                        if (airplaneIds.isNotEmpty() && clockIds.isNotEmpty()) {
                             val card = getStatisticsCard(date, airplaneIds, clockIds, detailedStats)
                             cardsList.add(card)
                         }
@@ -136,14 +137,16 @@ class StatisticsCardsCreator(
         )
     }
 
+    @Suppress("MagicNumber")
     private fun formatMillisecondsToMinutes(seconds: Int): String {
         val minutes = (seconds / 1000) / 60
         val remainingSeconds = (seconds / 1000) % 60
 
-        return String.format("%02d:%02d", minutes, remainingSeconds)
-    }
-
-    companion object {
-        private const val SECONDS_IN_MINUTE = 60
+        return String.format(
+            locale = Locale.getDefault(),
+            format = "%02d:%02d",
+            minutes,
+            remainingSeconds,
+        )
     }
 }

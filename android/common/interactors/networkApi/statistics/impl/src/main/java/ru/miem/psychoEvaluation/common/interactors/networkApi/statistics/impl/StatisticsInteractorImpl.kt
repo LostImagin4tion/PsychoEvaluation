@@ -4,16 +4,16 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.flow.first
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.StatisticsInteractor
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendAirplaneGameStatisticsData
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.impl.model.toRequest
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.CommonStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedAirplaneStatisticsState
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClockStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedClocksStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsAirplaneStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedForLevelsClockStatisticsState
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.DetailedStatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendAirplaneGameStatisticsData
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendClocksGameStatisticsData
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.SendStatisticsResponseType
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.impl.model.toRequest
 import ru.miem.psychoEvaluation.core.dataStorage.api.DataStorageKeys
 import ru.miem.psychoEvaluation.core.dataStorage.api.di.DataStorageDiApi
 import ru.miem.psychoEvaluation.core.di.impl.diApi
@@ -171,7 +171,7 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
 
     override suspend fun detailedClockStatistics(
         gameId: String
-    ): DetailedClockStatisticsState {
+    ): DetailedClocksStatisticsState {
         val apiAccessToken = dataStore[DataStorageKeys.apiAccessToken].first()
             .takeIf { it.isNotBlank() }
         val requestEntity = DetailedClockStatisticsRequest(apiAccessToken.toString(), gameId)
@@ -181,7 +181,7 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                     Timber.tag(TAG).d("Got detailed clock statistics response $it")
                 }
                 ?.run {
-                    DetailedClockStatisticsState.Success(
+                    DetailedClocksStatisticsState.Success(
                         duration = duration,
                         meanReactionSpeed = meanReactionSpeed,
                         meanGsrGame = meanGsrGame,
@@ -195,7 +195,7 @@ class StatisticsInteractorImpl @Inject constructor() : StatisticsInteractor {
                     )
                 }
         }
-            ?: DetailedClockStatisticsState.Error
+            ?: DetailedClocksStatisticsState.Error
     }
 
     override suspend fun sendAirplaneGameStatistics(

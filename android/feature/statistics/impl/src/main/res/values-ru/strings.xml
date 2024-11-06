@@ -2,7 +2,7 @@
 <resources>
     <string name="statistics_header">Статистика</string>
 
-    <string name="title_dates_picker">Выберите дату или период (не более 10 дней)</string>
+    <string name="title_dates_picker">Выберите дату или период</string>
     <string name="snackbar_dates_picker_dismiss">Отмена</string>
     <string name="snackbar_dates_picker_save">OK</string>
 

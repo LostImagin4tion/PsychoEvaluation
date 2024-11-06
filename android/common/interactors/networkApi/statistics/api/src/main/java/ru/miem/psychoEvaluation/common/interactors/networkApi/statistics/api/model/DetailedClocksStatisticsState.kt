@@ -2,9 +2,9 @@ package ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.mo
 
 import kotlinx.collections.immutable.ImmutableList
 
-sealed interface DetailedClockStatisticsState {
+sealed interface DetailedClocksStatisticsState {
 
-    data object Error : DetailedClockStatisticsState
+    data object Error : DetailedClocksStatisticsState
 
     data class Success(
         val duration: Int,
@@ -17,5 +17,5 @@ sealed interface DetailedClockStatisticsState {
         val concentrationRate: String,
         val vigilanceRate: String,
         val meanReactionSpeed: Float,
-    ) : DetailedClockStatisticsState
+    ) : DetailedClocksStatisticsState
 }

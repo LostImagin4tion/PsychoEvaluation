@@ -1,7 +1,5 @@
 package ru.miem.psychoEvaluation.multiplatform.core
 
-import ru.miem.psychoEvaluation.multiplatform.core.models.AirplaneData
-import ru.miem.psychoEvaluation.multiplatform.core.models.ClockData
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsRequest
@@ -26,13 +24,17 @@ interface StatisticsRepository {
         request: DetailedForLevelsAirplaneStatisticsRequest
     ): DetailedForLevelsAirplaneStatisticsResponse?
 
-    suspend fun detailedForLevelsClockStatistics(request: DetailedForLevelsClockStatisticsRequest): DetailedForLevelsClockStatisticsResponse?
+    suspend fun detailedForLevelsClockStatistics(
+        request: DetailedForLevelsClockStatisticsRequest
+    ): DetailedForLevelsClockStatisticsResponse?
 
     suspend fun detailedAirplaneStatistics(
         request: DetailedAirplaneStatisticsRequest
     ): DetailedAirplaneStatisticsResponse?
 
-    suspend fun detailedClockStatistics(request: DetailedClockStatisticsRequest): DetailedClockStatisticsResponse?
+    suspend fun detailedClockStatistics(
+        request: DetailedClockStatisticsRequest
+    ): DetailedClockStatisticsResponse?
 
     suspend fun sendAirplaneStatistics(
         request: SendAirplaneGameStatisticsRequest,
@@ -43,5 +45,4 @@ interface StatisticsRepository {
         request: SendClocksGameStatisticsRequest,
         token: String,
     ): Boolean
-
 }

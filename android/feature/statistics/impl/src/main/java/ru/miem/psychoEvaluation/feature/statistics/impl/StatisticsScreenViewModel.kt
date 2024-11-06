@@ -22,7 +22,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
 
-class  StatisticsScreenViewModel : ViewModel() {
+class StatisticsScreenViewModel : ViewModel() {
 
     private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
@@ -40,7 +40,7 @@ class  StatisticsScreenViewModel : ViewModel() {
     val chartModelProducer = CartesianChartModelProducer.build()
 
     val labelListKey: ExtraStore.Key<Map<Int, LocalDate>>
-        get() =  chartController.labelListKey
+        get() = chartController.labelListKey
 
     val bottomAxisValueFormatter =
         AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValues, _ ->
@@ -61,7 +61,7 @@ class  StatisticsScreenViewModel : ViewModel() {
                 is CommonStatisticsState.Success -> {
                     chartController.updateChart(startDate, endDate, commonStatistics)
 
-                    val cardsList = statisticsCardsCreator.createCards(startDate, endDate) // Список для хранения карточек
+                    val cardsList = statisticsCardsCreator.createCards(startDate, endDate)
 
                     _commonStatisticsScreenState.run {
                         emit(
