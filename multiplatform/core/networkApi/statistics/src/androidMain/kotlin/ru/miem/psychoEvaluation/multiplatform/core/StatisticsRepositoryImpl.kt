@@ -11,6 +11,16 @@ import ru.miem.psychoEvaluation.core.di.impl.diApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.SafeHttpClientFactory
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.factories.di.HttpClientFactoryDiApi
 import ru.miem.psychoEvaluation.multiplatform.core.httpClient.models.successOrNull
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedAirplaneStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedClockStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsAirplaneStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedForLevelsClockStatisticsResponse
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsRequest
+import ru.miem.psychoEvaluation.multiplatform.core.models.DetailedStatisticsResponse
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendAirplaneGameStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendClocksGameStatisticsRequest
 import ru.miem.psychoEvaluation.multiplatform.core.models.SendStatisticsResponse
@@ -35,7 +45,11 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
             .requestOnBackground<StatisticsResponse, Unit>(url) {
                 method = HttpMethod.Get
                 contentType(ContentType.Application.Json)
-                setBody(request)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("X-Start-Date", request.startDate)
+                    append("X-End-Date", request.endDate)
+                }
             }
             .successOrNull()
     }
@@ -84,13 +98,115 @@ class StatisticsRepositoryImpl @Inject constructor() : StatisticsRepository {
             .let { it != null }
     }
 
+    override suspend fun detailedStatistics(
+        request: DetailedStatisticsRequest
+    ): DetailedStatisticsResponse? {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(DetailedStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<DetailedStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Get
+                contentType(ContentType.Application.Json)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("X-Date", request.xDate)
+                }
+            }
+            .successOrNull()
+    }
+
+    override suspend fun detailedForLevelsAirplaneStatistics(
+        request: DetailedForLevelsAirplaneStatisticsRequest
+    ): DetailedForLevelsAirplaneStatisticsResponse? {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(DetailedForLevelsAirplaneStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<DetailedForLevelsAirplaneStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Get
+                contentType(ContentType.Application.Json)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("X-Level", request.xLevel)
+                }
+            }
+            .successOrNull()
+    }
+
+    override suspend fun detailedForLevelsClockStatistics(
+        request: DetailedForLevelsClockStatisticsRequest
+    ): DetailedForLevelsClockStatisticsResponse? {
+        val url = URLBuilder(StatisticsBaseUrl)
+            .appendPathSegments(DetailedForLevelsClockStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<DetailedForLevelsClockStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Get
+                contentType(ContentType.Application.Json)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("X-Level", request.xLevel)
+                }
+            }
+            .successOrNull()
+    }
+
+    override suspend fun detailedAirplaneStatistics(
+        request: DetailedAirplaneStatisticsRequest
+    ): DetailedAirplaneStatisticsResponse? {
+        val url = URLBuilder(StatisticsV2BaseUrl)
+            .appendPathSegments(DetailedAirplaneStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<DetailedAirplaneStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Get
+                contentType(ContentType.Application.Json)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("Game-Id", request.gameId)
+                }
+            }
+            .successOrNull()
+    }
+
+    override suspend fun detailedClockStatistics(
+        request: DetailedClockStatisticsRequest
+    ): DetailedClockStatisticsResponse? {
+        val url = URLBuilder(StatisticsV2BaseUrl)
+            .appendPathSegments(DetailedClockStatisticsEndpoint)
+            .buildString()
+
+        return safeHttpClientFactory.get()
+            .requestOnBackground<DetailedClockStatisticsResponse, Unit>(url) {
+                method = HttpMethod.Get
+                contentType(ContentType.Application.Json)
+                headers {
+                    append("Authorization-token", request.accessToken)
+                    append("Game-Id", request.gameId)
+                }
+            }
+            .successOrNull()
+    }
+
     private companion object {
         const val StatisticsBaseUrlV1 = "http://gsr.miem2.vmnet.top/api/v1"
         const val StatisticsBaseUrlV2 = "http://gsr.miem2.vmnet.top/api/v2"
 
+        const val StatisticsBaseUrl = "http://gsr.miem2.vmnet.top/api/v1"
+        const val StatisticsV2BaseUrl = "http://gsr.miem2.vmnet.top/api/v2"
         const val CommonStatisticsEndpoint = "games/dates"
         const val SendAirplaneStatisticsEndpoint = "games/airplane"
         const val SendClocksStatisticsEndpoint = "games/clock"
+        const val DetailedStatisticsEndpoint = "games/dates/details"
+        const val DetailedForLevelsAirplaneStatisticsEndpoint = "games/airplane/statistics"
+        const val DetailedForLevelsClockStatisticsEndpoint = "games/clock/statistics"
+        const val DetailedClockStatisticsEndpoint = "games/clock"
+        const val DetailedAirplaneStatisticsEndpoint = "games/airplane"
 
         const val AuthorizationTokenHeader = "Authorization-token"
     }

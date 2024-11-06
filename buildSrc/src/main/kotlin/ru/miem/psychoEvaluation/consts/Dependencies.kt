@@ -31,6 +31,15 @@ object Dependencies {
         val allDeps = listOf(CORE, ANDROID)
     }
 
+    object ImmutableCollections {
+        private const val IMMUTABLE_COLLECTIONS_VERSION = "0.3.7"
+
+        private const val IMMUTABLE_COLLECTIONS =
+            "org.jetbrains.kotlinx:kotlinx-collections-immutable:$IMMUTABLE_COLLECTIONS_VERSION"
+
+        val allDeps = listOf(IMMUTABLE_COLLECTIONS)
+    }
+
     object Compose {
 
         // ===========================================================================================
@@ -40,14 +49,11 @@ object Dependencies {
         const val COMPOSE_BOM = "androidx.compose:compose-bom:2024.02.02"
 
         object Core {
-            private const val IMMUTABLE_COLLECTIONS_VERSION = "0.3.7"
 
             private const val UI = "androidx.compose.ui:ui"
             private const val UI_UTILS = "androidx.compose.ui:ui-util"
-            private const val IMMUTABLE_COLLECTIONS =
-                "org.jetbrains.kotlinx:kotlinx-collections-immutable:$IMMUTABLE_COLLECTIONS_VERSION"
 
-            val allCoreDeps = listOf(UI, UI_UTILS, IMMUTABLE_COLLECTIONS)
+            val allCoreDeps = listOf(UI, UI_UTILS)
         }
 
         object Tooling {
@@ -67,10 +73,10 @@ object Dependencies {
         }
 
         object Material {
-            private const val MATERIAL = "androidx.compose.material3:material3"
+            private const val MATERIAL_3 = "androidx.compose.material3:material3"
             private const val MATERIAL_ICONS = "androidx.compose.material:material-icons-extended"
 
-            val allMaterialDeps = listOf(MATERIAL, MATERIAL_ICONS)
+            val allMaterialDeps = listOf(MATERIAL_3, MATERIAL_ICONS)
         }
 
         object Lifecycle {

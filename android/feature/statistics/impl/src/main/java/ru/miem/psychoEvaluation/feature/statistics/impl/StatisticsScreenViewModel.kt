@@ -1,79 +1,128 @@
 package ru.miem.psychoEvaluation.feature.statistics.impl
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.ExtraStore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import ru.miem.psychoEvaluation.common.designSystem.utils.ErrorResult
-import ru.miem.psychoEvaluation.common.designSystem.utils.LoadingResult
-import ru.miem.psychoEvaluation.common.designSystem.utils.NothingResult
-import ru.miem.psychoEvaluation.common.designSystem.utils.Result
-import ru.miem.psychoEvaluation.common.designSystem.utils.ResultNames
-import ru.miem.psychoEvaluation.common.designSystem.utils.SuccessResult
 import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.di.StatisticsInteractorDiApi
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsResponseType
-import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.StatisticsState
+import ru.miem.psychoEvaluation.common.interactors.networkApi.statistics.api.model.CommonStatisticsState
 import ru.miem.psychoEvaluation.core.di.impl.diApi
-import ru.miem.psychoEvaluation.feature.statistics.impl.utils.CardUpdate
-import ru.miem.psychoEvaluation.feature.statistics.impl.utils.DateProgression
-import ru.miem.psychoEvaluation.feature.statistics.impl.utils.parsedApiDate
-import timber.log.Timber
+import ru.miem.psychoEvaluation.feature.statistics.impl.state.CommonStatisticsScreenState
+import ru.miem.psychoEvaluation.feature.statistics.impl.state.DetailedStatisticsScreenState
+import ru.miem.psychoEvaluation.feature.statistics.impl.utils.ChartController
+import ru.miem.psychoEvaluation.feature.statistics.impl.utils.StatisticsCardsCreator
+import ru.miem.psychoEvaluation.feature.statistics.impl.utils.parsedDateForApi
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 class StatisticsScreenViewModel : ViewModel() {
 
     private val statisticsInteractor by diApi(StatisticsInteractorDiApi::statisticsInteractor)
 
-    private val _statisticsState = MutableStateFlow<Result<Unit>>(NothingResult())
+    private val _commonStatisticsScreenState =
+        MutableStateFlow<CommonStatisticsScreenState>(CommonStatisticsScreenState.Nothing)
+    private val _detailedStatisticsScreenState =
+        MutableStateFlow<DetailedStatisticsScreenState>(DetailedStatisticsScreenState.Nothing)
 
-    val statisticsState: StateFlow<Result<Unit>> = _statisticsState
+    private val statisticsCardsCreator by lazy { StatisticsCardsCreator(statisticsInteractor) }
+    private val chartController by lazy { ChartController(chartModelProducer) }
+
+    val commonStatisticsScreenStateStateFlow: StateFlow<CommonStatisticsScreenState> = _commonStatisticsScreenState
+    val detailedStatisticsScreenState: StateFlow<DetailedStatisticsScreenState> = _detailedStatisticsScreenState
 
     val chartModelProducer = CartesianChartModelProducer.build()
 
-    val cardUpdate = CardUpdate()
+    val labelListKey: ExtraStore.Key<Map<Int, LocalDate>>
+        get() = chartController.labelListKey
 
-    private fun commonStatistics(
-        startDate: String,
-        endDate: String
+    val bottomAxisValueFormatter =
+        AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValues, _ ->
+            val days = chartValues.model.extraStore[chartController.labelListKey][value.toInt()]
+                ?: LocalDate.ofEpochDay(value.toLong())
+
+            days.format(dateTimeFormatter)
+        }
+
+    fun requestCommonStatistics(
+        startDate: Date,
+        endDate: Date,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _commonStatisticsScreenState.emit(CommonStatisticsScreenState.Loading)
+
+            when (val commonStatistics = commonStatistics(startDate, endDate)) {
+                is CommonStatisticsState.Success -> {
+                    chartController.updateChart(startDate, endDate, commonStatistics)
+
+                    val cardsList = statisticsCardsCreator.createCards(startDate, endDate)
+
+                    _commonStatisticsScreenState.run {
+                        emit(
+                            CommonStatisticsScreenState.Success(
+                                commonStatisticsState = commonStatistics,
+                                cardsList = cardsList,
+                            )
+                        )
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
+    fun resetCommonStatisticsScreenState() {
+        viewModelScope.launch {
+            _commonStatisticsScreenState.emit(CommonStatisticsScreenState.Nothing)
+        }
+    }
+
+    fun resetDetailedStatisticsScreenState() {
+        viewModelScope.launch {
+            _detailedStatisticsScreenState.emit(DetailedStatisticsScreenState.Nothing)
+        }
+    }
+
+    fun onTrainingSelected(
+        trainingId: String,
+        trainingType: String
     ) {
         viewModelScope.launch {
-            _statisticsState.emit(LoadingResult())
-            Timber.tag(TAG).d("Got new UI state ${ResultNames.loading}")
+            if (trainingType == "airplane") {
+                val airplaneStats = statisticsInteractor.detailedAirplaneStatistics(trainingId)
 
-            statisticsInteractor.commonStatistics(startDate, endDate)
-                .run {
-                    val uiState = this.toResult<Unit>()
-                    Timber.tag(TAG).d("Got new UI state $uiState")
-                    _statisticsState.emit(uiState)
-                }
+                _detailedStatisticsScreenState.emit(
+                    DetailedStatisticsScreenState.DetailedAirplaneData(airplaneStats)
+                )
+            } else {
+                val clockStats = statisticsInteractor.detailedClockStatistics(trainingId)
+
+                _detailedStatisticsScreenState.emit(
+                    DetailedStatisticsScreenState.DetailedClocksData(clockStats)
+                )
+            }
         }
     }
 
-    private fun <T> StatisticsState.toResult(): Result<T> = when (this.state) {
-        StatisticsResponseType.StatisticAvailable -> SuccessResult()
-        StatisticsResponseType.Error -> ErrorResult()
-    }
-
-    operator fun LocalDate.rangeTo(other: LocalDate) = DateProgression(this, other)
-    fun onAcceptClick(startDate: MutableState<Date?>, endDate: MutableState<Date?>) {
-        if (endDate.value != null) {
-            commonStatistics(
-                parsedApiDate(startDate).toString(),
-                parsedApiDate(endDate).toString()
-            )
-        } else {
-            commonStatistics(
-                parsedApiDate(startDate).toString(),
-                parsedApiDate(startDate).toString()
-            )
-        }
+    private suspend fun commonStatistics(
+        startDate: Date,
+        endDate: Date,
+    ): CommonStatisticsState {
+        return statisticsInteractor.commonStatistics(
+            parsedDateForApi(startDate),
+            parsedDateForApi(endDate),
+        )
     }
 
     companion object {
         val TAG: String = StatisticsScreenViewModel::class.java.simpleName
+
+        private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d")
     }
 }

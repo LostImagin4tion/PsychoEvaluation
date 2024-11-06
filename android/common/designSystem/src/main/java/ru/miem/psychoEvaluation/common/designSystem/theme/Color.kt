@@ -27,6 +27,9 @@ val psychoChartSelectedDayBackground = Color(0xff4285F4)
 val psychoChartConcentration = Color(0xff09f9bf)
 val psychoChartClock = Color(0xff03a9f1)
 
+val psychoChartBottomSheet = Color(0xff495ECA)
+val psychoChartBottomSheetBackground = Color(0xff48690FF)
+
 /**
  * Background Colors
  */

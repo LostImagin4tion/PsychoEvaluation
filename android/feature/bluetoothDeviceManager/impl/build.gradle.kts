@@ -1,3 +1,5 @@
+import ru.miem.psychoEvaluation.consts.Dependencies
+
 plugins {
     conventions.`module-compose-impl`
 }
@@ -7,6 +9,8 @@ android {
 }
 
 dependencies {
+
+    Dependencies.ImmutableCollections.allDeps.forEach { implementation(it) }
 
     // ==== Core layer ====
 

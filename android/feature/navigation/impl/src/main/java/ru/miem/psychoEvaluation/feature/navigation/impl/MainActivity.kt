@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         setContent {
             navController = rememberNavController()
+
             val snackbarHostState = remember { SnackbarHostState() }
 
             PsychoEvaluationTheme {
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
                             snackbarHostState = snackbarHostState,
                             paddingValues = it,
                             navController = navController,
-                            setupSystemBarColors = { SetupSystemBarsColors() }
+                            setupSystemBarColors = { SetupSystemBarsColors() },
                         )
                     }
                 )
