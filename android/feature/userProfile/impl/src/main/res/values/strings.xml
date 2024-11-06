@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_header">Profile</string>
+
+    <string name="red_neuron_text">Greetings!\nWe are neurons, ready to guide you through all profile settings.</string>
+    <string name="blue_neuron_text">We are glad to welcome you!\nLet\'s look at your profile information together!</string>
+
+    <string name="authorization_data_section_title">Authorization data</string>
+    <string name="title_login">Login</string>
+    <string name="title_password">Password</string>
+
+    <string name="open_settings_button_text">Settings</string>
+    <string name="logout_button_text">Log out from account</string>
+</resources>

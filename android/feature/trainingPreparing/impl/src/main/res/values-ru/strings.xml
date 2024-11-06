@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="training_preparing_title_text">Вас ждет дыхательная гимнастика</string>
+    <string name="gymnastics_title_text">Гимнастика</string>
+    <string name="take_a_breath_text">Вдох</string>
+    <string name="hold_your_breath_text">Задержка</string>
+    <string name="exhale_text">Выдох</string>
+</resources>

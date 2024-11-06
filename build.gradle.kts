@@ -1,9 +1,12 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id("com.android.application") apply false
-    id("org.jetbrains.kotlin.android") apply false
-    id("com.google.devtools.ksp") version "1.9.0-1.0.12" apply false
-    id("io.gitlab.arturbosch.detekt") version Dependencies.Plugins.DETEKT_VERSION
+    id("com.android.library") apply false
+    kotlin("jvm") apply false
+    kotlin("android") apply false
+    kotlin("multiplatform") apply false
+    kotlin("plugin.serialization") version ru.miem.psychoEvaluation.consts.CompileVersions.KOTLIN_VERSION apply false
+    id("io.gitlab.arturbosch.detekt") version ru.miem.psychoEvaluation.consts.Dependencies.Plugins.DETEKT_VERSION
 }
 
 tasks {
@@ -20,7 +23,7 @@ tasks {
         ignoreFailures = false
         autoCorrect = true
         dependencies {
-            detektPlugins(Dependencies.Plugins.DETEKT_FORMATTING)
+            detektPlugins(ru.miem.psychoEvaluation.consts.Dependencies.Plugins.DETEKT_FORMATTING)
         }
     }
 }

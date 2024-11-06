@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_header_text">Connect device</string>
+    <string name="dialog_description_text">Looks like you\'are using BLE device. You need to connect it manually</string>
+
+    <string name="settings_header_text">Settings</string>
+    <string name="gsr_upper_limit_parameter">GSR upper limit parameter (0…1)</string>
+    <string name="gsr_lower_limit_parameter">GSR lower limit parameter (0…1)</string>
+    <string name="time_in_game_parameter">Time in game (minutes)</string>
+
+    <string name="settings_disclaimer">If you don\'t know what parameters to set, leave them as default.</string>
+    <string name="continue_button_text">Continue</string>
+
+    <string name="statistics_screen_title">You are doing great!</string>
+    <string name="statistics_screen_time_in_corridor_percent_text">%s%% of time in the corridor</string>
+    <string name="statistics_screen_time_in_corridor_text">Time in the corridor: %s</string>
+    <string name="statistics_screen_time_upper_corridor_text">Time outside the corridor (top): %s</string>
+    <string name="statistics_screen_time_lower_corridor_text">Time outside the corridor (bottom): %s</string>
+    <string name="statistics_screen_number_of_flights_from_outside_corridor">Number of flights from outside the corridor: %s</string>
+
+    <string name="statistics_play_again">Play again</string>
+    <string name="statistics_settings">Exit</string>
+    <string name="statistics_exit">Exit</string>
+</resources>

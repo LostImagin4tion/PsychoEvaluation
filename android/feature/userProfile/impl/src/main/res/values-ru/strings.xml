@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_header">Профиль</string>
+
+    <string name="red_neuron_text">Приветствуем тебя!\nМы - нейроны, готовы провести тебя через все настройки профиля.</string>
+    <string name="blue_neuron_text">Рады тебя приветствовать!\nДавай вместе посмотрим информацию о твоем профиле!</string>
+
+    <string name="authorization_data_section_title">Данные авторизации</string>
+    <string name="title_login">Логин</string>
+    <string name="title_password">Пароль</string>
+
+    <string name="open_settings_button_text">Настройки</string>
+    <string name="logout_button_text">Выйти из аккаунта</string>
+</resources>

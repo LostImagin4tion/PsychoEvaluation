@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_button_text">Стрелка перескочила</string>
+    <string name="bottom_description_text">Нажмите на кнопку, если стрелка перепрыгнет через несколько делений</string>
+
+    <string name="statistics_screen_title">Ты молодец!</string>
+    <string name="statistics_result_title">Результат: %s</string>
+    <string name="statistics_reaction_title">Средняя скорость реакции: %s</string>
+
+    <string name="statistics_good_vigilance"># Уверенный контролль бдительности</string>
+    <string name="statistics_bad_vigilance"># Склонность к потере бдительности</string>
+
+    <string name="statistics_good_reaction"># Уверенный контроль реакции</string>
+    <string name="statistics_bad_reaction"># Снижение концентрации</string>
+
+    <string name="statistics_play_again">Играть снова</string>
+    <string name="statistics_exit">Выйти в меню</string>
+</resources>

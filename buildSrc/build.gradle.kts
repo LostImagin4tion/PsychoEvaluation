@@ -5,11 +5,12 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
     google()
+    mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
     implementation("com.android.tools.build:gradle:8.2.2")
-    implementation(kotlin("gradle-plugin", version = "1.9.0"))
+    implementation(kotlin("gradle-plugin", version = "1.9.22"))
 }

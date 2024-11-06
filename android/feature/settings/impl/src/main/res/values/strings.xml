@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_header">Settings</string>
+
+    <string name="sensor_device_type_radio_button_text">Sensor device type</string>
+    <string name="sensor_device_type_option_usb" translatable="false">USB</string>
+    <string name="sensor_device_type_option_bluetooth" translatable="false">Bluetooth</string>
+    <string name="sensor_device_type_option_unknown">Don\'t have any</string>
+
+    <string name="export_stress_data">Export sensor data</string>
+
+    <string name="logout_from_account">Logout</string>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="registration_welcome_text">Регистрация</string>
+    <string name="registration_password_field">Пароль</string>
+
+    <string name="registration_continue_button">Продолжить</string>
+    <string name="registration_create_account_button">Войти в существующий аккаунт</string>
+
+    <string name="registration_accept_user_agreement_not_clickable_text">Я принимаю\u0020</string>
+    <string name="registration_accept_user_agreement_clickable_text">Пользовательское соглашение</string>
+    <string name="registration_accept_privacy_policy_not_clickable_text">Я принимаю\u0020</string>
+    <string name="registration_accept_privacy_policy_clickable_text">Политику конфиденциальности</string>
+
+    <string name="registration_invalid_data_alert">Пожалуйста, введите правильные email и пароль</string>
+    <string name="already_registered_alert">Пользователь с таким email уже существует</string>
+</resources>

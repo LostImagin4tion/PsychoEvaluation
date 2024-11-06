@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_header">Настройки</string>
+
+    <string name="sensor_device_type_radio_button_text">Тип датчика</string>
+    <string name="sensor_device_type_option_unknown">У меня нет датчика</string>
+
+    <string name="export_stress_data">Экспорт показаний датчика</string>
+
+    <string name="logout_from_account">Выйти из аккаунта</string>
+</resources>
