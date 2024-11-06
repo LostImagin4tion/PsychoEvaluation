@@ -6,4 +6,6 @@
     <string name="sensor_device_type_option_unknown">У меня нет датчика</string>
 
     <string name="export_stress_data">Экспорт показаний датчика</string>
+
+    <string name="logout_from_account">Выйти из аккаунта</string>
 </resources>

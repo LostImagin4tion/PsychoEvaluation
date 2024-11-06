@@ -1,8 +1,6 @@
 package ru.miem.psychoEvaluation.feature.navigation.impl
 
 import android.app.Activity
-import android.content.Intent
-import android.hardware.usb.UsbManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -90,13 +88,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        if (intent?.action == UsbManager.ACTION_USB_DEVICE_ATTACHED) {
-            navController.navigate(Routes.debugTraining)
-        }
-        super.onNewIntent(intent)
     }
 
     @Composable

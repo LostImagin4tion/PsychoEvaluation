@@ -13,6 +13,11 @@ class SettingsInteractorImpl @Inject constructor() : SettingsInteractor {
 
     private val dataStorage by diApi(DataStorageDiApi::dataStorage)
 
+    override suspend fun resetApiTokens() {
+        dataStorage.remove(DataStorageKeys.apiAccessToken)
+        dataStorage.remove(DataStorageKeys.refreshToken)
+    }
+
     override suspend fun changeSensorDeviceType(sensorDeviceType: SensorDeviceType) {
         dataStorage.set(DataStorageKeys.sensorDeviceConnectionType, sensorDeviceType.name)
     }

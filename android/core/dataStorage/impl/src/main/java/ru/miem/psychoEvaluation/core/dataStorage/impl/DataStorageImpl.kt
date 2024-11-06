@@ -25,4 +25,10 @@ class DataStorageImpl @Inject constructor(
             prefs[dataStorageKey.key] = value
         }
     }
+
+    override suspend fun <T> remove(dataStorageKey: DataStorageKey<T>) {
+        dataStore.edit { prefs ->
+            prefs.remove(dataStorageKey.key)
+        }
+    }
 }

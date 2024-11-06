@@ -50,21 +50,14 @@ class DebugTrainingScreenViewModel(
             .launchIn(viewModelScope)
     }
 
-    fun connectToUsbDevice(usbManager: UsbManager) {
+    fun connectToUsbDevice(activity: Activity, usbManager: UsbManager) {
+        setupFileInputStream(activity)
+
         val usbDeviceRawData = mutableListOf<Int>()
 
         viewModelScope.launch {
             usbDeviceInteractor.getRawDeviceData(usbManager) {
-                usbDeviceRawData.add(it)
-                chartModelProducer.runTransaction {
-                    lineSeries { series(usbDeviceRawData) }
-                }
-                _minY.emit(
-                    usbDeviceRawData.average()
-                        .roundToInt()
-                        .minus(200)
-                        .coerceAtLeast(0)
-                )
+                emitNewData(usbDeviceRawData, it)
             }
         }
     }
@@ -86,19 +79,7 @@ class DebugTrainingScreenViewModel(
 
         viewModelScope.launch {
             bleDeviceInteractor.getRawDeviceData {
-                bleDeviceData.add(it)
-                fileOutputWriter?.write("$it\n")
-                chartModelProducer.runTransaction {
-                    lineSeries { series(bleDeviceData) }
-                }
-                _minY.emit(
-                    bleDeviceData.average()
-                        .takeIf { !it.isNaN() }
-                        ?.roundToInt()
-                        ?.minus(200)
-                        ?.coerceAtLeast(0)
-                        ?: 0
-                )
+                emitNewData(bleDeviceData, it)
             }
         }
     }
@@ -118,6 +99,25 @@ class DebugTrainingScreenViewModel(
             Timber.tag(TAG).i("Closed file output writer")
         }
         fileOutputWriter = null
+    }
+
+    private suspend fun emitNewData(dataList: MutableList<Int>, newValue: Int) {
+        dataList.add(newValue)
+        fileOutputWriter?.write("$newValue\n")
+
+        chartModelProducer.runTransaction {
+            lineSeries { series(dataList) }
+        }
+
+        _minY.emit(
+            dataList
+                .reversed()
+                .take(30)
+                .average()
+                .roundToInt()
+                .minus(100)
+                .coerceAtLeast(0)
+        )
     }
 
     private fun setupFileInputStream(context: Context) {

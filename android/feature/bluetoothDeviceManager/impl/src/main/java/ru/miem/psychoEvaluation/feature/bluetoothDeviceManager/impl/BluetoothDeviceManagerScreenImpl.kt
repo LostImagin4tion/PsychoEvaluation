@@ -2,6 +2,7 @@ package ru.miem.psychoEvaluation.feature.bluetoothDeviceManager.impl
 
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +49,6 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
         bleDeviceInteractor: BluetoothDeviceInteractor,
         bluetoothDeviceManagerScreenArgs: BluetoothDeviceManagerScreenArgs,
         navigateToRoute: (route: String) -> Unit,
-        navigateBack: () -> Unit,
         showMessage: (String) -> Unit,
     ) {
         val context = LocalContext.current
@@ -69,6 +69,10 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             viewModel.discoverBluetoothDevices(bluetoothAdapter.bluetoothLeScanner)
         }
 
+        BackHandler {
+            navigateToRoute(Routes.trainingsList)
+        }
+
         BluetoothDeviceManagerScreenContent(
             devices = devices,
             isAnyDeviceConnected = connectedDevice != null,
@@ -81,7 +85,9 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
                     }
                 }
             },
-            onBackButtonClick = navigateBack,
+            onBackButtonClick = {
+                navigateToRoute(Routes.trainingsList)
+            },
             navigateToNextScreen = {
                 val route = when (val routeArg = bluetoothDeviceManagerScreenArgs.nextScreenRoute) {
                     Routes.debugTraining,

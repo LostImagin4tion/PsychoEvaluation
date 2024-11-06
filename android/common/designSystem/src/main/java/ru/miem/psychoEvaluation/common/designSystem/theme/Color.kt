@@ -14,6 +14,7 @@ val psychoPrimaryContainerDark = Color(0xFF242B36)
 val psychoGray = Color(0xFF8F8F8F)
 val psychoOnGray = Color(0xFF6B6D70)
 
+val psychoError = Color(0xFFFF4F4F)
 val psychoErrorPrimaryDark = Color(0xFF840101)
 val airplaneGamePrimary = Color(0xFF5089B5)
 

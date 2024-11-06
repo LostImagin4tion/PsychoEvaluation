@@ -176,6 +176,7 @@ fun NavigationContent(
                 setupSystemBarColors()
                 settingsScreen.SettingsScreen(
                     navigateToRoute = navigateToRoute,
+                    navigateToRouteWithOptions = navigateToRouteWithOptions,
                     showMessage = showMessage,
                 )
             }
@@ -205,7 +206,6 @@ fun NavigationContent(
                             ),
                     ),
                     navigateToRoute = navigateToRoute,
-                    navigateBack = navController::popBackStack,
                     showMessage = showMessage,
                 )
             }
