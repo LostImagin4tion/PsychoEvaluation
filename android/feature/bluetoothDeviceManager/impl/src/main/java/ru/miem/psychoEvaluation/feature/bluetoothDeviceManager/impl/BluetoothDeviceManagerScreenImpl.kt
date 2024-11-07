@@ -140,7 +140,9 @@ class BluetoothDeviceManagerScreenImpl @Inject constructor() : BluetoothDeviceMa
             modifier = Modifier.fillMaxSize(),
         ) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = Dimensions.primaryVerticalPadding * 5),
             ) {
                 items(devices) { item ->
                     BluetoothDeviceItem(

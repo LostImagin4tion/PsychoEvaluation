@@ -40,7 +40,7 @@ class StatisticsCardsCreator(
                         Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Airplane Data: $airplaneIds")
                         Timber.tag(StatisticsScreenViewModel.TAG).d("Detailed Clock Data: $clockIds")
 
-                        if (airplaneIds.isNotEmpty() && clockIds.isNotEmpty()) {
+                        if (airplaneIds.isNotEmpty() || clockIds.isNotEmpty()) {
                             val card = getStatisticsCard(date, airplaneIds, clockIds, detailedStats)
                             cardsList.add(card)
                         }
