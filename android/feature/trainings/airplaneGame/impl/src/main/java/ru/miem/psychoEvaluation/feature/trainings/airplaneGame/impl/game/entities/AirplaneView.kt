@@ -12,6 +12,7 @@ import com.soywiz.korma.geom.Angle
 import com.soywiz.korma.geom.Point
 import ru.miem.psychoEvaluation.common.designSystem.utils.dpd
 import ru.miem.psychoEvaluation.feature.trainings.airplaneGame.impl.game.resources.AssetLoader
+import kotlin.math.sign
 
 fun Container.airplaneView(
     x: Double,
@@ -23,8 +24,8 @@ fun Container.airplaneView(
 class AirplaneView(
     x: Double,
     y: Double,
-    private val minY: Double,
-    private val maxY: Double,
+    minY: Double,
+    maxY: Double,
 ) : Container() {
 
     private var isAlive = true
@@ -41,6 +42,9 @@ class AirplaneView(
         size(airplaneWidth, airplaneHeight)
     }
 
+    private val maxYPosition = maxY - airplaneHeight / 2
+    private val minYPosition = minY + airplaneHeight / 2
+
     init {
         updateView()
         zIndex(Int.MAX_VALUE)
@@ -53,18 +57,12 @@ class AirplaneView(
         get() = position.y + airplaneHeight / 2
 
     fun update(delta: TimeSpan) {
-        val minPosition = minY + airplaneHeight / 2
-        val maxPosition = maxY - airplaneHeight / 2
-        val positionRange = minPosition..maxPosition
+        val positionRange = minYPosition..maxYPosition
 
         val newPosition = position + velocity * delta.seconds
 
         position = newPosition.run {
             copy(y = y.coerceIn(positionRange))
-        }
-
-        if ((position.y == maxPosition && velocity.y < 0) || (position.y == minPosition && velocity.y > 0)) {
-            velocity.y = 0.0
         }
 
         if (acceleration.y > 0) {
@@ -88,8 +86,12 @@ class AirplaneView(
     fun onNewData(speed: Double) {
         if (isAlive) {
             acceleration.y = speed - velocity.y
-            velocity.y += speed * airplaneVelocityMultiplier
-//            Timber.tag("HELLO").i("velocity ${velocity.y} position ${position.y}")
+
+            val additionalSpeed = speed * airplaneVelocityMultiplier
+
+            if (position.y in minYPosition..maxYPosition || additionalSpeed.sign != velocity.y.sign) {
+                velocity.y += speed * airplaneVelocityMultiplier
+            }
         }
     }
 
@@ -120,7 +122,7 @@ class AirplaneView(
         private val airplaneWidth = 182.dpd
         private val airplaneHeight = 59.dpd
 
-        private val airplaneVelocityMultiplier = (-2).dpd
+        private val airplaneVelocityMultiplier = (-2.5).dpd
 
         private val airplaneRotationDegreesDelta = (0.071).dpd
         private val airplaneMaximumRotationDegrees = (4.3).dpd
